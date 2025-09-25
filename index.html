@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Red Cross SE & Caribbean Division - Organizational Chart</title>
-    <script src="https://balkangraph.com/js/latest/OrgChart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3"></script>
     <style>
         body {
             margin: 0;
@@ -63,9 +64,17 @@
             width: 250px;
         }
         
-        #tree {
+        #controls select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        #chart {
             width: 100%;
             height: calc(100vh - 150px);
+            overflow: auto;
         }
         
         #legend {
@@ -129,6 +138,15 @@
             color: #666;
             font-size: 12px;
         }
+        
+        .node-button-wrapper {
+            padding: 5px;
+            cursor: pointer;
+        }
+        
+        .node-button-wrapper:hover {
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body>
@@ -142,7 +160,15 @@
         <button onclick="expandAll()">Expand All</button>
         <button onclick="collapseAll()">Collapse All</button>
         <button onclick="fitToScreen()">Fit to Screen</button>
-        <button onclick="exportChart()">Export PDF</button>
+        <button onclick="exportChart()">Export SVG</button>
+        
+        <select id="regionFilter" onchange="filterByRegion(this.value)">
+            <option value="all">All Regions</option>
+            <option value="georgia">Georgia</option>
+            <option value="alabama">Alabama/Mississippi</option>
+            <option value="northcarolina">North Carolina</option>
+            <option value="southcarolina">South Carolina</option>
+        </select>
         
         <div class="stats">
             <div class="stat">
@@ -154,8 +180,8 @@
                 <span class="stat-label">Regions</span>
             </div>
             <div class="stat">
-                <span class="stat-number" id="expandedCount">0</span>
-                <span class="stat-label">Expanded</span>
+                <span class="stat-number" id="visibleCount">0</span>
+                <span class="stat-label">Visible</span>
             </div>
         </div>
     </div>
@@ -183,25 +209,337 @@
             <span>South Carolina</span>
         </div>
         <div class="legend-item">
-            <div class="legend-color" style="background: #6A994E;"></div>
-            <span>Tennessee</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-color" style="background: #BC4B51;"></div>
-            <span>Puerto Rico</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-color" style="background: #5D737E;"></div>
-            <span>Florida Regions</span>
-        </div>
-        <div class="legend-item">
             <div class="legend-color" style="background: #666;"></div>
             <span>Vacant Position</span>
         </div>
     </div>
     
-    <div id="tree"></div>
+    <div id="chart"></div>
     
-    <script src="orgChart.js"></script>
+    <script>
+        // Color scheme for regions
+        const COLORS = {
+            division: '#ED1B2E',
+            georgia: '#2E86AB',
+            alabama: '#A23B72',
+            northcarolina: '#F18F01',
+            southcarolina: '#C73E1D',
+            vacant: '#666666'
+        };
+        
+        // Sample data structure - replace with full data
+        const orgData = [
+            {
+                id: '1',
+                name: 'Anna Trefethen',
+                title: 'Vice President',
+                subtitle: 'SE & Caribbean Division',
+                parentId: '',
+                region: 'division'
+            },
+            // Georgia Region
+            {
+                id: '2',
+                name: 'Alicia Doherty',
+                title: 'Regional Chief Executive Officer',
+                location: 'Atlanta',
+                parentId: '1',
+                region: 'georgia'
+            },
+            {
+                id: '3',
+                name: 'D. Dixon',
+                title: 'DFVP',
+                parentId: '2',
+                region: 'georgia'
+            },
+            {
+                id: '4',
+                name: 'V. Barnett',
+                title: 'Director of Division Fundraising',
+                parentId: '3',
+                region: 'georgia'
+            },
+            {
+                id: '5',
+                name: 'Katrina Gonzalez',
+                title: 'Div SAF Director',
+                parentId: '2',
+                region: 'georgia'
+            },
+            {
+                id: '6',
+                name: 'Victoria Hamrick',
+                title: 'SAF Director',
+                location: 'Atlanta',
+                parentId: '5',
+                region: 'georgia'
+            },
+            {
+                id: '7',
+                name: 'S. Taylor',
+                title: 'DVSE',
+                parentId: '2',
+                region: 'georgia'
+            },
+            {
+                id: '8',
+                name: 'C. Edwards',
+                title: 'DCD',
+                parentId: '2',
+                region: 'georgia'
+            },
+            {
+                id: '9',
+                name: 'L. Mims',
+                title: 'DCOO',
+                parentId: '2',
+                region: 'georgia'
+            },
+            {
+                id: '10',
+                name: 'Carla Dillard Homer',
+                title: 'RCOO Atlanta',
+                parentId: '9',
+                region: 'georgia'
+            },
+            {
+                id: '11',
+                name: 'Adelaide Kirk',
+                title: 'Regional Disaster Officer',
+                location: 'Columbus',
+                parentId: '2',
+                region: 'georgia'
+            },
+            {
+                id: '12',
+                name: 'Jeremy McLendon',
+                title: 'Deputy Regional Disaster Officer',
+                location: 'Atlanta',
+                parentId: '11',
+                region: 'georgia'
+            },
+            // Alabama/Mississippi Region
+            {
+                id: '13',
+                name: 'M. Beddingfield',
+                title: 'Regional Executive',
+                location: 'Birmingham',
+                parentId: '1',
+                region: 'alabama'
+            },
+            {
+                id: '14',
+                name: 'E. Whitt',
+                title: 'Executive Coordinator',
+                location: 'Birmingham',
+                parentId: '13',
+                region: 'alabama'
+            },
+            {
+                id: '15',
+                name: 'D. Warren',
+                title: 'Chief Development Officer',
+                location: 'Birmingham',
+                parentId: '13',
+                region: 'alabama'
+            },
+            {
+                id: '16',
+                name: 'R. Word',
+                title: 'Chief Operating Officer ALMS',
+                parentId: '13',
+                region: 'alabama'
+            },
+            {
+                id: '17',
+                name: 'R. Lock',
+                title: 'Division Disaster Executive',
+                parentId: '13',
+                region: 'alabama'
+            },
+            // North Carolina Region
+            {
+                id: '18',
+                name: 'A. Taylor',
+                title: 'Regional Executive',
+                location: 'North Carolina',
+                parentId: '1',
+                region: 'northcarolina'
+            },
+            {
+                id: '19',
+                name: 'S. Laub',
+                title: 'Executive Coord',
+                parentId: '18',
+                region: 'northcarolina'
+            },
+            {
+                id: '20',
+                name: 'E. Davis',
+                title: 'CDO',
+                location: 'Charlotte',
+                parentId: '18',
+                region: 'northcarolina'
+            },
+            {
+                id: '21',
+                name: 'M. Womble',
+                title: 'COO',
+                location: 'Greenville',
+                parentId: '18',
+                region: 'northcarolina'
+            },
+            {
+                id: '22',
+                name: 'J. Jarvis',
+                title: 'RDO',
+                parentId: '18',
+                region: 'northcarolina'
+            },
+            // South Carolina Region
+            {
+                id: '23',
+                name: 'Susan Everitt',
+                title: 'Regional Executive',
+                location: 'South Carolina',
+                parentId: '1',
+                region: 'southcarolina'
+            },
+            {
+                id: '24',
+                name: 'L. Ruggles',
+                title: 'Executive Coord',
+                parentId: '23',
+                region: 'southcarolina'
+            },
+            {
+                id: '25',
+                name: 'S. Ingraham',
+                title: 'CDO',
+                parentId: '23',
+                region: 'southcarolina'
+            },
+            {
+                id: '26',
+                name: 'M. Hesbach',
+                title: 'COO',
+                parentId: '23',
+                region: 'southcarolina'
+            },
+            {
+                id: '27',
+                name: 'T. Reid',
+                title: 'RDO',
+                parentId: '23',
+                region: 'southcarolina'
+            },
+            // Add more staff members
+            {
+                id: '28',
+                name: 'Vacant',
+                title: 'SAF Program Manager',
+                location: 'Ft Stewart',
+                parentId: '5',
+                region: 'georgia'
+            }
+        ];
+        
+        let chart;
+        let currentData = [...orgData];
+        
+        // Initialize the chart
+        function initChart() {
+            chart = new d3.OrgChart()
+                .container('#chart')
+                .data(currentData)
+                .nodeWidth((d) => 250)
+                .nodeHeight((d) => 100)
+                .childrenMargin((d) => 40)
+                .compactMarginBetween((d) => 15)
+                .compactMarginPair((d) => 80)
+                .nodeContent(function (d, i, arr, state) {
+                    const color = d.data.name.includes('Vacant') ? COLORS.vacant : (COLORS[d.data.region] || COLORS.division);
+                    return `
+                        <div class="node-button-wrapper" style="font-family: Arial; width: ${d.width}px; height: ${d.height}px;">
+                            <div style="background-color: ${color}; border-radius: 8px; padding: 15px; height: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                <div style="color: white; font-size: 16px; font-weight: bold; margin-bottom: 5px;">
+                                    ${d.data.name}
+                                </div>
+                                <div style="color: rgba(255,255,255,0.9); font-size: 14px; margin-bottom: 3px;">
+                                    ${d.data.title}
+                                </div>
+                                ${d.data.location ? `<div style="color: rgba(255,255,255,0.7); font-size: 12px;">${d.data.location}</div>` : ''}
+                            </div>
+                        </div>`;
+                })
+                .render();
+            
+            // Update stats
+            document.getElementById('totalCount').textContent = currentData.length;
+            document.getElementById('visibleCount').textContent = currentData.length;
+        }
+        
+        // Control functions
+        function expandAll() {
+            chart.expandAll();
+        }
+        
+        function collapseAll() {
+            chart.collapseAll();
+        }
+        
+        function fitToScreen() {
+            chart.fit();
+        }
+        
+        function exportChart() {
+            chart.exportSvg();
+        }
+        
+        function filterByRegion(region) {
+            if (region === 'all') {
+                currentData = [...orgData];
+            } else {
+                // Get all IDs for the selected region
+                const regionIds = orgData.filter(d => d.region === region).map(d => d.id);
+                const relatedIds = new Set(regionIds);
+                
+                // Add parent chain up to root
+                regionIds.forEach(id => {
+                    let node = orgData.find(d => d.id === id);
+                    while (node && node.parentId) {
+                        relatedIds.add(node.parentId);
+                        node = orgData.find(d => d.id === node.parentId);
+                    }
+                });
+                
+                currentData = orgData.filter(d => relatedIds.has(d.id));
+            }
+            
+            chart.data(currentData).render();
+            document.getElementById('visibleCount').textContent = currentData.length;
+        }
+        
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('keyup', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            if (searchTerm.length > 2) {
+                const foundNode = orgData.find(d => 
+                    (d.name && d.name.toLowerCase().includes(searchTerm)) ||
+                    (d.title && d.title.toLowerCase().includes(searchTerm))
+                );
+                
+                if (foundNode) {
+                    chart.setCentered(foundNode.id).render();
+                }
+            }
+        });
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initChart();
+        });
+    </script>
 </body>
 </html>
