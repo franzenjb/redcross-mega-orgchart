@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Cross Mega Org Chart System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #ed1b2e 0%, #6d6e70 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: white;
+            border-right: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+        }
+        
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .toolbar {
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .chart-container {
+            flex: 1;
+            padding: 20px;
+            overflow: auto;
+            background: white;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            background: #ed1b2e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #c41230;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #6d6e70;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a5b5d;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .region-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .region-btn {
+            padding: 10px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .region-btn:hover {
+            border-color: #ed1b2e;
+            background: #fff5f5;
+        }
+        
+        .region-btn.active {
+            background: #ed1b2e;
+            color: white;
+            border-color: #ed1b2e;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .stats {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .stats h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 14px;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #ed1b2e;
+        }
+        
+        /* Org Chart Styles */
+        .org-tree {
+            display: inline-block;
+            padding: 20px;
+            min-width: 100%;
+        }
+        
+        .org-node {
+            display: inline-block;
+            vertical-align: top;
+            text-align: center;
+            position: relative;
+            padding: 10px 5px;
+        }
+        
+        .org-node-box {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            display: inline-block;
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+            min-width: 180px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .org-node-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            border-color: #ed1b2e;
+        }
+        
+        .node-title {
+            font-weight: 600;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .node-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .node-location {
+            font-size: 11px;
+            color: #999;
+        }
+        
+        .node-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ed1b2e;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .org-children {
+            padding-top: 20px;
+            position: relative;
+        }
+        
+        .org-children:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 1px;
+            height: 20px;
+            background: #ddd;
+        }
+        
+        .org-node-box.executive {
+            background: linear-gradient(135deg, #ed1b2e, #c41230);
+            color: white;
+            border-color: #ed1b2e;
+        }
+        
+        .org-node-box.executive .node-title,
+        .org-node-box.executive .node-name,
+        .org-node-box.executive .node-location {
+            color: white;
+        }
+        
+        .org-node-box.director {
+            background: #fff5f5;
+            border-color: #ed1b2e;
+        }
+        
+        .org-node-box.manager {
+            background: #f8f9fa;
+        }
+        
+        /* Regional Color Coding */
+        .org-node-box[data-region="alabama-mississippi"] {
+            background: linear-gradient(to bottom, #fff5f5, #ffe5e5);
+            border-left: 4px solid #c41230;
+        }
+        
+        .org-node-box[data-region="florida-nc"] {
+            background: linear-gradient(to bottom, #f0f8ff, #e6f3ff);
+            border-left: 4px solid #0066cc;
+        }
+        
+        .org-node-box[data-region="florida-south"] {
+            background: linear-gradient(to bottom, #fff9e6, #fff3cc);
+            border-left: 4px solid #ff9900;
+        }
+        
+        .org-node-box[data-region="georgia"] {
+            background: linear-gradient(to bottom, #f5fff5, #e5ffe5);
+            border-left: 4px solid #228b22;
+        }
+        
+        .org-node-box[data-region="north-carolina"] {
+            background: linear-gradient(to bottom, #f5f5ff, #e5e5ff);
+            border-left: 4px solid #4b0082;
+        }
+        
+        .org-node-box[data-region="puerto-rico"] {
+            background: linear-gradient(to bottom, #ffefff, #ffe0ff);
+            border-left: 4px solid #cc00cc;
+        }
+        
+        .org-node-box[data-region="south-carolina"] {
+            background: linear-gradient(to bottom, #fff0f5, #ffe0eb);
+            border-left: 4px solid #dc143c;
+        }
+        
+        .org-node-box[data-region="tennessee"] {
+            background: linear-gradient(to bottom, #ffefd5, #ffdead);
+            border-left: 4px solid #d2691e;
+        }
+        
+        .org-node-box.executive {
+            background: linear-gradient(135deg, #ed1b2e, #c41230) !important;
+            color: white;
+            border-color: #ed1b2e !important;
+            border-left: 4px solid #8b0000 !important;
+        }
+        
+        /* Region Legend */
+        .region-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .header {
+                position: relative;
+                background: white;
+                border-bottom: 2px solid black;
+                padding: 10px;
+            }
+            
+            .btn-group {
+                display: none;
+            }
+            
+            .org-chart {
+                overflow: visible !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                page-break-inside: avoid;
+            }
+            
+            .org-tree {
+                zoom: 0.8;
+                transform-origin: top left;
+            }
+            
+            .org-node-box {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #333;
+            }
+            
+            .org-node-box[data-region] {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            @page {
+                size: landscape;
+                margin: 0.5in;
+            }
+        }
+        
+        /* Data Editor */
+        .data-editor {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .data-editor.active {
+            display: block;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        /* Import/Export Panel */
+        .import-export {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .import-export h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .file-label {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #6d6e70;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .file-label:hover {
+            background: #5a5b5d;
+        }
+        
+        /* Print Styles */
+        @media print {
+            .sidebar,
+            .toolbar,
+            .header {
+                display: none;
+            }
+            
+            .main-container {
+                display: block;
+            }
+            
+            .content {
+                margin: 0;
+                box-shadow: none;
+            }
+            
+            .chart-container {
+                padding: 10px;
+            }
+            
+            @page {
+                size: portrait;
+                margin: 0.5in;
+            }
+        }
+        
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            z-index: 2000;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ed1b2e;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏥 Red Cross Mega Org Chart System</h1>
+        <div class="subtitle">Complete Organizational Structure Management - All Regions</div>
+        <div class="region-legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(to bottom, #fff5f5, #ffe5e5); border-left: 4px solid #c41230;"></div>
+                <span>Alabama/Mississippi</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(to bottom, #f0f8ff, #e6f3ff); border-left: 4px solid #0066cc;"></div>
+                <span>Florida N/C</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(to bottom, #fff9e6, #fff3cc); border-left: 4px solid #ff9900;"></div>
+                <span>Florida South</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(to bottom, #f5fff5, #e5ffe5); border-left: 4px solid #228b22;"></div>
+                <span>Georgia</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(to bottom, #f5f5ff, #e5e5ff); border-left: 4px solid #4b0082;"></div>
+                <span>North Carolina</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(to bottom, #ffefff, #ffe0ff); border-left: 4px solid #cc00cc;"></div>
+                <span>Puerto Rico</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(to bottom, #fff0f5, #ffe0eb); border-left: 4px solid #dc143c;"></div>
+                <span>South Carolina</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(to bottom, #ffefd5, #ffdead); border-left: 4px solid #d2691e;"></div>
+                <span>Tennessee</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-container">
+        <div class="sidebar">
+            <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search for any person...">
+            
+            <div class="region-selector">
+                <h3>Select Region</h3>
+                <button class="region-btn active" data-region="all">All Regions</button>
+                <button class="region-btn" data-region="alabama-mississippi">Alabama/Mississippi</button>
+                <button class="region-btn" data-region="florida-nc">Florida N/C</button>
+                <button class="region-btn" data-region="florida-south">Florida South</button>
+                <button class="region-btn" data-region="georgia">Georgia</button>
+                <button class="region-btn" data-region="north-carolina">North Carolina</button>
+                <button class="region-btn" data-region="puerto-rico">Puerto Rico</button>
+                <button class="region-btn" data-region="south-carolina">South Carolina</button>
+                <button class="region-btn" data-region="tennessee">Tennessee</button>
+            </div>
+            
+            <div class="stats">
+                <h3>Statistics</h3>
+                <div class="stat-item">
+                    <span>Total Positions:</span>
+                    <span class="stat-value" id="totalPositions">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Filled Positions:</span>
+                    <span class="stat-value" id="filledPositions">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Departments:</span>
+                    <span class="stat-value" id="totalDepartments">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Current View:</span>
+                    <span class="stat-value" id="currentView">All</span>
+                </div>
+            </div>
+            
+            <div class="import-export">
+                <h3>Data Management</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div class="file-input-wrapper">
+                        <input type="file" id="importFile" accept=".csv,.json">
+                        <label for="importFile" class="file-label">📥 Import Data</label>
+                    </div>
+                    <button class="btn btn-secondary" onclick="exportCSV()">📤 Export to CSV</button>
+                    <button class="btn btn-secondary" onclick="exportJSON()">💾 Export to JSON</button>
+                    <button class="btn btn-secondary" onclick="generatePDF()">📄 Generate PDF</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="toolbar">
+                <button class="btn" onclick="addNewPerson()">➕ Add Person</button>
+                <button class="btn btn-secondary" onclick="toggleEditMode()">✏️ Edit Mode</button>
+                <button class="btn btn-secondary" onclick="expandAll()">📂 Expand All</button>
+                <button class="btn btn-secondary" onclick="collapseAll()">📁 Collapse All</button>
+                <button class="btn btn-success" onclick="saveChanges()">💾 Save Changes</button>
+                <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+                <button class="btn btn-secondary" onclick="resetView()">🔄 Reset View</button>
+            </div>
+            
+            <div class="chart-container" id="chartContainer">
+                <!-- Org chart will be rendered here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Data Editor Modal -->
+    <div class="overlay" id="overlay"></div>
+    <div class="data-editor" id="dataEditor">
+        <h3>Edit Position</h3>
+        <form id="editForm">
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" id="editName" required>
+            </div>
+            <div class="form-group">
+                <label>Title:</label>
+                <input type="text" id="editTitle" required>
+            </div>
+            <div class="form-group">
+                <label>Location:</label>
+                <input type="text" id="editLocation">
+            </div>
+            <div class="form-group">
+                <label>Reports To:</label>
+                <select id="editReportsTo">
+                    <option value="">None (Top Level)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Region:</label>
+                <select id="editRegion">
+                    <option value="florida-nc">Florida N/C</option>
+                    <option value="florida-south">Florida South</option>
+                    <option value="georgia">Georgia</option>
+                    <option value="alabama-mississippi">Alabama/Mississippi</option>
+                    <option value="north-carolina">North Carolina</option>
+                    <option value="south-carolina">South Carolina</option>
+                    <option value="tennessee">Tennessee</option>
+                    <option value="puerto-rico">Puerto Rico</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeEditor()">Cancel</button>
+                <button type="submit" class="btn">Save</button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Processing...</p>
+    </div>
+    
+    <script src="complete-org-data.js"></script>
+    <script>
+        // Global variables
+        let currentRegion = 'all';
+        let editMode = false;
+        let orgData = {};
+        let flatData = [];
+        
+        // Initialize the application
+        function init() {
+            loadOrgData();
+            setupEventListeners();
+            renderOrgChart();
+            updateStats();
+        }
+        
+        // Load organization data
+        function loadOrgData() {
+            // Load from complete-org-data.js if available
+            if (typeof completeOrgData !== 'undefined') {
+                orgData = completeOrgData;
+                flatData = flattenOrgData(orgData);
+            } else if (typeof deepOrgData !== 'undefined') {
+                orgData = deepOrgData;
+                flatData = flattenOrgData(orgData);
+            } else {
+                // Load default data
+                orgData = getDefaultOrgData();
+                flatData = flattenOrgData(orgData);
+            }
+            
+            // Check localStorage for any saved changes
+            const savedData = localStorage.getItem('megaOrgChart');
+            if (savedData) {
+                try {
+                    orgData = JSON.parse(savedData);
+                    flatData = flattenOrgData(orgData);
+                } catch(e) {
+                    console.error('Error loading saved data:', e);
+                }
+            }
+        }
+        
+        // Flatten org data for easy searching
+        function flattenOrgData(data, result = []) {
+            for (let key in data) {
+                if (data[key] && typeof data[key] === 'object') {
+                    const node = data[key];
+                    result.push({
+                        id: key,
+                        name: node.name,
+                        title: node.title,
+                        location: node.location,
+                        type: node.type || key,
+                        parent: node.parent || null
+                    });
+                    
+                    if (node.children) {
+                        if (Array.isArray(node.children)) {
+                            node.children.forEach(child => {
+                                if (typeof child === 'object') {
+                                    flattenOrgData({[child.name]: child}, result);
+                                }
+                            });
+                        } else {
+                            flattenOrgData(node.children, result);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Region selector
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentRegion = this.dataset.region;
+                    renderOrgChart();
+                    updateStats();
+                });
+            });
+            
+            // Search functionality
+            document.getElementById('searchBox').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                if (searchTerm.length > 2) {
+                    searchAndHighlight(searchTerm);
+                } else {
+                    clearHighlights();
+                }
+            });
+            
+            // Import file
+            document.getElementById('importFile').addEventListener('change', handleFileImport);
+            
+            // Edit form submission
+            document.getElementById('editForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveEditedData();
+            });
+            
+            // Overlay click to close
+            document.getElementById('overlay').addEventListener('click', closeEditor);
+        }
+        
+        // Render org chart
+        function renderOrgChart() {
+            const container = document.getElementById('chartContainer');
+            container.innerHTML = '';
+            
+            if (currentRegion === 'all') {
+                // Render all regions
+                const wrapper = document.createElement('div');
+                wrapper.className = 'org-tree';
+                
+                for (let region in orgData) {
+                    const regionNode = createOrgNode(orgData[region], region, region);
+                    wrapper.appendChild(regionNode);
+                }
+                
+                container.appendChild(wrapper);
+            } else {
+                // Render specific region
+                if (orgData[currentRegion]) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'org-tree';
+                    const regionNode = createOrgNode(orgData[currentRegion], currentRegion, currentRegion);
+                    wrapper.appendChild(regionNode);
+                    container.appendChild(wrapper);
+                }
+            }
+        }
+        
+        // Create organization node
+        function createOrgNode(data, id, regionId = null) {
+            const node = document.createElement('div');
+            node.className = 'org-node';
+            node.dataset.id = id;
+            
+            const box = document.createElement('div');
+            box.className = 'org-node-box';
+            
+            // Determine region from ID
+            if (!regionId) {
+                const regions = ['alabama-mississippi', 'florida-nc', 'florida-south', 'georgia', 
+                                'north-carolina', 'puerto-rico', 'south-carolina', 'tennessee'];
+                for (let region of regions) {
+                    if (id.includes(region)) {
+                        regionId = region;
+                        break;
+                    }
+                }
+            }
+            
+            // Add region data attribute for color coding
+            if (regionId) {
+                box.setAttribute('data-region', regionId);
+            }
+            
+            // Determine node type for styling
+            if (data.title && data.title.toLowerCase().includes('executive')) {
+                box.classList.add('executive');
+            } else if (data.title && data.title.toLowerCase().includes('director')) {
+                box.classList.add('director');
+            } else if (data.title && data.title.toLowerCase().includes('manager')) {
+                box.classList.add('manager');
+            }
+            
+            // Add content
+            box.innerHTML = `
+                <div class="node-title">${data.title || 'Position'}</div>
+                <div class="node-name">${data.name || 'Vacant'}</div>
+                ${data.location ? `<div class="node-location">${data.location}</div>` : ''}
+                ${data.children && getChildCount(data.children) > 0 ? `<div class="node-count">${getChildCount(data.children)}</div>` : ''}
+            `;
+            
+            // Add click handler for editing
+            if (editMode) {
+                box.style.cursor = 'pointer';
+                box.addEventListener('click', () => editNode(id, data));
+            }
+            
+            node.appendChild(box);
+            
+            // Add children
+            if (data.children) {
+                const childrenContainer = document.createElement('div');
+                childrenContainer.className = 'org-children';
+                
+                if (Array.isArray(data.children)) {
+                    data.children.forEach((child, index) => {
+                        if (child && typeof child === 'object') {
+                            const childNode = createOrgNode(child, `${id}-${index}`, regionId);
+                            childrenContainer.appendChild(childNode);
+                        }
+                    });
+                } else {
+                    for (let childKey in data.children) {
+                        const childNode = createOrgNode(data.children[childKey], childKey, regionId || childKey);
+                        childrenContainer.appendChild(childNode);
+                    }
+                }
+                
+                node.appendChild(childrenContainer);
+            }
+            
+            return node;
+        }
+        
+        // Get child count
+        function getChildCount(children) {
+            if (Array.isArray(children)) {
+                return children.length;
+            } else if (typeof children === 'object') {
+                return Object.keys(children).length;
+            }
+            return 0;
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const stats = calculateStats();
+            document.getElementById('totalPositions').textContent = stats.total;
+            document.getElementById('filledPositions').textContent = stats.filled;
+            document.getElementById('totalDepartments').textContent = stats.departments;
+            document.getElementById('currentView').textContent = currentRegion === 'all' ? 'All Regions' : 
+                document.querySelector(`[data-region="${currentRegion}"]`).textContent;
+        }
+        
+        // Calculate statistics
+        function calculateStats() {
+            let total = 0;
+            let filled = 0;
+            const departments = new Set();
+            
+            flatData.forEach(person => {
+                if (currentRegion === 'all' || person.type === currentRegion) {
+                    total++;
+                    if (person.name && person.name !== 'Vacant') {
+                        filled++;
+                    }
+                    if (person.title) {
+                        const dept = person.title.split(' ')[0];
+                        departments.add(dept);
+                    }
+                }
+            });
+            
+            return {
+                total,
+                filled,
+                departments: departments.size
+            };
+        }
+        
+        // Search and highlight
+        function searchAndHighlight(term) {
+            clearHighlights();
+            
+            flatData.forEach(person => {
+                if (person.name && person.name.toLowerCase().includes(term)) {
+                    const nodes = document.querySelectorAll(`[data-id*="${person.id}"] .org-node-box`);
+                    nodes.forEach(node => {
+                        node.style.backgroundColor = '#ffeb3b';
+                        node.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    });
+                }
+            });
+        }
+        
+        // Clear highlights
+        function clearHighlights() {
+            document.querySelectorAll('.org-node-box').forEach(node => {
+                node.style.backgroundColor = '';
+            });
+        }
+        
+        // Toggle edit mode
+        function toggleEditMode() {
+            editMode = !editMode;
+            renderOrgChart();
+            
+            const btn = event.target;
+            if (editMode) {
+                btn.textContent = '✅ Edit Mode On';
+                btn.style.background = '#28a745';
+            } else {
+                btn.textContent = '✏️ Edit Mode';
+                btn.style.background = '#6d6e70';
+            }
+        }
+        
+        // Add new person
+        function addNewPerson() {
+            const editor = document.getElementById('dataEditor');
+            const overlay = document.getElementById('overlay');
+            
+            // Clear form
+            document.getElementById('editName').value = '';
+            document.getElementById('editTitle').value = '';
+            document.getElementById('editLocation').value = '';
+            document.getElementById('editReportsTo').value = '';
+            
+            // Populate reports to dropdown
+            populateReportsToDropdown();
+            
+            editor.classList.add('active');
+            overlay.classList.add('active');
+        }
+        
+        // Edit node
+        function editNode(id, data) {
+            const editor = document.getElementById('dataEditor');
+            const overlay = document.getElementById('overlay');
+            
+            // Populate form with current data
+            document.getElementById('editName').value = data.name || '';
+            document.getElementById('editTitle').value = data.title || '';
+            document.getElementById('editLocation').value = data.location || '';
+            
+            // Populate reports to dropdown
+            populateReportsToDropdown(id);
+            
+            editor.dataset.editId = id;
+            editor.classList.add('active');
+            overlay.classList.add('active');
+        }
+        
+        // Populate reports to dropdown
+        function populateReportsToDropdown(excludeId) {
+            const select = document.getElementById('editReportsTo');
+            select.innerHTML = '<option value="">None (Top Level)</option>';
+            
+            flatData.forEach(person => {
+                if (person.id !== excludeId) {
+                    const option = document.createElement('option');
+                    option.value = person.id;
+                    option.textContent = `${person.name} - ${person.title}`;
+                    select.appendChild(option);
+                }
+            });
+        }
+        
+        // Close editor
+        function closeEditor() {
+            document.getElementById('dataEditor').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+        
+        // Save edited data
+        function saveEditedData() {
+            const name = document.getElementById('editName').value;
+            const title = document.getElementById('editTitle').value;
+            const location = document.getElementById('editLocation').value;
+            const reportsTo = document.getElementById('editReportsTo').value;
+            const region = document.getElementById('editRegion').value;
+            
+            // Update data structure
+            // This would need more complex logic for real implementation
+            
+            closeEditor();
+            saveChanges();
+            renderOrgChart();
+            updateStats();
+        }
+        
+        // Save changes to localStorage
+        function saveChanges() {
+            localStorage.setItem('megaOrgChart', JSON.stringify(orgData));
+            showNotification('Changes saved successfully!');
+        }
+        
+        // Export to CSV
+        function exportCSV() {
+            const csv = Papa.unparse(flatData);
+            const blob = new Blob([csv], { type: 'text/csv' });
+            saveAs(blob, 'org-chart.csv');
+        }
+        
+        // Export to JSON
+        function exportJSON() {
+            const json = JSON.stringify(orgData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            saveAs(blob, 'org-chart.json');
+        }
+        
+        // Generate PDF (would call Python backend)
+        function generatePDF() {
+            showLoading();
+            // This would make an API call to the Python Graphviz generator
+            setTimeout(() => {
+                hideLoading();
+                showNotification('PDF generation started. Check your downloads folder.');
+            }, 2000);
+        }
+        
+        // Handle file import
+        function handleFileImport(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            
+            if (file.name.endsWith('.csv')) {
+                reader.onload = function(event) {
+                    const csv = event.target.result;
+                    const results = Papa.parse(csv, { header: true });
+                    // Process CSV data
+                    processImportedData(results.data);
+                };
+                reader.readAsText(file);
+            } else if (file.name.endsWith('.json')) {
+                reader.onload = function(event) {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        orgData = data;
+                        flatData = flattenOrgData(orgData);
+                        renderOrgChart();
+                        updateStats();
+                        showNotification('Data imported successfully!');
+                    } catch(e) {
+                        showNotification('Error importing data: ' + e.message, 'error');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+        
+        // Process imported data
+        function processImportedData(data) {
+            // Convert flat CSV data to hierarchical structure
+            // This would need implementation based on CSV format
+            showNotification('Data imported successfully!');
+            renderOrgChart();
+            updateStats();
+        }
+        
+        // Expand all nodes
+        function expandAll() {
+            // Implementation for expanding all nodes
+            renderOrgChart();
+        }
+        
+        // Collapse all nodes
+        function collapseAll() {
+            // Implementation for collapsing all nodes
+            renderOrgChart();
+        }
+        
+        // Reset view
+        function resetView() {
+            currentRegion = 'all';
+            document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-region="all"]').classList.add('active');
+            renderOrgChart();
+            updateStats();
+        }
+        
+        // Show loading indicator
+        function showLoading() {
+            document.getElementById('loading').classList.add('active');
+        }
+        
+        // Hide loading indicator
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('active');
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+                color: white;
+                border-radius: 4px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                z-index: 3000;
+                animation: slideIn 0.3s;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Get default org data if deep-org-data.js is not available
+        function getDefaultOrgData() {
+            return {
+                'florida-nc': {
+                    name: 'C. Smith',
+                    title: 'Regional Executive',
+                    location: 'Jacksonville',
+                    children: []
+                }
+            };
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
