@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Cross Mega Org Chart | Interactive Visualization</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="particles-bg"></div>
+    
+    <div class="control-panel">
+        <h1 class="title">
+            <span class="glow">Red Cross</span>
+            <span class="subtitle">Organizational Chart</span>
+        </h1>
+        
+        <div class="controls">
+            <input type="text" id="search" placeholder="Search for people or positions..." class="search-box">
+            <button id="expandAll" class="btn btn-primary">Expand All</button>
+            <button id="collapseAll" class="btn btn-secondary">Collapse All</button>
+            <button id="resetView" class="btn btn-tertiary">Reset View</button>
+            <select id="regionFilter" class="region-filter">
+                <option value="all">All Regions</option>
+                <option value="georgia">Georgia Region</option>
+                <option value="alabama-mississippi">Alabama/Mississippi</option>
+                <option value="north-carolina">North Carolina</option>
+                <option value="south-carolina">South Carolina</option>
+                <option value="tennessee">Tennessee</option>
+                <option value="puerto-rico">Puerto Rico</option>
+                <option value="south-florida">South Florida</option>
+                <option value="north-central-florida">North Central Florida</option>
+            </select>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <span class="stat-value" id="totalNodes">0</span>
+                <span class="stat-label">Total Positions</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="expandedNodes">0</span>
+                <span class="stat-label">Expanded</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="selectedRegion">All</span>
+                <span class="stat-label">Region</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container" id="chartContainer">
+        <div class="org-chart" id="orgChart"></div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+    
+    <div class="zoom-controls">
+        <button id="zoomIn" class="zoom-btn">+</button>
+        <span id="zoomLevel" class="zoom-level">100%</span>
+        <button id="zoomOut" class="zoom-btn">-</button>
+    </div>
+
+    <div class="mini-map" id="miniMap">
+        <div class="mini-viewport"></div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader">
+            <div class="loader-circle"></div>
+            <p>Loading organizational data...</p>
+        </div>
+    </div>
+
+    <script src="orgData.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
