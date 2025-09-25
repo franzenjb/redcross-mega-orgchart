@@ -86,9 +86,9 @@ const completeOrgData = {
                         ]
                     },
                     {
-                        name: "T. Anderson",
+                        name: "Kelly Hodges",
                         title: "Executive Director",
-                        location: "Mobile",
+                        location: "Southern Alabama",
                         children: [
                             { name: "M. Davis", title: "Operations Manager", location: "Mobile" },
                             { name: "R. Thompson", title: "Community Programs Director", location: "Mobile" }
