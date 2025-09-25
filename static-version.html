@@ -2559,6 +2559,7 @@
             document.querySelectorAll('.node').forEach(node => {
                 node.style.border = '';
                 node.style.backgroundColor = '';
+                node.style.color = '';
             });
             
             // Search all nodes
@@ -2567,8 +2568,9 @@
                 const name = node.querySelector('.name');
                 if (name && name.textContent.toLowerCase().includes(searchTerm)) {
                     // Highlight found node
-                    node.style.border = '3px solid red';
-                    node.style.backgroundColor = '#ffeb3b';
+                    node.style.border = '3px solid #8b0000';
+                    node.style.backgroundColor = '#dc143c';
+                    node.style.color = 'white';
                     
                     // Show the region containing this person
                     const region = node.closest('.region-content');
@@ -2606,6 +2608,7 @@
             document.querySelectorAll('.node').forEach(node => {
                 node.style.border = '';
                 node.style.backgroundColor = '';
+                node.style.color = '';
             });
         }
     </script>

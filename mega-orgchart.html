@@ -1009,7 +1009,9 @@
                 if (person.name && person.name.toLowerCase().includes(term)) {
                     const nodes = document.querySelectorAll(`[data-id*="${person.id}"] .org-node-box`);
                     nodes.forEach(node => {
-                        node.style.backgroundColor = '#ffeb3b';
+                        node.style.backgroundColor = '#dc143c';
+                        node.style.color = 'white';
+                        node.style.border = '3px solid #8b0000';
                         node.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     });
                 }
@@ -1020,6 +1022,8 @@
         function clearHighlights() {
             document.querySelectorAll('.org-node-box').forEach(node => {
                 node.style.backgroundColor = '';
+                node.style.color = '';
+                node.style.border = '';
             });
         }
         
