@@ -275,10 +275,38 @@
             display: block;
         }
         
+        /* Print Button */
+        .print-btn {
+            background: #ed1b2e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-left: 10px;
+        }
+        
+        .print-btn:hover {
+            background: #c41230;
+            transform: translateY(-1px);
+        }
+        
         /* Print styles */
         @media print {
             .header {
                 position: static;
+                background: white !important;
+                color: black !important;
+                border-bottom: 2px solid #333;
+                page-break-after: avoid;
+            }
+            
+            .header h1 {
+                color: black !important;
+                font-size: 24px;
             }
             
             .controls {
@@ -287,11 +315,39 @@
             
             body {
                 background: white;
+                margin: 0;
+                padding: 0;
             }
             
             .container {
                 box-shadow: none;
                 max-width: 100%;
+                padding: 20px;
+            }
+            
+            .executive-row, .leaders-row {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            
+            .discipline-section {
+                page-break-inside: avoid;
+                margin-bottom: 30px;
+            }
+            
+            .node {
+                page-break-inside: avoid;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .disciplines-stack {
+                display: block;
+            }
+            
+            @page {
+                size: portrait;
+                margin: 0.75in 0.5in;
             }
         }
     </style>
@@ -316,6 +372,7 @@
                 <button onclick="clearSearch()">Clear</button>
             </div>
             <button class="region-btn" style="background: #ff9800; border-color: #ff9800;" onclick="toggleEditMode()">Edit Mode</button>
+            <button class="print-btn" onclick="window.print()">🖨️ Print</button>
         </div>
     </div>
     

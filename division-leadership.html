@@ -289,31 +289,83 @@
             font-weight: 600;
         }
         
+        /* Print Button */
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ed1b2e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .print-btn:hover {
+            background: #c41230;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
         /* Print Styles */
         @media print {
             body {
                 background: white;
-                padding: 10px;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .print-btn {
+                display: none;
             }
             
             .header {
                 box-shadow: none;
-                border: 1px solid #ddd;
+                background: white !important;
+                color: black !important;
+                page-break-after: avoid;
+                border-bottom: 2px solid #333;
+            }
+            
+            .header h1, .header .subtitle {
+                color: black !important;
+            }
+            
+            .stats {
+                background: white !important;
             }
             
             .chart-container {
                 box-shadow: none;
-                border: 1px solid #ddd;
+                border: none;
+            }
+            
+            .division-vp, .executive, .node {
+                page-break-inside: avoid;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .region-group {
+                page-break-inside: avoid;
+                margin-bottom: 20px;
             }
             
             @page {
-                size: landscape;
-                margin: 0.5in;
+                size: portrait;
+                margin: 0.75in 0.5in;
             }
         }
     </style>
 </head>
 <body>
+    <button class="print-btn" onclick="window.print()">🖨️ Print Chart</button>
     <div class="header">
         <h1>🏥 SE & Caribbean Division Leadership</h1>
         <div class="subtitle">American Red Cross - Division Executive Structure</div>
