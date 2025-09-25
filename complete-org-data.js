@@ -179,21 +179,6 @@ const completeOrgData = {
                 location: "Jacksonville",
                 children: [
                     {
-                        name: "M. Brown",
-                        title: "Sr Dir of Development",
-                        location: "Jacksonville"
-                    },
-                    {
-                        name: "J. Moran",
-                        title: "Dir Major Gifts",
-                        location: "Jacksonville"
-                    },
-                    {
-                        name: "T. Sweeten",
-                        title: "Dir Annual Giving",
-                        location: "Jacksonville"
-                    },
-                    {
                         name: "A. Kennedy",
                         title: "Sr. RPO",
                         location: "Orlando",
