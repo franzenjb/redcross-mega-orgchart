@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Cross SE & Caribbean Division - Organizational Chart</title>
+    <title>American Red Cross - SE & Caribbean Division Organizational Chart</title>
     <style>
         * {
             margin: 0;
@@ -14,6 +14,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #f5f5f5;
+            overflow: auto;
         }
         
         #header {
@@ -21,6 +22,11 @@
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             border-bottom: 3px solid #ED1B2E;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
         }
         
         #header h1 {
@@ -42,6 +48,11 @@
             gap: 20px;
             align-items: center;
             flex-wrap: wrap;
+            position: fixed;
+            top: 73px;
+            left: 0;
+            right: 0;
+            z-index: 999;
         }
         
         #controls button {
@@ -73,15 +84,16 @@
             font-size: 14px;
         }
         
-        #tree {
+        #chart-container {
+            margin-top: 140px;
             padding: 40px;
             overflow: auto;
-            height: calc(100vh - 150px);
+            min-height: calc(100vh - 140px);
         }
         
         #legend {
             position: fixed;
-            top: 150px;
+            bottom: 20px;
             right: 20px;
             background: white;
             padding: 15px;
@@ -111,65 +123,54 @@
             border: 1px solid #ddd;
         }
         
-        /* Tree styles */
-        .tree {
-            margin: 0;
-            padding: 0;
-            list-style: none;
+        /* Chart styles */
+        .org-chart {
+            display: inline-block;
+            min-width: 100%;
+            padding: 20px;
         }
         
-        .tree ul {
-            padding-left: 30px;
+        .level {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 60px;
             position: relative;
-            margin-top: 10px;
         }
         
-        .tree li {
-            list-style: none;
-            margin: 10px 0;
+        .level-title {
+            position: absolute;
+            left: -120px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            background: #333;
+            color: white;
+            padding: 5px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        
+        .node-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 20px;
             position: relative;
-            padding-left: 30px;
-        }
-        
-        .tree li::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -15px;
-            width: 15px;
-            height: 50%;
-            border-bottom: 2px solid #ccc;
-            border-left: 2px solid #ccc;
-        }
-        
-        .tree li::after {
-            content: '';
-            position: absolute;
-            left: -15px;
-            bottom: -10px;
-            width: 15px;
-            height: calc(50% + 10px);
-            border-left: 2px solid #ccc;
-        }
-        
-        .tree li:last-child::after {
-            display: none;
-        }
-        
-        .tree li:first-child::before {
-            top: 20px;
         }
         
         .node {
-            display: inline-block;
-            padding: 10px 15px;
+            padding: 12px 20px;
             border-radius: 8px;
             color: white;
             cursor: pointer;
-            position: relative;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
-            min-width: 200px;
+            min-width: 180px;
+            max-width: 250px;
+            text-align: center;
+            position: relative;
+            margin: 5px;
         }
         
         .node:hover {
@@ -179,49 +180,131 @@
         
         .node-title {
             font-weight: 600;
-            font-size: 14px;
+            font-size: 11px;
             margin-bottom: 4px;
-        }
-        
-        .node-name {
-            font-size: 16px;
-            margin-bottom: 2px;
-        }
-        
-        .node-location {
-            font-size: 12px;
+            text-transform: uppercase;
             opacity: 0.9;
         }
         
-        .toggle-btn {
+        .node-name {
+            font-size: 14px;
+            margin-bottom: 2px;
+            font-weight: 500;
+        }
+        
+        .node-location {
+            font-size: 11px;
+            opacity: 0.8;
+            font-style: italic;
+        }
+        
+        .horizontal-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .vertical-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .divisional-section {
+            background: rgba(237, 27, 46, 0.05);
+            border: 2px dashed #ED1B2E;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .divisional-header {
+            text-align: center;
+            color: #ED1B2E;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        
+        .regional-section {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px;
+            background: white;
+        }
+        
+        .regional-header {
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 16px;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        /* Connection lines */
+        .connector {
             position: absolute;
-            right: 10px;
+            background: #ccc;
+            z-index: -1;
+        }
+        
+        .connector-vertical {
+            width: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .connector-horizontal {
+            height: 2px;
             top: 50%;
             transform: translateY(-50%);
-            width: 24px;
-            height: 24px;
+        }
+        
+        /* Color classes */
+        .division { background: #ED1B2E; }
+        .divisional-role { background: #8B0000; }
+        .georgia { background: #2E86AB; }
+        .alabama { background: #A23B72; }
+        .northcarolina { background: #F18F01; }
+        .southcarolina { background: #C73E1D; }
+        .tennessee { background: #6B4423; }
+        .ncflorida { background: #00A86B; }
+        .sflorida { background: #FF6B9D; }
+        .puertorico { background: #4169E1; }
+        .vacant { background: #666666; }
+        
+        .georgia-header { background: rgba(46, 134, 171, 0.1); color: #2E86AB; }
+        .alabama-header { background: rgba(162, 59, 114, 0.1); color: #A23B72; }
+        .northcarolina-header { background: rgba(241, 143, 1, 0.1); color: #F18F01; }
+        .southcarolina-header { background: rgba(199, 62, 29, 0.1); color: #C73E1D; }
+        .tennessee-header { background: rgba(107, 68, 35, 0.1); color: #6B4423; }
+        .ncflorida-header { background: rgba(0, 168, 107, 0.1); color: #00A86B; }
+        .sflorida-header { background: rgba(255, 107, 157, 0.1); color: #FF6B9D; }
+        
+        .toggle-btn {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            width: 20px;
+            height: 20px;
             background: rgba(255,255,255,0.3);
-            border: 2px solid white;
+            border: 1px solid rgba(255,255,255,0.5);
             border-radius: 50%;
             color: white;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 12px;
             font-weight: bold;
         }
         
-        .collapsed > ul {
+        .collapsed .expandable {
             display: none;
         }
-        
-        /* Color classes */
-        .division { background: #ED1B2E; }
-        .georgia { background: #2E86AB; }
-        .alabama { background: #A23B72; }
-        .northcarolina { background: #F18F01; }
-        .southcarolina { background: #C73E1D; }
-        .vacant { background: #666666; }
         
         .highlight {
             animation: pulse 1s ease-in-out infinite;
@@ -232,16 +315,15 @@
             50% { box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 0 40px rgba(237, 27, 46, 0.8); }
         }
     </style>
-    <script src="orgData.js"></script>
 </head>
 <body>
     <div id="header">
         <h1>American Red Cross - SE & Caribbean Division</h1>
-        <p>Complete Organizational Structure</p>
+        <p>Complete Organizational Structure - Horizontal View</p>
     </div>
     
     <div id="controls">
-        <input type="text" id="searchBox" placeholder="Search by name or position..." onkeyup="searchTree(this.value)">
+        <input type="text" id="searchBox" placeholder="Search by name or position..." onkeyup="searchChart(this.value)">
         <button onclick="expandAll()">Expand All</button>
         <button onclick="collapseAll()">Collapse All</button>
         <select id="regionFilter" onchange="filterByRegion(this.value)">
@@ -250,14 +332,21 @@
             <option value="alabama">Alabama/Mississippi</option>
             <option value="northcarolina">North Carolina</option>
             <option value="southcarolina">South Carolina</option>
+            <option value="tennessee">Tennessee</option>
+            <option value="ncflorida">North/Central Florida</option>
+            <option value="sflorida">South Florida</option>
         </select>
     </div>
     
     <div id="legend">
-        <h3>Region Color Coding</h3>
+        <h3>Organization Color Coding</h3>
         <div class="legend-item">
             <div class="legend-color" style="background: #ED1B2E;"></div>
-            <span>Division Leadership</span>
+            <span>Division VP</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #8B0000;"></div>
+            <span>Division-Wide Roles</span>
         </div>
         <div class="legend-item">
             <div class="legend-color" style="background: #2E86AB;"></div>
@@ -276,133 +365,368 @@
             <span>South Carolina</span>
         </div>
         <div class="legend-item">
+            <div class="legend-color" style="background: #6B4423;"></div>
+            <span>Tennessee</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #00A86B;"></div>
+            <span>N/C Florida</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #FF6B9D;"></div>
+            <span>South Florida</span>
+        </div>
+        <div class="legend-item">
             <div class="legend-color" style="background: #666;"></div>
             <span>Vacant Position</span>
         </div>
     </div>
     
-    <div id="tree">
-        <ul class="tree" id="orgTree">
-            <!-- Tree will be generated dynamically -->
-        </ul>
+    <div id="chart-container">
+        <div class="org-chart">
+            <!-- Level 1: Division VP -->
+            <div class="level">
+                <div class="node-group">
+                    <div class="node division">
+                        <div class="node-name">Anna Trefethen</div>
+                        <div class="node-title">Division Vice President</div>
+                        <div class="node-location">SE & Caribbean Division</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Level 2: Division-Wide Leadership (Horizontal) -->
+            <div class="divisional-section">
+                <div class="divisional-header">Division-Wide Leadership (Serving All Regions)</div>
+                <div class="horizontal-group" style="justify-content: center; flex-wrap: wrap;">
+                    <div class="node divisional-role">
+                        <div class="node-name">Dee Dixon</div>
+                        <div class="node-title">DFVP</div>
+                        <div class="node-location">Division</div>
+                    </div>
+                    <div class="node divisional-role">
+                        <div class="node-name">Vickey Barnett</div>
+                        <div class="node-title">Dir. Division Fundraising</div>
+                        <div class="node-location">Division</div>
+                    </div>
+                    <div class="node divisional-role">
+                        <div class="node-name">Kay Gonzalez</div>
+                        <div class="node-title">Div. SAF Director</div>
+                        <div class="node-location">Division</div>
+                    </div>
+                    <div class="node divisional-role">
+                        <div class="node-name">Leisle Mims</div>
+                        <div class="node-title">DCOO</div>
+                        <div class="node-location">Division</div>
+                    </div>
+                    <div class="node divisional-role">
+                        <div class="node-name">Silvia Taylor</div>
+                        <div class="node-title">DVSE</div>
+                        <div class="node-location">Division</div>
+                    </div>
+                    <div class="node divisional-role">
+                        <div class="node-name">Cally Edwards</div>
+                        <div class="node-title">DCD</div>
+                        <div class="node-location">Division</div>
+                    </div>
+                    <div class="node divisional-role">
+                        <div class="node-name">Ryan Lock</div>
+                        <div class="node-title">DDE</div>
+                        <div class="node-location">Division</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Level 3: Regional Executives (Horizontal) -->
+            <div class="level" style="margin-top: 40px;">
+                <div class="horizontal-group" style="justify-content: center; flex-wrap: wrap;">
+                    <!-- Georgia -->
+                    <div class="regional-section">
+                        <div class="regional-header georgia-header">Georgia Region</div>
+                        <div class="vertical-group">
+                            <div class="node georgia">
+                                <div class="node-name">Alicia Doherty</div>
+                                <div class="node-title">Regional Chief Executive</div>
+                                <div class="node-location">Atlanta</div>
+                                <span class="toggle-btn" onclick="toggleRegion(this)">+</span>
+                            </div>
+                            <div class="expandable" style="display: none;">
+                                <div class="horizontal-group" style="margin-top: 20px;">
+                                    <div class="node georgia">
+                                        <div class="node-name">Adelaide Kirk</div>
+                                        <div class="node-title">Regional Disaster Officer</div>
+                                        <div class="node-location">Columbus</div>
+                                    </div>
+                                    <div class="node georgia">
+                                        <div class="node-name">Carla Dillard Homer</div>
+                                        <div class="node-title">RCOO Atlanta</div>
+                                        <div class="node-location">Atlanta</div>
+                                    </div>
+                                    <div class="node georgia">
+                                        <div class="node-name">P. Foster</div>
+                                        <div class="node-title">DRHRM</div>
+                                        <div class="node-location">Atlanta</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Alabama/Mississippi -->
+                    <div class="regional-section">
+                        <div class="regional-header alabama-header">Alabama/Mississippi</div>
+                        <div class="vertical-group">
+                            <div class="node alabama">
+                                <div class="node-name">M. Beddingfield</div>
+                                <div class="node-title">Regional Executive</div>
+                                <div class="node-location">Birmingham</div>
+                                <span class="toggle-btn" onclick="toggleRegion(this)">+</span>
+                            </div>
+                            <div class="expandable" style="display: none;">
+                                <div class="horizontal-group" style="margin-top: 20px;">
+                                    <div class="node alabama">
+                                        <div class="node-name">D. Warren</div>
+                                        <div class="node-title">Chief Development Officer</div>
+                                        <div class="node-location">Birmingham</div>
+                                    </div>
+                                    <div class="node alabama">
+                                        <div class="node-name">R. Word</div>
+                                        <div class="node-title">COO ALMS</div>
+                                        <div class="node-location">Birmingham</div>
+                                    </div>
+                                    <div class="node alabama">
+                                        <div class="node-name">E. Whitt</div>
+                                        <div class="node-title">Executive Coordinator</div>
+                                        <div class="node-location">Birmingham</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- North Carolina -->
+                    <div class="regional-section">
+                        <div class="regional-header northcarolina-header">North Carolina</div>
+                        <div class="vertical-group">
+                            <div class="node northcarolina">
+                                <div class="node-name">A. Taylor</div>
+                                <div class="node-title">Regional Executive</div>
+                                <div class="node-location">North Carolina</div>
+                                <span class="toggle-btn" onclick="toggleRegion(this)">+</span>
+                            </div>
+                            <div class="expandable" style="display: none;">
+                                <div class="horizontal-group" style="margin-top: 20px;">
+                                    <div class="node northcarolina">
+                                        <div class="node-name">E. Davis</div>
+                                        <div class="node-title">CDO</div>
+                                        <div class="node-location">Charlotte</div>
+                                    </div>
+                                    <div class="node northcarolina">
+                                        <div class="node-name">M. Womble</div>
+                                        <div class="node-title">COO</div>
+                                        <div class="node-location">Greenville</div>
+                                    </div>
+                                    <div class="node northcarolina">
+                                        <div class="node-name">J. Jarvis</div>
+                                        <div class="node-title">RDO</div>
+                                        <div class="node-location">North Carolina</div>
+                                    </div>
+                                    <div class="node northcarolina">
+                                        <div class="node-name">S. Laub</div>
+                                        <div class="node-title">Executive Coord</div>
+                                        <div class="node-location">North Carolina</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- South Carolina -->
+                    <div class="regional-section">
+                        <div class="regional-header southcarolina-header">South Carolina</div>
+                        <div class="vertical-group">
+                            <div class="node southcarolina">
+                                <div class="node-name">Susan Everitt</div>
+                                <div class="node-title">Regional Executive</div>
+                                <div class="node-location">South Carolina</div>
+                                <span class="toggle-btn" onclick="toggleRegion(this)">+</span>
+                            </div>
+                            <div class="expandable" style="display: none;">
+                                <div class="horizontal-group" style="margin-top: 20px;">
+                                    <div class="node southcarolina">
+                                        <div class="node-name">S. Ingraham</div>
+                                        <div class="node-title">CDO</div>
+                                        <div class="node-location">South Carolina</div>
+                                    </div>
+                                    <div class="node southcarolina">
+                                        <div class="node-name">M. Hesbach</div>
+                                        <div class="node-title">COO</div>
+                                        <div class="node-location">South Carolina</div>
+                                    </div>
+                                    <div class="node southcarolina">
+                                        <div class="node-name">T. Reid</div>
+                                        <div class="node-title">RDO</div>
+                                        <div class="node-location">South Carolina</div>
+                                    </div>
+                                    <div class="node southcarolina">
+                                        <div class="node-name">L. Ruggles</div>
+                                        <div class="node-title">Executive Coord</div>
+                                        <div class="node-location">South Carolina</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Second Row of Regions -->
+            <div class="level">
+                <div class="horizontal-group" style="justify-content: center; flex-wrap: wrap;">
+                    <!-- Tennessee -->
+                    <div class="regional-section">
+                        <div class="regional-header tennessee-header">Tennessee</div>
+                        <div class="vertical-group">
+                            <div class="node tennessee">
+                                <div class="node-name">J. Sullivan</div>
+                                <div class="node-title">Regional Executive</div>
+                                <div class="node-location">Nashville</div>
+                                <span class="toggle-btn" onclick="toggleRegion(this)">+</span>
+                            </div>
+                            <div class="expandable" style="display: none;">
+                                <div class="horizontal-group" style="margin-top: 20px;">
+                                    <div class="node tennessee">
+                                        <div class="node-name">L. Vaughn</div>
+                                        <div class="node-title">CDO</div>
+                                        <div class="node-location">Memphis</div>
+                                    </div>
+                                    <div class="node tennessee">
+                                        <div class="node-name">G. King</div>
+                                        <div class="node-title">RCOO</div>
+                                        <div class="node-location">Chattanooga</div>
+                                    </div>
+                                    <div class="node tennessee">
+                                        <div class="node-name">C. Robins</div>
+                                        <div class="node-title">RDO</div>
+                                        <div class="node-location">Nashville</div>
+                                    </div>
+                                    <div class="node tennessee">
+                                        <div class="node-name">J. Williams</div>
+                                        <div class="node-title">Dir Comm/Mkt</div>
+                                        <div class="node-location">Nashville</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- North/Central Florida -->
+                    <div class="regional-section">
+                        <div class="regional-header ncflorida-header">North/Central Florida</div>
+                        <div class="vertical-group">
+                            <div class="node ncflorida">
+                                <div class="node-name">C. Smith</div>
+                                <div class="node-title">Regional Executive</div>
+                                <div class="node-location">Jacksonville</div>
+                                <span class="toggle-btn" onclick="toggleRegion(this)">+</span>
+                            </div>
+                            <div class="expandable" style="display: none;">
+                                <div class="horizontal-group" style="margin-top: 20px;">
+                                    <div class="node ncflorida">
+                                        <div class="node-name">W. Carney</div>
+                                        <div class="node-title">Chief Dev. Officer</div>
+                                        <div class="node-location">Jacksonville</div>
+                                    </div>
+                                    <div class="node ncflorida">
+                                        <div class="node-name">S. Rosario</div>
+                                        <div class="node-title">Regional COO</div>
+                                        <div class="node-location">Tampa</div>
+                                    </div>
+                                    <div class="node ncflorida">
+                                        <div class="node-name">K. Watt</div>
+                                        <div class="node-title">RDO (interim)</div>
+                                        <div class="node-location">Jacksonville</div>
+                                    </div>
+                                    <div class="node ncflorida">
+                                        <div class="node-name">J. Walker</div>
+                                        <div class="node-title">RVSO</div>
+                                        <div class="node-location">Jacksonville</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- South Florida -->
+                    <div class="regional-section">
+                        <div class="regional-header sflorida-header">South Florida</div>
+                        <div class="vertical-group">
+                            <div class="node sflorida">
+                                <div class="node-name">Krista Coletti</div>
+                                <div class="node-title">Regional Executive</div>
+                                <div class="node-location">Miami</div>
+                                <span class="toggle-btn" onclick="toggleRegion(this)">+</span>
+                            </div>
+                            <div class="expandable" style="display: none;">
+                                <div class="horizontal-group" style="margin-top: 20px;">
+                                    <div class="node sflorida">
+                                        <div class="node-name">Tzaicel Hernandez</div>
+                                        <div class="node-title">RCDO</div>
+                                        <div class="node-location">Miami</div>
+                                    </div>
+                                    <div class="node sflorida">
+                                        <div class="node-name">Julie Unwin</div>
+                                        <div class="node-title">RCOO</div>
+                                        <div class="node-location">Palm Beach</div>
+                                    </div>
+                                    <div class="node sflorida">
+                                        <div class="node-name">Monica Rusconi</div>
+                                        <div class="node-title">RDO</div>
+                                        <div class="node-location">Miami</div>
+                                    </div>
+                                    <div class="node sflorida">
+                                        <div class="node-name">Tiffany Gonzalez</div>
+                                        <div class="node-title">Dir Comm</div>
+                                        <div class="node-location">Miami</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <script>
-        // Generate tree from data
-        function generateTree(data, container, isCollapsed = false) {
-            const li = document.createElement('li');
-            li.dataset.region = data.type || 'division';
+        function toggleRegion(btn) {
+            const nodeGroup = btn.closest('.vertical-group');
+            const expandable = nodeGroup.querySelector('.expandable');
             
-            const nodeDiv = document.createElement('div');
-            nodeDiv.className = `node ${data.type || 'division'}`;
-            
-            if (data.children && data.children.length > 0) {
-                nodeDiv.onclick = function() { toggleNode(this); };
-            }
-            
-            const nameDiv = document.createElement('div');
-            nameDiv.className = 'node-name';
-            nameDiv.textContent = data.name;
-            nodeDiv.appendChild(nameDiv);
-            
-            if (data.title) {
-                const titleDiv = document.createElement('div');
-                titleDiv.className = 'node-title';
-                titleDiv.textContent = data.title;
-                nodeDiv.appendChild(titleDiv);
-            }
-            
-            if (data.location) {
-                const locationDiv = document.createElement('div');
-                locationDiv.className = 'node-location';
-                locationDiv.textContent = data.location;
-                nodeDiv.appendChild(locationDiv);
-            }
-            
-            if (data.children && data.children.length > 0) {
-                const toggleBtn = document.createElement('span');
-                toggleBtn.className = 'toggle-btn';
-                toggleBtn.textContent = isCollapsed ? '+' : '-';
-                nodeDiv.appendChild(toggleBtn);
-            }
-            
-            li.appendChild(nodeDiv);
-            
-            if (data.children && data.children.length > 0) {
-                const ul = document.createElement('ul');
-                if (isCollapsed) {
-                    ul.style.display = 'none';
-                }
-                data.children.forEach(child => {
-                    generateTree(child, ul, true); // All children start collapsed
-                });
-                li.appendChild(ul);
-            }
-            
-            container.appendChild(li);
-        }
-        
-        // Initialize the tree
-        document.addEventListener('DOMContentLoaded', function() {
-            const treeContainer = document.getElementById('orgTree');
-            generateTree(orgData, treeContainer, false);
-            
-            // Update stats
-            updateStats();
-        });
-        
-        function updateStats() {
-            const totalNodes = document.querySelectorAll('.node').length;
-            const expandedNodes = document.querySelectorAll('.toggle-btn').filter(btn => btn.textContent === '-').length;
-            
-            // Add stats display if not exists
-            if (!document.getElementById('stats')) {
-                const statsDiv = document.createElement('div');
-                statsDiv.id = 'stats';
-                statsDiv.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); font-size: 13px;';
-                statsDiv.innerHTML = `<strong>Total Positions:</strong> <span id="totalCount">${totalNodes}</span><br>
-                                     <strong>Expanded Nodes:</strong> <span id="expandedCount">${expandedNodes}</span>`;
-                document.body.appendChild(statsDiv);
+            if (expandable.style.display === 'none') {
+                expandable.style.display = 'block';
+                btn.textContent = '-';
             } else {
-                document.getElementById('totalCount').textContent = totalNodes;
-                document.getElementById('expandedCount').textContent = expandedNodes;
+                expandable.style.display = 'none';
+                btn.textContent = '+';
             }
-        }
-        
-        function toggleNode(element) {
-            const parent = element.parentElement;
-            const children = parent.querySelector('ul');
-            const toggleBtn = element.querySelector('.toggle-btn');
-            
-            if (children) {
-                if (children.style.display === 'none') {
-                    children.style.display = 'block';
-                    if (toggleBtn) toggleBtn.textContent = '-';
-                } else {
-                    children.style.display = 'none';
-                    if (toggleBtn) toggleBtn.textContent = '+';
-                }
-            }
-            updateStats();
         }
         
         function expandAll() {
-            const allUls = document.querySelectorAll('.tree ul');
-            const allBtns = document.querySelectorAll('.toggle-btn');
-            allUls.forEach(ul => ul.style.display = 'block');
-            allBtns.forEach(btn => btn.textContent = '-');
-            updateStats();
+            const expandables = document.querySelectorAll('.expandable');
+            const btns = document.querySelectorAll('.toggle-btn');
+            expandables.forEach(el => el.style.display = 'block');
+            btns.forEach(btn => btn.textContent = '-');
         }
         
         function collapseAll() {
-            const allUls = document.querySelectorAll('.tree ul ul');
-            const allBtns = document.querySelectorAll('.tree ul .toggle-btn');
-            allUls.forEach(ul => ul.style.display = 'none');
-            allBtns.forEach(btn => btn.textContent = '+');
-            updateStats();
+            const expandables = document.querySelectorAll('.expandable');
+            const btns = document.querySelectorAll('.toggle-btn');
+            expandables.forEach(el => el.style.display = 'none');
+            btns.forEach(btn => btn.textContent = '+');
         }
         
-        function searchTree(query) {
+        function searchChart(query) {
             const nodes = document.querySelectorAll('.node');
             nodes.forEach(node => node.classList.remove('highlight'));
             
@@ -410,13 +734,12 @@
                 nodes.forEach(node => {
                     if (node.textContent.toLowerCase().includes(query.toLowerCase())) {
                         node.classList.add('highlight');
-                        // Expand parents
-                        let parent = node.parentElement;
-                        while (parent) {
-                            if (parent.tagName === 'UL') {
-                                parent.style.display = 'block';
-                            }
-                            parent = parent.parentElement;
+                        // Expand parent if collapsed
+                        const expandable = node.closest('.expandable');
+                        if (expandable) {
+                            expandable.style.display = 'block';
+                            const btn = expandable.parentElement.querySelector('.toggle-btn');
+                            if (btn) btn.textContent = '-';
                         }
                     }
                 });
@@ -424,17 +747,14 @@
         }
         
         function filterByRegion(region) {
-            const allItems = document.querySelectorAll('.tree li[data-region]');
+            const sections = document.querySelectorAll('.regional-section');
             
             if (region === 'all') {
-                allItems.forEach(item => item.style.display = 'list-item');
+                sections.forEach(section => section.style.display = 'block');
             } else {
-                allItems.forEach(item => {
-                    if (item.dataset.region === region || item.dataset.region === 'division') {
-                        item.style.display = 'list-item';
-                    } else {
-                        item.style.display = 'none';
-                    }
+                sections.forEach(section => {
+                    const hasClass = section.querySelector('.' + region);
+                    section.style.display = hasClass ? 'block' : 'none';
                 });
             }
         }
