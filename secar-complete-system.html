@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SE & Caribbean Division - Complete Organizational Chart</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        /* Header and Controls */
+        .header {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: #1a472a;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .region-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .region-btn {
+            padding: 8px 15px;
+            border: 2px solid #2e7d32;
+            background: white;
+            color: #2e7d32;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .region-btn:hover {
+            background: #e8f5e9;
+        }
+        
+        .region-btn.active {
+            background: #2e7d32;
+            color: white;
+        }
+        
+        /* Region-specific colors */
+        .region-btn.georgia { border-color: #1976d2; color: #1976d2; }
+        .region-btn.georgia.active { background: #1976d2; }
+        
+        .region-btn.alabama { border-color: #c2185b; color: #c2185b; }
+        .region-btn.alabama.active { background: #c2185b; }
+        
+        .region-btn.tennessee { border-color: #7b1fa2; color: #7b1fa2; }
+        .region-btn.tennessee.active { background: #7b1fa2; }
+        
+        .region-btn.northcarolina { border-color: #f57c00; color: #f57c00; }
+        .region-btn.northcarolina.active { background: #f57c00; }
+        
+        .region-btn.southcarolina { border-color: #d32f2f; color: #d32f2f; }
+        .region-btn.southcarolina.active { background: #d32f2f; }
+        
+        .region-btn.sflorida { border-color: #00796b; color: #00796b; }
+        .region-btn.sflorida.active { background: #00796b; }
+        
+        .region-btn.puertorico { border-color: #0097a7; color: #0097a7; }
+        .region-btn.puertorico.active { background: #0097a7; }
+        
+        .search-box {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .search-input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+            font-size: 12px;
+        }
+        
+        .search-btn, .print-btn {
+            padding: 8px 15px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .search-btn:hover, .print-btn:hover {
+            background: #45a049;
+        }
+        
+        .print-btn {
+            background: #757575;
+        }
+        
+        .print-btn:hover {
+            background: #616161;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Region sections - hidden by default */
+        .region-section {
+            display: none;
+        }
+        
+        .region-section.active {
+            display: block;
+        }
+        
+        /* Top leadership row */
+        .top-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .division-section {
+            text-align: center;
+        }
+        
+        /* Executive and direct reports row */
+        .executive-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .executive-section {
+            text-align: center;
+            margin: 0 20px;
+        }
+        
+        .division-support {
+            position: absolute;
+            left: 0;
+            top: 0;
+            border: 2px dashed #757575;
+            padding: 10px;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        
+        /* Direct reports row - leaders only */
+        .leaders-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            padding: 20px 10px;
+            background: #e8f5e9;
+            border-radius: 4px;
+            flex-wrap: wrap;
+        }
+        
+        /* Stacked discipline sections */
+        .disciplines-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .discipline-section {
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            padding: 15px;
+            background: #f8fdf9;
+        }
+        
+        .discipline-header {
+            text-align: center;
+            font-weight: bold;
+            color: #1b5e20;
+            margin-bottom: 10px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .sub-team {
+            border-left: 3px solid #66bb6a;
+            padding-left: 10px;
+            margin-top: 15px;
+        }
+        
+        .sub-team-header {
+            font-weight: bold;
+            color: #2e7d32;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+        
+        /* Node styles - Improved contrast */
+        .node {
+            border: 1px solid #424242;
+            background: white;
+            padding: 5px 7px;
+            text-align: center;
+            border-radius: 4px;
+            font-size: 10px;
+            color: #212121;
+        }
+        
+        .node.division {
+            background: #b71c1c;
+            color: white;
+            border-color: #880e0e;
+            font-size: 12px;
+            padding: 8px 12px;
+            font-weight: bold;
+        }
+        
+        .node.executive {
+            background: #1b5e20;
+            color: white;
+            border-color: #0d3e10;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .node.chief {
+            background: #2e7d32;
+            color: white;
+            border-color: #1b5e20;
+            font-weight: bold;
+        }
+        
+        .node.director {
+            background: #388e3c;
+            color: white;
+            border-color: #2e7d32;
+        }
+        
+        .node.manager {
+            background: #558b2f;
+            color: white;
+        }
+        
+        .node.specialist {
+            background: #fff9c4;
+            color: #424242;
+            border-color: #9e9e9e;
+        }
+        
+        .node.vacant {
+            background: #eeeeee;
+            color: #757575;
+            border: 2px dashed #bdbdbd;
+        }
+        
+        .node.dotted {
+            border: 2px dashed #757575;
+            background: #f5f5f5;
+            color: #424242;
+        }
+        
+        .title {
+            font-size: 9px;
+            font-weight: normal;
+        }
+        
+        .name {
+            font-weight: bold;
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        
+        .location {
+            font-size: 8px;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+        
+        /* Connecting lines */
+        .connector {
+            width: 2px;
+            height: 20px;
+            background: #424242;
+            margin: 5px auto;
+        }
+        
+        .connector-horizontal {
+            height: 2px;
+            background: #424242;
+            margin: 10px 0;
+        }
+        
+        /* Highlight for search */
+        .highlight {
+            background: #ffeb3b !important;
+            border: 2px solid #f57f17 !important;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                padding: 10px;
+                font-size: 9px;
+            }
+            
+            .header {
+                position: static;
+                page-break-after: avoid;
+            }
+            
+            .controls {
+                display: none;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 10px;
+            }
+            
+            .discipline-section {
+                page-break-inside: avoid;
+                margin-bottom: 10px;
+            }
+            
+            .node {
+                font-size: 8px;
+                padding: 3px 5px;
+            }
+            
+            .discipline-header {
+                font-size: 10px;
+            }
+            
+            @page {
+                size: portrait;
+                margin: 0.5in;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>American Red Cross - SE & Caribbean Division</h1>
+        <div class="controls">
+            <div class="region-buttons">
+                <button class="region-btn ncflorida active" onclick="showRegion('ncflorida')">N/C Florida</button>
+                <button class="region-btn georgia" onclick="showRegion('georgia')">Georgia</button>
+                <button class="region-btn alabama" onclick="showRegion('alabama')">Alabama/MS</button>
+                <button class="region-btn tennessee" onclick="showRegion('tennessee')">Tennessee</button>
+                <button class="region-btn northcarolina" onclick="showRegion('northcarolina')">North Carolina</button>
+                <button class="region-btn southcarolina" onclick="showRegion('southcarolina')">South Carolina</button>
+                <button class="region-btn sflorida" onclick="showRegion('sflorida')">South Florida</button>
+                <button class="region-btn puertorico" onclick="showRegion('puertorico')">Puerto Rico</button>
+            </div>
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search for a person...">
+                <button class="search-btn" onclick="searchPerson()">Search</button>
+            </div>
+            <button class="print-btn" onclick="window.print()">Print</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- North/Central Florida Region -->
+        <div class="region-section ncflorida active" id="ncflorida">
+            <h2 style="text-align: center; color: #2e7d32; margin-bottom: 20px;">North/Central Florida Region</h2>
+            
+            <!-- Top: Division VP -->
+            <div class="top-row">
+                <div class="division-section">
+                    <div class="node division">
+                        <div class="title">Division VP</div>
+                        <div class="name">A. Trefethen</div>
+                    </div>
+                    <div class="connector"></div>
+                </div>
+            </div>
+            
+            <!-- Regional Executive with Division Support -->
+            <div class="executive-row">
+                <div class="division-support">
+                    <div style="font-weight: bold; margin-bottom: 8px; color: #424242;">Division Support (Dotted Line)</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                        <div class="node dotted">
+                            <div class="title">DFVP</div>
+                            <div class="name">D. Dixon</div>
+                        </div>
+                        <div class="node dotted">
+                            <div class="title">Dir. Fundraising</div>
+                            <div class="name">V. Barnett</div>
+                        </div>
+                        <div class="node dotted">
+                            <div class="title">DCOO</div>
+                            <div class="name">L. Mims</div>
+                        </div>
+                        <div class="node dotted">
+                            <div class="title">Div. SAF</div>
+                            <div class="name">K. Gonzales</div>
+                        </div>
+                        <div class="node dotted">
+                            <div class="title">Div. Comm.</div>
+                            <div class="name">C. Edwards</div>
+                        </div>
+                        <div class="node dotted">
+                            <div class="title">DVSE</div>
+                            <div class="name">S. Taylor</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="executive-section">
+                    <div class="node executive">
+                        <div class="title">Regional Executive</div>
+                        <div class="name">C. Smith</div>
+                        <div class="location">Jacksonville</div>
+                    </div>
+                    <div class="connector"></div>
+                    <div class="node specialist">
+                        <div class="title">Executive Assistant</div>
+                        <div class="name">K. Jones</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Direct Reports Leaders Row -->
+            <div class="leaders-row">
+                <div class="node chief">
+                    <div class="title">Chief Dev. Officer</div>
+                    <div class="name">W. Carney</div>
+                    <div class="location">Jacksonville</div>
+                </div>
+                <div class="node chief">
+                    <div class="title">Regional COO</div>
+                    <div class="name">S. Rosario</div>
+                    <div class="location">Tampa</div>
+                </div>
+                <div class="node chief">
+                    <div class="title">RDO (interim)</div>
+                    <div class="name">K. Watt</div>
+                </div>
+                <div class="node chief">
+                    <div class="title">RVSO</div>
+                    <div class="name">J. Walker</div>
+                    <div class="location">Jacksonville</div>
+                </div>
+                <div class="node director" style="border-style: dashed;">
+                    <div class="title">SAF/Program Dir</div>
+                    <div class="name">G. Scrivens</div>
+                    <div class="location">Tampa</div>
+                </div>
+                <div class="node director" style="border-style: dashed;">
+                    <div class="title">Comm Director</div>
+                    <div class="name">A. Bierfreund</div>
+                    <div class="location">Jacksonville</div>
+                </div>
+            </div>
+            
+            <div class="connector-horizontal"></div>
+            
+            <!-- Stacked Discipline Sections -->
+            <div class="disciplines-stack">
+                
+                <!-- Development Team -->
+                <div class="discipline-section">
+                    <div class="discipline-header">DEVELOPMENT (W. Carney)</div>
+                    <div class="team-grid">
+                        <div>
+                            <div class="node manager">
+                                <div class="title">Sr. RPO</div>
+                                <div class="name">A. Kennedy</div>
+                                <div class="location">Orlando</div>
+                            </div>
+                            <div class="connector" style="height: 10px;"></div>
+                            <div class="node specialist">
+                                <div class="title">RPO</div>
+                                <div class="name">M. Pharazyn</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="node manager">
+                                <div class="title">Sr. RPO</div>
+                                <div class="name">R. Resler</div>
+                                <div class="location">Tampa</div>
+                            </div>
+                            <div class="connector" style="height: 10px;"></div>
+                            <div style="display: flex; gap: 3px;">
+                                <div class="node specialist">
+                                    <div class="title">RPO</div>
+                                    <div class="name">C. Marasco</div>
+                                </div>
+                                <div class="node specialist">
+                                    <div class="title">RPO</div>
+                                    <div class="name">Z. Thomas</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">RPO</div>
+                            <div class="name">H. Marchbanks</div>
+                            <div class="location">Tallahassee</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Dev Ops Coord</div>
+                            <div class="name">D. Roman</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Regional Operations / Executive Directors -->
+                <div class="discipline-section">
+                    <div class="discipline-header">REGIONAL OPERATIONS (S. Rosario)</div>
+                    <div class="team-grid">
+                        <div>
+                            <div class="node director">
+                                <div class="title">Exec Director</div>
+                                <div class="name">J. Moran</div>
+                                <div class="location">Orlando</div>
+                            </div>
+                            <div class="connector" style="height: 8px;"></div>
+                            <div style="font-size: 9px;">
+                                <div class="node specialist">
+                                    <div class="name">D. Lindo</div>
+                                </div>
+                                <div class="node specialist" style="margin-top: 3px;">
+                                    <div class="name">J. Judkins</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="node director">
+                                <div class="title">Exec Director</div>
+                                <div class="name">M. Brown</div>
+                                <div class="location">Tampa Bay</div>
+                            </div>
+                            <div class="connector" style="height: 8px;"></div>
+                            <div class="node specialist">
+                                <div class="name">C. Montoya</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="node director">
+                                <div class="title">Exec Director</div>
+                                <div class="name">T. Jenkins</div>
+                                <div class="location">Pensacola</div>
+                            </div>
+                            <div class="connector" style="height: 8px;"></div>
+                            <div style="font-size: 9px;">
+                                <div class="node specialist">
+                                    <div class="name">D. Streeter</div>
+                                </div>
+                                <div class="node vacant" style="margin-top: 3px;">
+                                    <div class="name">Vacant</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="node director">
+                                <div class="title">Exec Director</div>
+                                <div class="name">S. Carraway</div>
+                                <div class="location">Tallahassee</div>
+                            </div>
+                            <div class="connector" style="height: 8px;"></div>
+                            <div style="font-size: 9px;">
+                                <div class="node specialist">
+                                    <div class="name">S. Francois</div>
+                                </div>
+                                <div class="node specialist" style="margin-top: 3px;">
+                                    <div class="name">V. Williams</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="node vacant">
+                            <div class="title">Exec Director</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Gainesville</div>
+                        </div>
+                        <div class="node vacant">
+                            <div class="title">Exec Director</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Disaster Services - Complete -->
+                <div class="discipline-section">
+                    <div class="discipline-header">DISASTER SERVICES (K. Watt)</div>
+                    
+                    <!-- Direct reports to K. Watt -->
+                    <div class="team-grid">
+                        <div class="node director">
+                            <div class="title">Deputy RDO</div>
+                            <div class="name">M. Holland</div>
+                        </div>
+                        <div>
+                            <div class="node manager">
+                                <div class="title">Reg DWE Mgr</div>
+                                <div class="name">D. McNair</div>
+                            </div>
+                            <div class="connector" style="height: 8px;"></div>
+                            <div class="node specialist">
+                                <div class="name">A. Young</div>
+                            </div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">Mass Care Mgr</div>
+                            <div class="name">M. Donahue</div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">Planning Mgr</div>
+                            <div class="name">J. Clairday</div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">Client Care Mgr</div>
+                            <div class="name">Z. Pettis</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">DAT Manager</div>
+                            <div class="name">A. Cullison</div>
+                        </div>
+                    </div>
+                    
+                    <!-- CDPM Teams -->
+                    <div class="sub-team">
+                        <div class="sub-team-header">CDPM TEAM 1-4 (M. Boyd)</div>
+                        <div class="team-grid">
+                            <div>
+                                <div class="node manager">
+                                    <div class="title">CDPM</div>
+                                    <div class="name">A. Cornett</div>
+                                    <div class="location">Pensacola</div>
+                                </div>
+                                <div class="node vacant" style="margin-top: 3px; font-size: 9px;">
+                                    <div>CDPS Vacant</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="node manager">
+                                    <div class="title">CDPM</div>
+                                    <div class="name">K. Bland</div>
+                                    <div class="location">Tallahassee</div>
+                                </div>
+                                <div class="node specialist" style="margin-top: 3px; font-size: 9px;">
+                                    <div>R. Barkley</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="node manager">
+                                    <div class="title">CDPM</div>
+                                    <div class="name">A. Martain</div>
+                                    <div class="location">Gainesville</div>
+                                </div>
+                                <div class="node vacant" style="margin-top: 3px; font-size: 9px;">
+                                    <div>CDPS Vacant</div>
+                                </div>
+                            </div>
+                            <div class="node manager">
+                                <div class="title">CDPM</div>
+                                <div class="name">D. Gee</div>
+                                <div class="location">Jacksonville</div>
+                            </div>
+                            <div>
+                                <div class="node manager">
+                                    <div class="title">CDPM</div>
+                                    <div class="name">M. Giannini</div>
+                                    <div class="location">Jacksonville</div>
+                                </div>
+                                <div style="display: flex; gap: 2px; margin-top: 3px;">
+                                    <div class="node vacant" style="font-size: 9px;">
+                                        <div>CDPS</div>
+                                    </div>
+                                    <div class="node vacant" style="font-size: 9px;">
+                                        <div>CDPS</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="node vacant">
+                                <div class="title">CDPM</div>
+                                <div class="name">Vacant</div>
+                                <div class="location">Gainesville</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-team">
+                        <div class="sub-team-header">CDPM TEAM 5-6 (J. Latalladi)</div>
+                        <div class="team-grid">
+                            <div class="node manager">
+                                <div class="title">CDPM</div>
+                                <div class="name">S. Thompson</div>
+                                <div class="location">Orlando</div>
+                            </div>
+                            <div>
+                                <div class="node manager">
+                                    <div class="title">CDPM</div>
+                                    <div class="name">K. Abel</div>
+                                    <div class="location">Orlando</div>
+                                </div>
+                                <div style="display: flex; gap: 2px; margin-top: 3px;">
+                                    <div class="node vacant" style="font-size: 9px;">
+                                        <div>CDPS</div>
+                                    </div>
+                                    <div class="node specialist" style="font-size: 9px;">
+                                        <div>R. McGuire</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="node manager">
+                                    <div class="title">CDPM</div>
+                                    <div class="name">X. Reeves</div>
+                                    <div class="location">Tampa</div>
+                                </div>
+                                <div class="node specialist" style="margin-top: 3px; font-size: 9px;">
+                                    <div>A. Quinones</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="node manager">
+                                    <div class="title">CDPM</div>
+                                    <div class="name">S. Poreda</div>
+                                    <div class="location">Tampa</div>
+                                </div>
+                                <div class="node vacant" style="margin-top: 3px; font-size: 9px;">
+                                    <div>CDPS Vacant</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-team">
+                        <div class="sub-team-header">CDPM USVI (T. Beazer)</div>
+                        <div class="team-grid">
+                            <div class="node vacant">
+                                <div class="title">CDPM</div>
+                                <div class="name">Vacant</div>
+                                <div class="location">USVI</div>
+                            </div>
+                            <div class="node manager">
+                                <div class="title">CDPM</div>
+                                <div class="name">S. Hensley</div>
+                                <div class="location">USVI</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Volunteer Services -->
+                <div class="discipline-section">
+                    <div class="discipline-header">VOLUNTEER SERVICES (J. Walker)</div>
+                    <div class="team-grid">
+                        <div class="node manager">
+                            <div class="title">Supervisor VS</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Specialist</div>
+                            <div class="name">S. Williams</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Specialist</div>
+                            <div class="name">C. Funkhouser</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Rep II</div>
+                            <div class="name">A. Lin</div>
+                            <div class="location">Orlando/Daytona</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Rep III</div>
+                            <div class="name">M. Gallagher</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Rep II</div>
+                            <div class="name">H. Anderson</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Rep III</div>
+                            <div class="name">D. Streeter</div>
+                            <div class="location">Pensacola</div>
+                        </div>
+                        <div class="node vacant">
+                            <div class="title">Rep III</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Jax/G'ville</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Sr. Specialist</div>
+                            <div class="name">D. McMillian</div>
+                            <div class="location">Tallahassee</div>
+                        </div>
+                        <div class="node vacant">
+                            <div class="title">Sr. Specialist</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Daytona/Orlando</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Sr. Specialist</div>
+                            <div class="name">C. Montoya</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Rep II</div>
+                            <div class="name">M. Smith</div>
+                            <div class="location">USVI</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SAF Team -->
+                <div class="discipline-section" style="background: #fffde7;">
+                    <div class="discipline-header">SERVICE TO ARMED FORCES (G. Scrivens - Division)</div>
+                    <div class="team-grid">
+                        <div class="node manager">
+                            <div class="title">SAF Manager</div>
+                            <div class="name">A. Bolton</div>
+                            <div class="location">Orlando</div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">Prog. Manager</div>
+                            <div class="name">L. Tissicino</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">Mobile Prog Mgr</div>
+                            <div class="name">L. Simms</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Mobile SAF</div>
+                            <div class="name">M. Chavarria</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">SAF Specialist</div>
+                            <div class="name">S. Youngren</div>
+                            <div class="location">Pensacola</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Sr. Specialist</div>
+                            <div class="name">D. McMillian</div>
+                            <div class="location">Tallahassee</div>
+                        </div>
+                        <div class="node vacant">
+                            <div class="title">Sr. Specialist</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Daytona/Orlando</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Coordinator</div>
+                            <div class="name">L. Pendergrass</div>
+                            <div class="location">Daytona</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Communications -->
+                <div class="discipline-section" style="background: #f3e5f5;">
+                    <div class="discipline-header">COMMUNICATIONS (A. Bierfreund - Division)</div>
+                    <div class="team-grid">
+                        <div class="node specialist">
+                            <div class="title">Comm Spec III</div>
+                            <div class="name">D. Lindo</div>
+                            <div class="location">Orlando</div>
+                        </div>
+                        <div class="node specialist">
+                            <div class="title">Comm Spec III</div>
+                            <div class="name">R. Nelson</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Georgia Region (Hidden by default) -->
+        <div class="region-section georgia" id="georgia">
+            <h2 style="text-align: center; color: #1976d2; margin-bottom: 20px;">Georgia Region</h2>
+            <!-- Similar structure but with Georgia data -->
+            <div style="text-align: center; padding: 50px;">
+                <p>Georgia region organizational chart will be populated here...</p>
+            </div>
+        </div>
+        
+        <!-- Other regions will follow the same pattern -->
+        <div class="region-section alabama" id="alabama">
+            <h2 style="text-align: center; color: #c2185b; margin-bottom: 20px;">Alabama/Mississippi Region</h2>
+            <div style="text-align: center; padding: 50px;">
+                <p>Alabama/Mississippi region organizational chart will be populated here...</p>
+            </div>
+        </div>
+        
+        <div class="region-section tennessee" id="tennessee">
+            <h2 style="text-align: center; color: #7b1fa2; margin-bottom: 20px;">Tennessee Region</h2>
+            <div style="text-align: center; padding: 50px;">
+                <p>Tennessee region organizational chart will be populated here...</p>
+            </div>
+        </div>
+        
+        <div class="region-section northcarolina" id="northcarolina">
+            <h2 style="text-align: center; color: #f57c00; margin-bottom: 20px;">North Carolina Region</h2>
+            <div style="text-align: center; padding: 50px;">
+                <p>North Carolina region organizational chart will be populated here...</p>
+            </div>
+        </div>
+        
+        <div class="region-section southcarolina" id="southcarolina">
+            <h2 style="text-align: center; color: #d32f2f; margin-bottom: 20px;">South Carolina Region</h2>
+            <div style="text-align: center; padding: 50px;">
+                <p>South Carolina region organizational chart will be populated here...</p>
+            </div>
+        </div>
+        
+        <div class="region-section sflorida" id="sflorida">
+            <h2 style="text-align: center; color: #00796b; margin-bottom: 20px;">South Florida Region</h2>
+            <div style="text-align: center; padding: 50px;">
+                <p>South Florida region organizational chart will be populated here...</p>
+            </div>
+        </div>
+        
+        <div class="region-section puertorico" id="puertorico">
+            <h2 style="text-align: center; color: #0097a7; margin-bottom: 20px;">Puerto Rico/USVI Region</h2>
+            <div style="text-align: center; padding: 50px;">
+                <p>Puerto Rico/USVI region organizational chart will be populated here...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Show/hide regions
+        function showRegion(regionId) {
+            // Hide all regions
+            document.querySelectorAll('.region-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // Remove active from all buttons
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected region
+            document.getElementById(regionId).classList.add('active');
+            // Add active to selected button
+            document.querySelector('.region-btn.' + regionId).classList.add('active');
+            
+            // Clear any highlights
+            clearHighlights();
+        }
+        
+        // Search functionality
+        function searchPerson() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (!searchTerm) {
+                clearHighlights();
+                return;
+            }
+            
+            clearHighlights();
+            let found = false;
+            
+            // Search through all regions
+            document.querySelectorAll('.region-section').forEach(region => {
+                const nodes = region.querySelectorAll('.node');
+                nodes.forEach(node => {
+                    const text = node.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        // Show this region
+                        showRegion(region.id);
+                        // Highlight the node
+                        node.classList.add('highlight');
+                        // Scroll to the node
+                        if (!found) {
+                            node.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            found = true;
+                        }
+                    }
+                });
+            });
+            
+            if (!found) {
+                alert('Person not found. Try searching for a different name.');
+            }
+        }
+        
+        function clearHighlights() {
+            document.querySelectorAll('.highlight').forEach(node => {
+                node.classList.remove('highlight');
+            });
+        }
+        
+        // Allow search on Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchPerson();
+            }
+        });
+    </script>
+</body>
+</html>

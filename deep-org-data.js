@@ -1,5 +1,64 @@
 // Complete deep organizational data for SE & Caribbean Division
 const deepOrgData = {
+    puertorico: {
+        name: "L. Rodriguez",
+        title: "Regional Executive",
+        location: "San Juan",
+        type: "puertorico",
+        children: [
+            {
+                name: "M. Santiago",
+                title: "Chief Development Officer",
+                location: "San Juan",
+                children: [
+                    {
+                        name: "A. Martinez",
+                        title: "Dir. Major Gifts",
+                        location: "San Juan"
+                    },
+                    {
+                        name: "C. Rivera",
+                        title: "Dir. Corporate Partnerships",
+                        location: "San Juan"
+                    }
+                ]
+            },
+            {
+                name: "J. Colon",
+                title: "Regional Disaster Officer",
+                location: "San Juan",
+                children: [
+                    {
+                        name: "R. Hernandez",
+                        title: "Emergency Services Manager",
+                        location: "San Juan"
+                    },
+                    {
+                        name: "E. Gonzalez",
+                        title: "Disaster Response Lead",
+                        location: "Ponce"
+                    }
+                ]
+            },
+            {
+                name: "P. Torres",
+                title: "Regional Program Officer",
+                location: "San Juan",
+                children: [
+                    {
+                        name: "D. Lopez",
+                        title: "Community Services Manager",
+                        location: "San Juan"
+                    },
+                    {
+                        name: "N. Ortiz",
+                        title: "Service to Armed Forces Lead",
+                        location: "San Juan"
+                    }
+                ]
+            }
+        ]
+    },
     georgia: {
         name: "Alicia Doherty",
         title: "Regional Chief Executive",

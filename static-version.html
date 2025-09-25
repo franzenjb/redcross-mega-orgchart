@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SE & Caribbean Division - Complete Organizational Chart</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        /* Header and Controls */
+        .header {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: #1a472a;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .region-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .region-btn {
+            padding: 8px 15px;
+            border: 2px solid #2e7d32;
+            background: white;
+            color: #2e7d32;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .region-btn:hover {
+            background: #e8f5e9;
+        }
+        
+        .region-btn.active {
+            background: #2e7d32;
+            color: white;
+        }
+        
+        /* Region-specific colors */
+        .region-btn.alabama { border-color: #c2185b; color: #c2185b; }
+        .region-btn.alabama.active { background: #c2185b; }
+        
+        .region-btn.ncflorida { border-color: #388e3c; color: #388e3c; }
+        .region-btn.ncflorida.active { background: #388e3c; }
+        
+        .region-btn.sflorida { border-color: #00796b; color: #00796b; }
+        .region-btn.sflorida.active { background: #00796b; }
+        
+        .region-btn.georgia { border-color: #1976d2; color: #1976d2; }
+        .region-btn.georgia.active { background: #1976d2; }
+        
+        .region-btn.northcarolina { border-color: #f57c00; color: #f57c00; }
+        .region-btn.northcarolina.active { background: #f57c00; }
+        
+        .region-btn.puertorico { border-color: #0097a7; color: #0097a7; }
+        .region-btn.puertorico.active { background: #0097a7; }
+        
+        .region-btn.southcarolina { border-color: #d32f2f; color: #d32f2f; }
+        .region-btn.southcarolina.active { background: #d32f2f; }
+        
+        .region-btn.tennessee { border-color: #7b1fa2; color: #7b1fa2; }
+        .region-btn.tennessee.active { background: #7b1fa2; }
+        
+        .search-box {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .search-input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+            font-size: 12px;
+        }
+        
+        .search-btn, .print-btn, .edit-btn {
+            padding: 8px 15px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .search-btn:hover, .print-btn:hover, .edit-btn:hover {
+            background: #45a049;
+        }
+        
+        .print-btn {
+            background: #757575;
+        }
+        
+        .print-btn:hover {
+            background: #616161;
+        }
+        
+        .edit-btn {
+            background: #ff9800;
+        }
+        
+        .edit-btn:hover {
+            background: #f57c00;
+        }
+        
+        .edit-btn.active {
+            background: #e65100;
+        }
+        
+        /* Stats */
+        .stats {
+            text-align: center;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 12px;
+            color: #2e7d32;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Region sections - hidden by default */
+        .region-section {
+            display: none;
+        }
+        
+        .region-section.active {
+            display: block;
+        }
+        
+        /* Top leadership row */
+        .top-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .division-section {
+            text-align: center;
+        }
+        
+        /* Executive and direct reports row */
+        .executive-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .executive-section {
+            text-align: center;
+            margin: 0 20px;
+        }
+        
+        .division-support {
+            position: absolute;
+            left: 0;
+            top: 0;
+            border: 2px dashed #757575;
+            padding: 10px;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        
+        /* Direct reports - leaders only */
+        .leaders-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        /* Node styling */
+        .node {
+            border: 2px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+            background: white;
+            min-width: 120px;
+            transition: all 0.3s;
+            cursor: default;
+        }
+        
+        .node.editable {
+            cursor: pointer;
+        }
+        
+        .node.editable:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Edit mode input styling */
+        .node input {
+            width: 100%;
+            border: 1px solid #4caf50;
+            padding: 2px;
+            margin: 2px 0;
+            font-size: 11px;
+            border-radius: 2px;
+        }
+        
+        .node.chief {
+            background: #1a472a;
+            color: white;
+            border-color: #0d2315;
+            min-width: 150px;
+        }
+        
+        .node.director {
+            background: #2e7d32;
+            color: white;
+            border-color: #1b5e20;
+            min-width: 140px;
+        }
+        
+        .node.manager {
+            background: #4caf50;
+            color: white;
+            border-color: #388e3c;
+        }
+        
+        .node.specialist {
+            background: #81c784;
+            color: black;
+            border-color: #4caf50;
+        }
+        
+        .node.coordinator {
+            background: #a5d6a7;
+            color: black;
+            border-color: #81c784;
+        }
+        
+        .node.vacant {
+            background: #ffeb3b;
+            color: black;
+            border-color: #fbc02d;
+            font-style: italic;
+        }
+        
+        .node.highlight {
+            box-shadow: 0 0 15px #ff9800;
+            border-color: #ff9800;
+            transform: scale(1.05);
+        }
+        
+        .node .title {
+            font-weight: bold;
+            font-size: 10px;
+            margin-bottom: 3px;
+        }
+        
+        .node .name {
+            font-size: 12px;
+            font-weight: bold;
+            margin: 3px 0;
+        }
+        
+        .node .location {
+            font-size: 9px;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .node.chief .location,
+        .node.director .location,
+        .node.manager .location {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        /* Discipline sections - stacked */
+        .disciplines-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .discipline-section {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            background: #fafafa;
+        }
+        
+        .discipline-header {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 15px;
+            padding: 8px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .sub-team {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #ccc;
+        }
+        
+        .sub-team-header {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 10px;
+            color: #333;
+            background: rgba(0,0,0,0.03);
+            padding: 5px;
+            border-radius: 3px;
+        }
+        
+        /* Print styles */
+        @media print {
+            .header {
+                position: static;
+                page-break-after: avoid;
+            }
+            
+            .controls {
+                display: none;
+            }
+            
+            .stats {
+                display: none;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 10px;
+            }
+            
+            .node {
+                page-break-inside: avoid;
+            }
+            
+            .discipline-section {
+                page-break-inside: avoid;
+            }
+            
+            @page {
+                size: portrait;
+                margin: 0.5in;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>SE & Caribbean Division - Complete Organizational Chart</h1>
+        <div class="controls">
+            <div class="region-buttons">
+                <!-- Alphabetically ordered with Florida regions grouped -->
+                <button class="region-btn alabama" onclick="showRegion('alabama')">Alabama/MS</button>
+                <button class="region-btn ncflorida" onclick="showRegion('ncflorida')">Florida N/C</button>
+                <button class="region-btn sflorida" onclick="showRegion('sflorida')">Florida South</button>
+                <button class="region-btn georgia active" onclick="showRegion('georgia')">Georgia</button>
+                <button class="region-btn northcarolina" onclick="showRegion('northcarolina')">North Carolina</button>
+                <button class="region-btn puertorico" onclick="showRegion('puertorico')">Puerto Rico</button>
+                <button class="region-btn southcarolina" onclick="showRegion('southcarolina')">South Carolina</button>
+                <button class="region-btn tennessee" onclick="showRegion('tennessee')">Tennessee</button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search for a person...">
+                <button onclick="searchPerson()" class="search-btn">Search</button>
+                <button onclick="toggleEditMode()" class="edit-btn" id="editBtn">Edit Mode</button>
+                <button onclick="window.print()" class="print-btn">Print</button>
+            </div>
+        </div>
+        <div class="stats" id="stats">Loading...</div>
+    </div>
+    
+    <div class="container">
+        
+        <!-- Georgia Region (showing as example) -->
+        <div class="region-section georgia active" id="georgia">
+            <h2 style="text-align: center; color: #1976d2; margin-bottom: 20px;">Georgia Region</h2>
+            
+            <!-- Top leadership -->
+            <div class="executive-row">
+                <div class="executive-section">
+                    <div class="node chief editable">
+                        <div class="title">Regional Chief Executive</div>
+                        <div class="name">Alicia Doherty</div>
+                        <div class="location">Atlanta</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Direct reports - leaders only -->
+            <div class="leaders-row">
+                <div class="node director editable">
+                    <div class="title">Regional Disaster Officer</div>
+                    <div class="name">Adelaide Kirk</div>
+                    <div class="location">Columbus</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Chief Development Officer</div>
+                    <div class="name">Greg Scrivens</div>
+                    <div class="location">Atlanta</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">RD Biomedical Services</div>
+                    <div class="name">Keith Cofer</div>
+                    <div class="location">Atlanta</div>
+                </div>
+            </div>
+            
+            <!-- Simplified discipline sections for demo -->
+            <div class="disciplines-stack">
+                <div class="discipline-section" style="background: #e3f2fd;">
+                    <div class="discipline-header">DISASTER OPERATIONS</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Deputy Regional Disaster Officer</div>
+                            <div class="name">Jeremy McLendon</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                        <div class="node specialist editable">
+                            <div class="title">Sr CDPM</div>
+                            <div class="name">C. Williams</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Other regions would go here -->
+        <div class="region-section alabama" id="alabama">
+            <h2 style="text-align: center; color: #c2185b;">Alabama/Mississippi Region</h2>
+            <p style="text-align: center; padding: 50px;">Full data available in complete version</p>
+        </div>
+        
+    </div>
+    
+    <script>
+        let editMode = false;
+        
+        // Toggle edit mode
+        function toggleEditMode() {
+            editMode = !editMode;
+            const editBtn = document.getElementById('editBtn');
+            editBtn.classList.toggle('active');
+            editBtn.textContent = editMode ? 'Exit Edit Mode' : 'Edit Mode';
+            
+            const nodes = document.querySelectorAll('.node.editable');
+            nodes.forEach(node => {
+                if (editMode) {
+                    node.style.cursor = 'pointer';
+                    node.onclick = () => editNode(node);
+                } else {
+                    node.style.cursor = 'default';
+                    node.onclick = null;
+                }
+            });
+        }
+        
+        // Edit a node
+        function editNode(node) {
+            if (!editMode) return;
+            
+            const titleDiv = node.querySelector('.title');
+            const nameDiv = node.querySelector('.name');
+            const locationDiv = node.querySelector('.location');
+            
+            const originalTitle = titleDiv ? titleDiv.textContent : '';
+            const originalName = nameDiv ? nameDiv.textContent : '';
+            const originalLocation = locationDiv ? locationDiv.textContent : '';
+            
+            if (titleDiv) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = originalTitle;
+                input.onblur = () => saveEdit(titleDiv, input, originalTitle);
+                input.onkeypress = (e) => {
+                    if (e.key === 'Enter') input.blur();
+                    if (e.key === 'Escape') {
+                        titleDiv.textContent = originalTitle;
+                        titleDiv.style.display = 'block';
+                        input.remove();
+                    }
+                };
+                titleDiv.style.display = 'none';
+                titleDiv.parentNode.insertBefore(input, titleDiv.nextSibling);
+                input.focus();
+            }
+        }
+        
+        // Save edit
+        function saveEdit(div, input, originalValue) {
+            const newValue = input.value.trim();
+            if (newValue) {
+                div.textContent = newValue;
+            } else {
+                div.textContent = originalValue;
+            }
+            div.style.display = 'block';
+            input.remove();
+        }
+        
+        // Show/hide regions
+        function showRegion(regionId) {
+            document.querySelectorAll('.region-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(regionId).classList.add('active');
+            document.querySelector('.region-btn.' + regionId).classList.add('active');
+            
+            const regionName = document.querySelector('.region-btn.' + regionId).textContent;
+            document.getElementById('stats').textContent = `Viewing: ${regionName}`;
+        }
+        
+        // Search functionality
+        function searchPerson() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (!searchTerm) return;
+            
+            let found = false;
+            document.querySelectorAll('.region-section').forEach(region => {
+                const nodes = region.querySelectorAll('.node');
+                nodes.forEach(node => {
+                    const text = node.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        showRegion(region.id);
+                        node.classList.add('highlight');
+                        node.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        found = true;
+                    }
+                });
+            });
+            
+            if (!found) {
+                alert('Person not found.');
+            }
+        }
+        
+        // Initialize
+        window.onload = () => {
+            showRegion('georgia');
+        };
+    </script>
+</body>
+</html>

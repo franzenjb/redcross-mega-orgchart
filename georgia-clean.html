@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Georgia Region - Clean Org Chart</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            background: white;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 18px;
+            color: #3498db;
+        }
+        
+        .chart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        .level {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        /* Georgia color scheme - Blue */
+        .node {
+            border: 2px solid #2874A6;
+            background: #EBF5FB;
+            padding: 5px 8px;
+            margin: 0 5px;
+            text-align: center;
+            min-width: 90px;
+            max-width: 150px;
+        }
+        
+        .node.executive {
+            background: #3498db;
+            color: white;
+            border-width: 3px;
+        }
+        
+        .node.chief {
+            background: #5DADE2;
+            color: white;
+        }
+        
+        .node.director {
+            background: #85C1E2;
+            color: white;
+        }
+        
+        .node.manager {
+            background: #AED6F1;
+        }
+        
+        .node.dotted {
+            border-style: dashed;
+            border-color: #666;
+            background: #D6EAF8;
+        }
+        
+        .node.vacant {
+            border-style: dashed;
+            color: #999;
+            background: #F8F9F9;
+        }
+        
+        .title {
+            font-size: 10px;
+            margin-bottom: 2px;
+        }
+        
+        .name {
+            font-weight: bold;
+            font-size: 11px;
+        }
+        
+        .location {
+            font-size: 9px;
+            color: #666;
+            margin-top: 2px;
+        }
+        
+        .branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px;
+        }
+        
+        .team {
+            border: 1px solid #AED6F1;
+            background: #F8FBFE;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 4px;
+        }
+        
+        .team-header {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #2874A6;
+        }
+        
+        .team-members {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .connector {
+            width: 2px;
+            height: 20px;
+            background: #2874A6;
+            margin: 0 auto;
+        }
+        
+        .connector.dotted {
+            background: repeating-linear-gradient(
+                to bottom,
+                #666,
+                #666 3px,
+                transparent 3px,
+                transparent 6px
+            );
+        }
+    </style>
+</head>
+<body>
+    <h1>Georgia Region</h1>
+    
+    <div class="chart">
+        <!-- Division VP -->
+        <div class="level">
+            <div class="node executive">
+                <div class="title">Division VP</div>
+                <div class="name">A. Trefethen</div>
+            </div>
+        </div>
+        
+        <div class="connector"></div>
+        
+        <!-- Regional Executive Level -->
+        <div class="level">
+            <div class="branch">
+                <div class="team">
+                    <div class="team-header">Division Support (Dotted Line)</div>
+                    <div class="team-members">
+                        <div class="node dotted">
+                            <div class="title">DFVP</div>
+                            <div class="name">D. Dixon</div>
+                        </div>
+                        <div class="node dotted">
+                            <div class="title">Dir. Division<br/>Fundraising</div>
+                            <div class="name">V. Barnett</div>
+                        </div>
+                        <div class="node dotted">
+                            <div class="title">DCOO</div>
+                            <div class="name">L. Mims</div>
+                        </div>
+                        <div class="node dotted">
+                            <div class="title">Div. SAF</div>
+                            <div class="name">K. Gonzales</div>
+                        </div>
+                        <div class="node dotted">
+                            <div class="title">Div. Comm. Dir</div>
+                            <div class="name">C. Edwards</div>
+                        </div>
+                        <div class="node dotted">
+                            <div class="title">DVSE</div>
+                            <div class="name">S. Taylor</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="branch">
+                <div class="node executive">
+                    <div class="title">Regional Chief Executive</div>
+                    <div class="name">Alicia Doherty</div>
+                    <div class="location">Atlanta</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="connector"></div>
+        
+        <!-- Direct Reports -->
+        <div class="level">
+            <!-- Adelaide Kirk and Disaster team -->
+            <div class="branch">
+                <div class="node chief">
+                    <div class="title">Regional Disaster Officer</div>
+                    <div class="name">Adelaide Kirk</div>
+                    <div class="location">Columbus</div>
+                </div>
+                <div class="connector"></div>
+                <div class="team">
+                    <div class="team-header">Disaster Services Team</div>
+                    <div class="team-members">
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <div class="node director">
+                                <div class="title">Deputy RDO</div>
+                                <div class="name">Jeremy McLendon</div>
+                                <div class="location">Atlanta</div>
+                            </div>
+                            <div class="connector" style="height: 10px;"></div>
+                            <div style="display: flex; gap: 5px;">
+                                <div class="node manager">
+                                    <div class="title">Sr CDPM</div>
+                                    <div class="name">C. Williams</div>
+                                    <div class="location">Atlanta</div>
+                                </div>
+                                <div class="node manager">
+                                    <div class="title">Sr CDPM</div>
+                                    <div class="name">M. Morrison</div>
+                                    <div class="location">SW GA</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <div class="node director">
+                                <div class="title">Sr CDPM</div>
+                                <div class="name">Kelly Crane</div>
+                            </div>
+                            <div class="connector" style="height: 10px;"></div>
+                            <div style="display: flex; gap: 5px;">
+                                <div class="node manager">
+                                    <div class="title">CDPM</div>
+                                    <div class="name">R. Oaks</div>
+                                    <div class="location">Atlanta</div>
+                                </div>
+                                <div class="node manager">
+                                    <div class="title">Sr DRM</div>
+                                    <div class="name">M. Ruff</div>
+                                    <div class="location">Atlanta</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <div class="node director">
+                                <div class="title">Reg Mass Care Mgr</div>
+                                <div class="name">T. Norbut</div>
+                                <div class="location">Atlanta</div>
+                            </div>
+                            <div class="connector" style="height: 10px;"></div>
+                            <div style="display: flex; gap: 5px;">
+                                <div class="node manager">
+                                    <div class="title">Sr Logistics Spec</div>
+                                    <div class="name">M. Coates</div>
+                                    <div class="location">Atlanta</div>
+                                </div>
+                                <div class="node manager">
+                                    <div class="title">DS Technician</div>
+                                    <div class="name">D. Boatwright</div>
+                                    <div class="location">Atlanta</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="node vacant">
+                            <div class="title">DAT Manager</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Carla Dillard Homer and Atlanta Operations -->
+            <div class="branch">
+                <div class="node chief">
+                    <div class="title">RCOO Atlanta</div>
+                    <div class="name">Carla Dillard Homer</div>
+                </div>
+                <div class="connector"></div>
+                <div class="team">
+                    <div class="team-header">Executive Directors - Atlanta</div>
+                    <div class="team-members">
+                        <div class="node director">
+                            <div class="title">Ex Dir</div>
+                            <div class="name">R. Williams</div>
+                            <div class="location">Fulton</div>
+                        </div>
+                        <div class="node director">
+                            <div class="title">Ex Dir</div>
+                            <div class="name">D. Maull</div>
+                            <div class="location">Douglas</div>
+                        </div>
+                        <div class="node director">
+                            <div class="title">Ex Dir</div>
+                            <div class="name">V. Woodward</div>
+                            <div class="location">East Point</div>
+                        </div>
+                        <div class="node vacant">
+                            <div class="title">Ex Dir</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Jonesboro</div>
+                        </div>
+                        <div class="node director">
+                            <div class="title">Ex Dir</div>
+                            <div class="name">Y. Treadwell</div>
+                            <div class="location">Central/Mid GA</div>
+                        </div>
+                        <div class="node vacant">
+                            <div class="title">Ex Dir</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Coastal GA</div>
+                        </div>
+                        <div class="node director">
+                            <div class="title">Ex Dir</div>
+                            <div class="name">L. Little</div>
+                            <div class="location">SW GA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- L. Holland and Central GA Operations -->
+            <div class="branch">
+                <div class="node chief">
+                    <div class="title">RCOO Central GA</div>
+                    <div class="name">L. Holland</div>
+                </div>
+                <div class="connector"></div>
+                <div class="team">
+                    <div class="team-header">Central GA Team</div>
+                    <div class="team-members">
+                        <div class="node vacant">
+                            <div class="title">Ex Dir</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Columbus</div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">BBS Prog Mgr</div>
+                            <div class="name">M. Benford</div>
+                            <div class="location">Columbus</div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">VS Coordinator</div>
+                            <div class="name">C. Bowser</div>
+                            <div class="location">Columbus</div>
+                        </div>
+                        <div class="node vacant">
+                            <div class="title">Ex Dir</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Macon</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- P. Foster and HR -->
+            <div class="branch">
+                <div class="node chief">
+                    <div class="title">DRHRM</div>
+                    <div class="name">P. Foster</div>
+                    <div class="location">Atlanta</div>
+                </div>
+                <div class="connector"></div>
+                <div class="team">
+                    <div class="team-header">HR Team</div>
+                    <div class="team-members">
+                        <div class="node manager">
+                            <div class="title">HR Business Partner</div>
+                            <div class="name">J. Myers</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">Regional HR BP</div>
+                            <div class="name">C. Davis</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                        <div class="node vacant">
+                            <div class="title">HR Coordinator</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Division-linked teams -->
+        <div class="level">
+            <!-- Development Team under D. Dixon -->
+            <div class="branch">
+                <div class="node dotted">
+                    <div class="title">Regional Development</div>
+                    <div class="name">(under D. Dixon)</div>
+                </div>
+                <div class="connector dotted"></div>
+                <div class="team">
+                    <div class="team-header">Development Team - Georgia</div>
+                    <div class="team-members">
+                        <div class="node manager">
+                            <div class="title">RPO</div>
+                            <div class="name">K. Hobbs</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">RPO</div>
+                            <div class="name">C. Bingham</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">RPO</div>
+                            <div class="name">T. Frazier</div>
+                            <div class="location">East Point</div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">RPO</div>
+                            <div class="name">S. Hogan</div>
+                            <div class="location">Douglasville</div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">RPO</div>
+                            <div class="name">P. Sewell-Briscoe</div>
+                            <div class="location">Macon</div>
+                        </div>
+                        <div class="node manager">
+                            <div class="title">RPO</div>
+                            <div class="name">M. Hartley</div>
+                            <div class="location">Savannah</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SAF Team under K. Gonzales -->
+            <div class="branch">
+                <div class="node dotted">
+                    <div class="title">SAF Teams</div>
+                    <div class="name">(under K. Gonzales)</div>
+                </div>
+                <div class="connector dotted"></div>
+                <div class="team">
+                    <div class="team-header">Service to Armed Forces - Georgia</div>
+                    <div class="team-members">
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <div class="node director">
+                                <div class="title">SAF Director</div>
+                                <div class="name">Victoria Hamrick</div>
+                                <div class="location">Atlanta</div>
+                            </div>
+                            <div class="connector" style="height: 10px;"></div>
+                            <div style="display: flex; gap: 5px;">
+                                <div class="node manager">
+                                    <div class="title">SAF Station Mgr</div>
+                                    <div class="name">J. Harris</div>
+                                    <div class="location">Atlanta Airport</div>
+                                </div>
+                                <div class="node manager">
+                                    <div class="title">Sr. SAF Spec</div>
+                                    <div class="name">N. Clay</div>
+                                    <div class="location">Atlanta North</div>
+                                </div>
+                                <div class="node manager">
+                                    <div class="title">Sr. SAF Spec</div>
+                                    <div class="name">L. Elmore</div>
+                                    <div class="location">Atlanta South</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <div class="node director">
+                                <div class="title">Sr. VS Specialist</div>
+                                <div class="name">Jill Deskins</div>
+                                <div class="location">Columbus</div>
+                            </div>
+                            <div class="connector" style="height: 10px;"></div>
+                            <div style="display: flex; gap: 5px;">
+                                <div class="node manager">
+                                    <div class="title">SAF Prog Mgr</div>
+                                    <div class="name">J. Haire</div>
+                                    <div class="location">Columbus</div>
+                                </div>
+                                <div class="node manager">
+                                    <div class="title">SAF Manager</div>
+                                    <div class="name">C. Jeter</div>
+                                    <div class="location">Columbus</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

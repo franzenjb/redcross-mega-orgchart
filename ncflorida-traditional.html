@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>North Central Florida - Traditional Org Chart</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .org-chart {
+            display: table;
+            margin: 0 auto;
+        }
+        
+        .level {
+            display: table-row;
+        }
+        
+        .level-group {
+            display: table-cell;
+            vertical-align: top;
+            text-align: center;
+            padding: 20px 10px;
+        }
+        
+        .position-box {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 5px;
+            min-width: 160px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .position-box.executive {
+            background: #c0392b;
+            font-size: 16px;
+            min-width: 200px;
+        }
+        
+        .position-box.chief {
+            background: #2980b9;
+            min-width: 180px;
+        }
+        
+        .position-box.director {
+            background: #8e44ad;
+        }
+        
+        .position-box.manager {
+            background: #16a085;
+        }
+        
+        .position-box.vacant {
+            background: #95a5a6;
+            border: 2px dashed #7f8c8d;
+        }
+        
+        .name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .title {
+            font-size: 12px;
+            opacity: 0.95;
+        }
+        
+        .location {
+            font-size: 11px;
+            opacity: 0.85;
+            margin-top: 4px;
+        }
+        
+        /* Connection lines */
+        .connector {
+            width: 2px;
+            background: #333;
+            margin: 0 auto;
+            height: 20px;
+        }
+        
+        .horizontal-line {
+            height: 2px;
+            background: #333;
+            margin: 10px 0;
+        }
+        
+        /* Traditional org chart table layout */
+        table.org-table {
+            margin: 0 auto;
+            border-collapse: separate;
+            border-spacing: 20px 40px;
+        }
+        
+        td {
+            text-align: center;
+            vertical-align: top;
+            position: relative;
+        }
+        
+        /* Vertical connectors */
+        td.has-reports::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            width: 2px;
+            height: 40px;
+            background: #333;
+            transform: translateX(-50%);
+        }
+        
+        /* Horizontal connectors for multiple reports */
+        .connector-row td {
+            position: relative;
+            height: 2px;
+        }
+        
+        .connector-row td::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #333;
+        }
+        
+        .connector-row td:first-child::after {
+            left: 50%;
+        }
+        
+        .connector-row td:last-child::after {
+            right: 50%;
+        }
+        
+        .report-line::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            width: 2px;
+            height: 40px;
+            background: #333;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>North Central Florida Region - Organizational Chart</h1>
+        
+        <table class="org-table">
+            <!-- Level 1: Regional Executive -->
+            <tr>
+                <td colspan="7" class="has-reports">
+                    <div class="position-box executive">
+                        <div class="name">C. Smith</div>
+                        <div class="title">Regional Executive</div>
+                        <div class="location">Jacksonville</div>
+                    </div>
+                </td>
+            </tr>
+            
+            <!-- Connector Row -->
+            <tr class="connector-row">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            
+            <!-- Level 2: Direct Reports to Regional Executive -->
+            <tr>
+                <td class="report-line has-reports">
+                    <div class="position-box chief">
+                        <div class="name">W. Carney</div>
+                        <div class="title">Chief Dev. Officer</div>
+                    </div>
+                </td>
+                <td class="report-line has-reports">
+                    <div class="position-box chief">
+                        <div class="name">K. Smith</div>
+                        <div class="title">Regional Disaster Officer</div>
+                    </div>
+                </td>
+                <td class="report-line has-reports">
+                    <div class="position-box chief">
+                        <div class="name">K. Brown</div>
+                        <div class="title">Reg. Volunteer Svcs Officer</div>
+                    </div>
+                </td>
+                <td class="report-line">
+                    <div class="position-box director">
+                        <div class="name">J. Price</div>
+                        <div class="title">Exec. Dir. N Central FL</div>
+                    </div>
+                </td>
+                <td class="report-line">
+                    <div class="position-box director">
+                        <div class="name">E. Martin</div>
+                        <div class="title">Exec. Dir. Northeast FL</div>
+                    </div>
+                </td>
+                <td class="report-line">
+                    <div class="position-box director">
+                        <div class="name">J. Williams</div>
+                        <div class="title">Reg. Chief. Nurse</div>
+                    </div>
+                </td>
+                <td class="report-line">
+                    <div class="position-box manager">
+                        <div class="name">S. Bradley</div>
+                        <div class="title">Regional Comms. Mgr.</div>
+                    </div>
+                </td>
+            </tr>
+            
+            <!-- Level 3: Reports to Chiefs -->
+            <tr>
+                <td colspan="2">
+                    <!-- Under W. Carney -->
+                    <table style="margin: 0 auto;">
+                        <tr>
+                            <td class="report-line">
+                                <div class="position-box manager">
+                                    <div class="name">A. Kennedy</div>
+                                    <div class="title">Dir. Philanthropic Fundraising</div>
+                                </div>
+                            </td>
+                            <td class="report-line">
+                                <div class="position-box manager">
+                                    <div class="name">L. James</div>
+                                    <div class="title">Sr. Dev. Officer</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td colspan="2">
+                    <!-- Under K. Smith -->
+                    <table style="margin: 0 auto;">
+                        <tr>
+                            <td class="report-line">
+                                <div class="position-box manager">
+                                    <div class="name">J. Gibson</div>
+                                    <div class="title">Mass Care Mgr.</div>
+                                </div>
+                            </td>
+                            <td class="report-line">
+                                <div class="position-box manager">
+                                    <div class="name">C. Mills</div>
+                                    <div class="title">Disaster Prog. Mgr.</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td colspan="2">
+                    <!-- Under K. Brown -->
+                    <table style="margin: 0 auto;">
+                        <tr>
+                            <td class="report-line">
+                                <div class="position-box manager">
+                                    <div class="name">M. Thomas</div>
+                                    <div class="title">Vol. Engagement Mgr.</div>
+                                </div>
+                            </td>
+                            <td class="report-line">
+                                <div class="position-box manager">
+                                    <div class="name">J. Morales</div>
+                                    <div class="title">Vol. Services Coordinator</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            
+            <!-- Level 4: Additional Reports -->
+            <tr>
+                <td>
+                    <!-- Under A. Kennedy -->
+                    <div class="position-box manager report-line">
+                        <div class="name">M. Pharazyn</div>
+                        <div class="title">Dev. Coordinator</div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        
+        <div style="margin-top: 40px; padding: 20px; background: #ecf0f1; border-radius: 6px;">
+            <h3 style="margin-bottom: 10px;">Legend</h3>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div><span class="position-box executive" style="padding: 4px 8px;">Executive</span></div>
+                <div><span class="position-box chief" style="padding: 4px 8px;">Chief Officer</span></div>
+                <div><span class="position-box director" style="padding: 4px 8px;">Director</span></div>
+                <div><span class="position-box manager" style="padding: 4px 8px;">Manager</span></div>
+                <div><span class="position-box vacant" style="padding: 4px 8px;">Vacant</span></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

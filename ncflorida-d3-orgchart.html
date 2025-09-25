@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>N/C Florida Red Cross - Organizational Chart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+            min-height: 800px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        /* Node styles */
+        .node {
+            cursor: pointer;
+        }
+        
+        .node-rect {
+            stroke-width: 2px;
+            stroke: #333;
+            fill: white;
+        }
+        
+        .node-rect.division {
+            fill: #e74c3c;
+        }
+        
+        .node-rect.regional {
+            fill: #3498db;
+        }
+        
+        .node-rect.chief {
+            fill: #2ecc71;
+        }
+        
+        .node-rect.director {
+            fill: #9b59b6;
+        }
+        
+        .node-rect.manager {
+            fill: #f39c12;
+        }
+        
+        .node-rect.specialist {
+            fill: #1abc9c;
+        }
+        
+        .node-rect.vacant {
+            fill: #95a5a6;
+            stroke-dasharray: 5,5;
+        }
+        
+        .node-text {
+            font-size: 11px;
+            fill: white;
+            text-anchor: middle;
+        }
+        
+        .link {
+            fill: none;
+            stroke: #555;
+            stroke-width: 1.5px;
+        }
+        
+        .link.division {
+            stroke-dasharray: 5,5;
+            stroke: #999;
+        }
+        
+        /* Table-based org chart for simpler representation */
+        .org-table {
+            width: 100%;
+            margin: 20px auto;
+        }
+        
+        .org-row {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .org-box {
+            background: white;
+            border: 2px solid #333;
+            border-radius: 5px;
+            padding: 8px 12px;
+            margin: 0 10px;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .org-box.division-vp {
+            background: #e74c3c;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .org-box.regional-exec {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .org-box.division-role {
+            background: #95a5a6;
+            color: white;
+            border-style: dashed;
+        }
+        
+        .org-box.chief {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .org-box.director {
+            background: #9b59b6;
+            color: white;
+        }
+        
+        .org-box.manager {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .org-box.specialist {
+            background: #1abc9c;
+            color: white;
+        }
+        
+        .org-box.vacant {
+            background: #ecf0f1;
+            color: #7f8c8d;
+            border-style: dashed;
+        }
+        
+        .org-name {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+        
+        .org-title {
+            font-size: 10px;
+            margin-bottom: 2px;
+        }
+        
+        .org-location {
+            font-size: 9px;
+            opacity: 0.9;
+        }
+        
+        .connector-vertical {
+            position: absolute;
+            width: 2px;
+            background: #333;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .connector-horizontal {
+            position: absolute;
+            height: 2px;
+            background: #333;
+        }
+        
+        .division-line {
+            border-style: dashed;
+            border-color: #999;
+            background: #999;
+        }
+        
+        .level-label {
+            font-weight: bold;
+            color: #555;
+            text-align: center;
+            margin: 10px 0;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .group-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px;
+            background: #fafafa;
+        }
+        
+        .group-label {
+            font-weight: bold;
+            color: #666;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h1>North/Central Florida - American Red Cross</h1>
+        
+        <!-- Level 1: Division VP -->
+        <div class="level-label">Division Leadership</div>
+        <div class="org-row">
+            <div class="org-box division-vp">
+                <div class="org-title">Division VP</div>
+                <div class="org-name">A. Trefethen</div>
+            </div>
+        </div>
+        
+        <!-- Connector -->
+        <div style="text-align: center;">
+            <div class="connector-vertical" style="height: 30px; position: relative; display: inline-block;"></div>
+        </div>
+        
+        <!-- Level 2: Regional Executive with Division Support Roles -->
+        <div class="level-label">Regional Executive & Division Support</div>
+        <div class="org-row">
+            <!-- Division roles on left with dotted lines -->
+            <div style="display: flex; align-items: center;">
+                <div class="group-container">
+                    <div class="group-label">Division Support Roles (Dotted Line)</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <div class="org-box division-role">
+                            <div class="org-title">DFVP</div>
+                            <div class="org-name">D. Dixon</div>
+                        </div>
+                        <div class="org-box division-role">
+                            <div class="org-title">Dir. Division Fundraising</div>
+                            <div class="org-name">V. Barnett</div>
+                        </div>
+                        <div class="org-box division-role">
+                            <div class="org-title">DCOO</div>
+                            <div class="org-name">L. Mims</div>
+                        </div>
+                        <div class="org-box division-role">
+                            <div class="org-title">Div. SAF</div>
+                            <div class="org-name">K. Gonzales</div>
+                        </div>
+                        <div class="org-box division-role">
+                            <div class="org-title">Div. Comm. Dir</div>
+                            <div class="org-name">C. Edwards</div>
+                        </div>
+                        <div class="org-box division-role">
+                            <div class="org-title">DVSE</div>
+                            <div class="org-name">S. Taylor</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Regional Executive in center -->
+            <div style="margin: 0 40px;">
+                <div class="org-box regional-exec">
+                    <div class="org-title">Regional Executive</div>
+                    <div class="org-name">C. Smith</div>
+                    <div class="org-location">Jacksonville</div>
+                </div>
+            </div>
+            
+            <!-- Executive Assistant on right -->
+            <div class="org-box specialist">
+                <div class="org-title">Executive Assistant</div>
+                <div class="org-name">K. Jones</div>
+                <div class="org-location">Jacksonville</div>
+            </div>
+        </div>
+        
+        <!-- Connector -->
+        <div style="text-align: center;">
+            <div class="connector-vertical" style="height: 30px; position: relative; display: inline-block;"></div>
+        </div>
+        
+        <!-- Level 3: Direct Reports to Regional Executive -->
+        <div class="level-label">Regional Leadership Team</div>
+        <div class="org-row">
+            <div class="org-box chief">
+                <div class="org-title">Chief Dev. Officer</div>
+                <div class="org-name">W. Carney</div>
+                <div class="org-location">Jacksonville</div>
+            </div>
+            
+            <div class="org-box chief">
+                <div class="org-title">Regional Chief Operating Officer</div>
+                <div class="org-name">S. Rosario</div>
+                <div class="org-location">Tampa</div>
+            </div>
+            
+            <div class="org-box chief">
+                <div class="org-title">RVSO</div>
+                <div class="org-name">J. Walker</div>
+                <div class="org-location">Jacksonville</div>
+            </div>
+            
+            <div class="org-box chief">
+                <div class="org-title">RDO (interim)</div>
+                <div class="org-name">K. Watt</div>
+            </div>
+            
+            <div class="org-box director">
+                <div class="org-title">SAF/Program Director</div>
+                <div class="org-name">G. Scrivens</div>
+                <div class="org-location">Tampa</div>
+            </div>
+            
+            <div class="org-box director">
+                <div class="org-title">Comm Director</div>
+                <div class="org-name">A. Bierfreund</div>
+                <div class="org-location">Jacksonville</div>
+            </div>
+        </div>
+        
+        <!-- Level 4: Teams under each leader -->
+        <div class="level-label">Operational Teams</div>
+        
+        <!-- Development Team under W. Carney -->
+        <div class="group-container">
+            <div class="group-label">Development Team (Reports to W. Carney)</div>
+            <div class="org-row">
+                <div class="org-box manager">
+                    <div class="org-title">Sr. RPO</div>
+                    <div class="org-name">A. Kennedy</div>
+                    <div class="org-location">Orlando</div>
+                </div>
+                <div class="org-box manager">
+                    <div class="org-title">Sr. RPO</div>
+                    <div class="org-name">R. Resler</div>
+                    <div class="org-location">Tampa</div>
+                </div>
+                <div class="org-box manager">
+                    <div class="org-title">RPO</div>
+                    <div class="org-name">H. Marchbanks</div>
+                    <div class="org-location">Tallahassee</div>
+                </div>
+                <div class="org-box specialist">
+                    <div class="org-title">Dev Ops Coordinator</div>
+                    <div class="org-name">D. Roman</div>
+                </div>
+            </div>
+            
+            <!-- Sub-team under Kennedy and Resler -->
+            <div class="org-row" style="margin-top: 20px;">
+                <div style="margin-right: 40px;">
+                    <div class="group-label" style="font-size: 11px;">Under A. Kennedy</div>
+                    <div class="org-box specialist">
+                        <div class="org-title">RPO</div>
+                        <div class="org-name">M. Pharazyn</div>
+                        <div class="org-location">Orlando</div>
+                    </div>
+                </div>
+                <div>
+                    <div class="group-label" style="font-size: 11px;">Under R. Resler</div>
+                    <div style="display: flex; gap: 10px;">
+                        <div class="org-box specialist">
+                            <div class="org-title">RPO</div>
+                            <div class="org-name">C. Marasco</div>
+                            <div class="org-location">Tampa</div>
+                        </div>
+                        <div class="org-box specialist">
+                            <div class="org-title">RPO</div>
+                            <div class="org-name">Z. Thomas</div>
+                            <div class="org-location">Jacksonville</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Executive Directors under S. Rosario -->
+        <div class="group-container">
+            <div class="group-label">Regional Operations - Executive Directors (Reports to S. Rosario)</div>
+            <div class="org-row">
+                <div class="org-box director">
+                    <div class="org-title">Executive Director</div>
+                    <div class="org-name">J. Moran</div>
+                    <div class="org-location">Orlando</div>
+                </div>
+                <div class="org-box director">
+                    <div class="org-title">Executive Director</div>
+                    <div class="org-name">M. Brown</div>
+                    <div class="org-location">Tampa Bay</div>
+                </div>
+                <div class="org-box director">
+                    <div class="org-title">Executive Director</div>
+                    <div class="org-name">T. Jenkins</div>
+                    <div class="org-location">Pensacola</div>
+                </div>
+                <div class="org-box director">
+                    <div class="org-title">Executive Director</div>
+                    <div class="org-name">S. Carraway</div>
+                    <div class="org-location">Tallahassee</div>
+                </div>
+                <div class="org-box vacant">
+                    <div class="org-title">Executive Director</div>
+                    <div class="org-name">Vacant</div>
+                    <div class="org-location">Gainesville</div>
+                </div>
+                <div class="org-box vacant">
+                    <div class="org-title">Executive Director</div>
+                    <div class="org-name">Vacant</div>
+                    <div class="org-location">Jacksonville</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Volunteer Services under J. Walker -->
+        <div class="group-container">
+            <div class="group-label">Volunteer Services (Reports to J. Walker)</div>
+            <div class="org-row">
+                <div class="org-box specialist">
+                    <div class="org-title">Specialist</div>
+                    <div class="org-name">S. Williams</div>
+                    <div class="org-location">Jacksonville</div>
+                </div>
+                <div class="org-box specialist">
+                    <div class="org-title">Specialist</div>
+                    <div class="org-name">C. Funkhouser</div>
+                    <div class="org-location">Tampa</div>
+                </div>
+                <div class="org-box specialist">
+                    <div class="org-title">Rep II</div>
+                    <div class="org-name">A. Lin</div>
+                    <div class="org-location">Orlando/Daytona</div>
+                </div>
+                <div class="org-box specialist">
+                    <div class="org-title">Rep III</div>
+                    <div class="org-name">M. Gallagher</div>
+                    <div class="org-location">Tampa</div>
+                </div>
+                <div class="org-box specialist">
+                    <div class="org-title">Rep II</div>
+                    <div class="org-name">H. Anderson</div>
+                    <div class="org-location">Jacksonville</div>
+                </div>
+                <div class="org-box vacant">
+                    <div class="org-title">Rep III</div>
+                    <div class="org-name">Vacant</div>
+                    <div class="org-location">Jacksonville/G'ville</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

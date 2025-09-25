@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SE & Caribbean Division - Clean Org Chart</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        select, button {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #f0f0f0;
+        }
+        
+        .tree-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            overflow-x: auto;
+            min-height: 600px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .tree {
+            display: inline-block;
+            padding: 20px;
+        }
+        
+        .tree ul {
+            position: relative;
+            padding: 20px 0 0 0;
+            margin: 0;
+            list-style: none;
+        }
+        
+        .tree li {
+            position: relative;
+            padding: 10px 5px 0 5px;
+            list-style: none;
+        }
+        
+        .tree li::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 1px;
+            height: 10px;
+            right: 50%;
+            border-left: 2px solid #ccc;
+        }
+        
+        .tree li::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            width: calc(50% + 5px);
+            height: 20px;
+            right: calc(50% - 5px);
+            border-top: 2px solid #ccc;
+        }
+        
+        .tree li:only-child::after,
+        .tree li:only-child::before {
+            display: none;
+        }
+        
+        .tree li:first-child::after {
+            border-radius: 5px 0 0 0;
+        }
+        
+        .tree li:last-child::after {
+            border-radius: 0 5px 0 0;
+        }
+        
+        .tree ul ul::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            border-left: 2px solid #ccc;
+            width: 1px;
+            height: 20px;
+        }
+        
+        .tree .node {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 5px;
+            color: white;
+            text-align: center;
+            min-width: 150px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .tree .node:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .node-name {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .node-title {
+            font-size: 11px;
+            opacity: 0.95;
+        }
+        
+        .node-location {
+            font-size: 10px;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+        
+        /* Region colors */
+        .division { background: #e74c3c; }
+        .divisional-role { background: #9b59b6; }
+        .georgia { background: #3498db; }
+        .alabama { background: #e67e22; }
+        .northcarolina { background: #f39c12; }
+        .southcarolina { background: #d35400; }
+        .tennessee { background: #8e44ad; }
+        .ncflorida { background: #27ae60; }
+        .sflorida { background: #e91e63; }
+        .puertorico { background: #00bcd4; }
+        
+        .collapsed > ul {
+            display: none;
+        }
+        
+        .expand-btn {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #333;
+            font-size: 12px;
+            line-height: 16px;
+            text-align: center;
+            cursor: pointer;
+            color: #333;
+            z-index: 10;
+        }
+        
+        .stats {
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>American Red Cross - SE & Caribbean Division</h1>
+        <div class="stats" id="stats">Loading organizational data...</div>
+        <div class="controls">
+            <select id="viewSelector" onchange="changeView()">
+                <option value="overview">Division Overview</option>
+                <option value="georgia">Georgia Region</option>
+                <option value="alabama">Alabama/Mississippi</option>
+                <option value="northcarolina">North Carolina</option>
+                <option value="southcarolina">South Carolina</option>
+                <option value="tennessee">Tennessee</option>
+                <option value="ncflorida">N/C Florida</option>
+                <option value="sflorida">South Florida</option>
+                <option value="puertorico">Puerto Rico/USVI</option>
+            </select>
+            <button onclick="expandAll()">Expand All</button>
+            <button onclick="collapseAll()">Collapse All</button>
+        </div>
+    </div>
+    
+    <div class="tree-container" id="treeContainer">
+        <div class="tree" id="orgTree"></div>
+    </div>
+    
+    <script src="deep-org-data.js"></script>
+    <script>
+        let currentView = 'overview';
+        
+        function createNodeElement(data, type) {
+            const node = document.createElement('div');
+            node.className = `node ${type || data.type || 'division'}`;
+            node.innerHTML = `
+                <div class="node-name">${data.name}</div>
+                <div class="node-title">${data.title}</div>
+                ${data.location ? `<div class="node-location">${data.location}</div>` : ''}
+            `;
+            
+            if (data.children && data.children.length > 0) {
+                const expandBtn = document.createElement('div');
+                expandBtn.className = 'expand-btn';
+                expandBtn.textContent = '-';
+                expandBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const li = node.parentElement;
+                    if (li.classList.contains('collapsed')) {
+                        li.classList.remove('collapsed');
+                        expandBtn.textContent = '-';
+                    } else {
+                        li.classList.add('collapsed');
+                        expandBtn.textContent = '+';
+                    }
+                };
+                node.appendChild(expandBtn);
+            }
+            
+            return node;
+        }
+        
+        function buildTree(data, parentUl, type) {
+            if (!data) return;
+            
+            const li = document.createElement('li');
+            li.appendChild(createNodeElement(data, type));
+            
+            if (data.children && data.children.length > 0) {
+                const ul = document.createElement('ul');
+                data.children.forEach(child => {
+                    buildTree(child, ul, child.type || type);
+                });
+                li.appendChild(ul);
+            }
+            
+            parentUl.appendChild(li);
+        }
+        
+        function renderTree() {
+            const container = document.getElementById('orgTree');
+            container.innerHTML = '';
+            
+            const ul = document.createElement('ul');
+            
+            if (currentView === 'overview') {
+                // Show full division structure
+                const divisionData = {
+                    name: "Anna Trefethen",
+                    title: "Division Vice President",
+                    location: "SE & Caribbean Division",
+                    type: "division",
+                    children: [
+                        // Division Leadership
+                        {
+                            name: "Division Leadership",
+                            title: "Serving All Regions",
+                            type: "divisional-role",
+                            children: [
+                                { name: "Dee Dixon", title: "DFVP", type: "divisional-role" },
+                                { name: "Vickey Barnett", title: "Dir. Division Fundraising", type: "divisional-role" },
+                                { name: "Kay Gonzalez", title: "Div. SAF Director", type: "divisional-role" },
+                                { name: "Leisle Mims", title: "DCOO", type: "divisional-role" },
+                                { name: "Silvia Taylor", title: "DVSE", type: "divisional-role" },
+                                { name: "Cally Edwards", title: "DCD", type: "divisional-role" },
+                                { name: "Ryan Lock", title: "DDE", type: "divisional-role" }
+                            ]
+                        },
+                        // Regional Executives
+                        deepOrgData.georgia,
+                        deepOrgData.alabama,
+                        deepOrgData.northcarolina,
+                        deepOrgData.southcarolina,
+                        deepOrgData.tennessee,
+                        deepOrgData.ncflorida,
+                        deepOrgData.sflorida,
+                        deepOrgData.puertorico
+                    ]
+                };
+                buildTree(divisionData, ul);
+            } else {
+                // Show specific region
+                const regionData = deepOrgData[currentView];
+                if (regionData) {
+                    buildTree(regionData, ul, currentView);
+                }
+            }
+            
+            container.appendChild(ul);
+            updateStats();
+        }
+        
+        function changeView() {
+            currentView = document.getElementById('viewSelector').value;
+            renderTree();
+        }
+        
+        function expandAll() {
+            document.querySelectorAll('li.collapsed').forEach(li => {
+                li.classList.remove('collapsed');
+                const btn = li.querySelector('.expand-btn');
+                if (btn) btn.textContent = '-';
+            });
+        }
+        
+        function collapseAll() {
+            document.querySelectorAll('li').forEach(li => {
+                if (li.querySelector('ul')) {
+                    li.classList.add('collapsed');
+                    const btn = li.querySelector('.expand-btn');
+                    if (btn) btn.textContent = '+';
+                }
+            });
+        }
+        
+        function countNodes(data) {
+            let count = 1;
+            if (data.children) {
+                data.children.forEach(child => {
+                    count += countNodes(child);
+                });
+            }
+            return count;
+        }
+        
+        function updateStats() {
+            let totalCount = 0;
+            
+            if (currentView === 'overview') {
+                totalCount = 8; // VP + Division Leadership
+                Object.keys(deepOrgData).forEach(key => {
+                    if (deepOrgData[key]) {
+                        totalCount += countNodes(deepOrgData[key]);
+                    }
+                });
+            } else {
+                const regionData = deepOrgData[currentView];
+                if (regionData) {
+                    totalCount = countNodes(regionData);
+                }
+            }
+            
+            document.getElementById('stats').textContent = 
+                `Viewing: ${getRegionName(currentView)} | Total positions: ${totalCount}`;
+        }
+        
+        function getRegionName(view) {
+            const names = {
+                'overview': 'Division Overview',
+                'georgia': 'Georgia Region',
+                'alabama': 'Alabama/Mississippi',
+                'northcarolina': 'North Carolina',
+                'southcarolina': 'South Carolina',
+                'tennessee': 'Tennessee',
+                'ncflorida': 'North/Central Florida',
+                'sflorida': 'South Florida',
+                'puertorico': 'Puerto Rico/USVI'
+            };
+            return names[view] || view;
+        }
+        
+        // Initialize on load
+        window.onload = () => {
+            renderTree();
+        };
+    </script>
+</body>
+</html>

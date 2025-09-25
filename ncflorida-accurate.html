@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>N/C Florida - ACCURATE Org Chart from PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+            min-width: 1600px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        /* Box styles matching PDF */
+        .box {
+            border: 2px solid #000;
+            background: white;
+            padding: 6px 10px;
+            text-align: center;
+            min-width: 100px;
+            display: inline-block;
+            margin: 2px;
+            font-size: 11px;
+            line-height: 1.3;
+        }
+        
+        .box.division {
+            border-width: 3px;
+        }
+        
+        .box.dotted {
+            border-style: dashed;
+            border-color: #666;
+        }
+        
+        .name {
+            font-weight: bold;
+        }
+        
+        .title {
+            font-size: 10px;
+        }
+        
+        .location {
+            font-size: 9px;
+            font-style: italic;
+        }
+        
+        /* Layout structure */
+        .level {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 15px;
+        }
+        
+        .subgroup {
+            display: flex;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .vertical-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* Lines */
+        .line-down {
+            width: 2px;
+            height: 20px;
+            background: #000;
+            margin: 0 auto;
+        }
+        
+        .line-across {
+            height: 2px;
+            background: #000;
+            margin: 10px 0;
+        }
+        
+        .dotted-line {
+            border-top: 2px dashed #666;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>North/Central Florida</h1>
+        
+        <!-- TOP LEVEL: Division VP -->
+        <div class="level">
+            <div class="box division">
+                <div class="title">Division VP</div>
+                <div class="name">A. Trefethen</div>
+            </div>
+        </div>
+        
+        <div class="line-down"></div>
+        
+        <!-- SECOND LEVEL: Regional Executive with Division Support -->
+        <div class="level">
+            <!-- Left side: Division roles (dotted lines) -->
+            <div class="group">
+                <div class="box dotted">
+                    <div class="title">DFVP</div>
+                    <div class="name">D. Dixon</div>
+                </div>
+                <div class="vertical-group">
+                    <div class="box dotted">
+                        <div class="title">Director of Division Fundraising</div>
+                        <div class="name">V. Barnett</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="group">
+                <div class="box dotted">
+                    <div class="title">DCOO</div>
+                    <div class="name">L. Mims</div>
+                </div>
+            </div>
+            
+            <!-- Center: Regional Executive -->
+            <div class="group">
+                <div class="box division">
+                    <div class="title">Regional Executive</div>
+                    <div class="name">C. Smith</div>
+                </div>
+                <div class="box" style="margin-top: 10px;">
+                    <div class="title">Executive Assistant</div>
+                    <div class="name">K. Jones</div>
+                    <div class="location">Jacksonville</div>
+                </div>
+            </div>
+            
+            <!-- Right side: More division roles -->
+            <div class="group">
+                <div class="box dotted">
+                    <div class="title">Div. SAF</div>
+                    <div class="name">K. Gonzales</div>
+                </div>
+            </div>
+            
+            <div class="group">
+                <div class="box dotted">
+                    <div class="title">Div. Comm. Dir</div>
+                    <div class="name">C. Edwards</div>
+                </div>
+            </div>
+            
+            <div class="group">
+                <div class="box dotted">
+                    <div class="title">DVSE</div>
+                    <div class="name">S. Taylor</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="line-down"></div>
+        
+        <!-- THIRD LEVEL: Direct Reports to C. Smith -->
+        <div class="level">
+            <div class="group">
+                <div class="box">
+                    <div class="title">Chief Dev. Officer</div>
+                    <div class="name">W. Carney</div>
+                    <div class="location">Jacksonville</div>
+                </div>
+            </div>
+            
+            <div class="group">
+                <div class="box">
+                    <div class="title">Regional Chief Operating Officer</div>
+                    <div class="name">S. Rosario</div>
+                    <div class="location">Tampa</div>
+                </div>
+            </div>
+            
+            <div class="group">
+                <div class="box">
+                    <div class="title">Service to Armed Forces/Program Director</div>
+                    <div class="name">G. Scrivens</div>
+                    <div class="location">Tampa</div>
+                </div>
+            </div>
+            
+            <div class="group">
+                <div class="box">
+                    <div class="title">RVSO</div>
+                    <div class="name">J. Walker</div>
+                    <div class="location">Jacksonville</div>
+                </div>
+            </div>
+            
+            <div class="group">
+                <div class="box">
+                    <div class="title">Comm Director</div>
+                    <div class="name">A. Bierfreund</div>
+                    <div class="location">Jacksonville</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="line-down"></div>
+        
+        <!-- FOURTH LEVEL: The complete teams under each leader -->
+        <div class="level" style="flex-wrap: wrap;">
+            
+            <!-- UNDER W. CARNEY - COMPLETE DEVELOPMENT TEAM -->
+            <div class="group" style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; background: #f9f9f9;">
+                <h3 style="margin-top: 0; font-size: 14px; color: #333;">Development Team (W. Carney)</h3>
+                
+                <!-- First row of direct reports -->
+                <div class="subgroup">
+                    <div class="box">
+                        <div class="title">Sr. RPO</div>
+                        <div class="name">A. Kennedy</div>
+                        <div class="location">Orlando</div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">RPO</div>
+                        <div class="name">M. Pharazyn</div>
+                        <div class="location">Orlando</div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">Sr. RPO</div>
+                        <div class="name">R. Resler</div>
+                        <div class="location">Tampa</div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">RPO</div>
+                        <div class="name">C. Marasco</div>
+                        <div class="location">Tampa</div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">RPO</div>
+                        <div class="name">Z. Thomas</div>
+                        <div class="location">Jacksonville</div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">RPO</div>
+                        <div class="name">H. Marchbanks</div>
+                        <div class="location">Tallahassee</div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">Dev Ops Coordinator</div>
+                        <div class="name">D. Roman</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- UNDER S. ROSARIO - ALL EXECUTIVE DIRECTORS AND THEIR TEAMS -->
+            <div class="group" style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; background: #f9f9f9;">
+                <h3 style="margin-top: 0; font-size: 14px; color: #333;">Regional Operations (S. Rosario)</h3>
+                
+                <!-- Executive Directors row -->
+                <div class="subgroup">
+                    <div class="vertical-group">
+                        <div class="box">
+                            <div class="title">Executive Director</div>
+                            <div class="name">J. Moran</div>
+                            <div class="location">Orlando</div>
+                        </div>
+                        <!-- Staff under J. Moran -->
+                        <div class="subgroup" style="margin-left: 20px;">
+                            <div class="box">
+                                <div class="title">Specialist</div>
+                                <div class="name">S. Williams</div>
+                                <div class="location">Jacksonville</div>
+                            </div>
+                            <div class="box">
+                                <div class="title">Coordinator</div>
+                                <div class="name">J. Judkins</div>
+                                <div class="location">Orlando</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="vertical-group">
+                        <div class="box">
+                            <div class="title">Executive Director</div>
+                            <div class="name">M. Brown</div>
+                            <div class="location">Tampa Bay</div>
+                        </div>
+                        <!-- Staff under M. Brown -->
+                        <div class="box" style="margin-left: 20px; margin-top: 10px;">
+                            <div class="title">Specialist</div>
+                            <div class="name">C. Funkhouser</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vertical-group">
+                        <div class="box">
+                            <div class="title">Executive Director</div>
+                            <div class="name">T. Jenkins</div>
+                            <div class="location">Pensacola</div>
+                        </div>
+                        <!-- Staff under T. Jenkins -->
+                        <div class="box" style="margin-left: 20px; margin-top: 10px;">
+                            <div class="title">Coordinator</div>
+                            <div class="name">S. Francois</div>
+                            <div class="location">Tallahassee</div>
+                        </div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">Executive Director</div>
+                        <div class="name">S. Carraway</div>
+                        <div class="location">Tallahassee</div>
+                    </div>
+                    
+                    <div class="box" style="border-style: dashed;">
+                        <div class="title">Executive Director</div>
+                        <div class="name">Vacant</div>
+                        <div class="location">Gainesville</div>
+                    </div>
+                    
+                    <div class="box" style="border-style: dashed;">
+                        <div class="title">Executive Director</div>
+                        <div class="name">Vacant</div>
+                        <div class="location">Jacksonville</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- UNDER G. SCRIVENS - SAF TEAM -->
+            <div class="group" style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; background: #f9f9f9;">
+                <h3 style="margin-top: 0; font-size: 14px; color: #333;">SAF Team (G. Scrivens)</h3>
+                
+                <div class="subgroup">
+                    <div class="box">
+                        <div class="title">SAF Manager</div>
+                        <div class="name">A. Bolton</div>
+                        <div class="location">Orlando</div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">Mobile Program Manager</div>
+                        <div class="name">L. Simms</div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">SAF Specialist</div>
+                        <div class="name">S. Youngren</div>
+                        <div class="location">Pensacola</div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">Prog. Manager</div>
+                        <div class="name">L. Tissicino</div>
+                        <div class="location">Jacksonville</div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">Mobile SAF Spec</div>
+                        <div class="name">M. Chavarria</div>
+                        <div class="location">Tampa</div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">Sr. Specialist</div>
+                        <div class="name">D. McMillian</div>
+                        <div class="location">Tallahassee</div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">Coordinator</div>
+                        <div class="name">L. Pendergrass</div>
+                        <div class="location">Daytona</div>
+                    </div>
+                    
+                    <div class="box" style="border-style: dashed;">
+                        <div class="title">Sr. Specialist</div>
+                        <div class="name">Vacant</div>
+                        <div class="location">Daytona/Orlando</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- UNDER J. WALKER - VOLUNTEER SERVICES -->
+            <div class="group" style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; background: #f9f9f9;">
+                <h3 style="margin-top: 0; font-size: 14px; color: #333;">Volunteer Services (J. Walker)</h3>
+                
+                <div style="display: flex; gap: 20px;">
+                    <!-- Supervisor VS -->
+                    <div class="vertical-group">
+                        <div class="box">
+                            <div class="title">Supervisor VS</div>
+                        </div>
+                        
+                        <div class="box">
+                            <div class="title">Sr. Specialist</div>
+                            <div class="name">D. McMillian</div>
+                            <div class="location">Tallahassee</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Direct reports -->
+                    <div class="vertical-group">
+                        <div class="box">
+                            <div class="title">Rep II</div>
+                            <div class="name">A. Lin</div>
+                            <div class="location">Orlando/Daytona</div>
+                        </div>
+                        
+                        <div class="box">
+                            <div class="title">Rep III</div>
+                            <div class="name">M. Gallagher</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                        
+                        <div class="box">
+                            <div class="title">Rep III</div>
+                            <div class="name">D. Streeter</div>
+                            <div class="location">Pensacola</div>
+                        </div>
+                        
+                        <div class="box">
+                            <div class="title">Rep II</div>
+                            <div class="name">H. Anderson</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        
+                        <div class="box" style="border-style: dashed;">
+                            <div class="title">Rep III</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Jacksonville/G'ville</div>
+                        </div>
+                        
+                        <div class="box" style="border-style: dashed;">
+                            <div class="title">Sr. Specialist</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Daytona/Orlando</div>
+                        </div>
+                        
+                        <div class="box">
+                            <div class="title">Sr. Specialist</div>
+                            <div class="name">C. Montoya</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                        
+                        <div class="box">
+                            <div class="title">Rep II</div>
+                            <div class="name">M. Smith</div>
+                            <div class="location">USVI</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- UNDER A. BIERFREUND - COMMUNICATIONS -->
+            <div class="group" style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; background: #f9f9f9;">
+                <h3 style="margin-top: 0; font-size: 14px; color: #333;">Communications (A. Bierfreund)</h3>
+                
+                <div class="subgroup">
+                    <div class="box">
+                        <div class="title">Comm Spec III</div>
+                        <div class="name">D. Lindo</div>
+                        <div class="location">Orlando</div>
+                    </div>
+                    
+                    <div class="box">
+                        <div class="title">Comm Spec. III</div>
+                        <div class="name">R. Nelson</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 15px; background: #ffffcc; border: 1px solid #ffcc00;">
+            <h3>IMPORTANT: Reading this chart</h3>
+            <ul>
+                <li>Solid lines = Direct reporting relationship</li>
+                <li>Dashed boxes/lines = Division-level support (dotted line reporting)</li>
+                <li>Names shown match exactly what's in the PDF provided</li>
+                <li>Some positions appear under multiple managers due to matrix structure</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

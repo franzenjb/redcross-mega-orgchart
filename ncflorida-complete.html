@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>North Central Florida - Complete Org Chart</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .org-chart {
+            min-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .level {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .position-box {
+            background: #27ae60;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 0 10px;
+            min-width: 140px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .position-box.executive {
+            background: #c0392b;
+            font-size: 16px;
+            min-width: 200px;
+        }
+        
+        .position-box.chief {
+            background: #2980b9;
+            min-width: 180px;
+        }
+        
+        .position-box.director {
+            background: #8e44ad;
+            min-width: 160px;
+        }
+        
+        .position-box.manager {
+            background: #16a085;
+        }
+        
+        .position-box.specialist {
+            background: #f39c12;
+            min-width: 120px;
+        }
+        
+        .position-box.vacant {
+            background: #95a5a6;
+            border: 2px dashed #7f8c8d;
+            opacity: 0.7;
+        }
+        
+        .name {
+            font-weight: bold;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        
+        .title {
+            font-size: 11px;
+            opacity: 0.95;
+        }
+        
+        .location {
+            font-size: 10px;
+            opacity: 0.85;
+            margin-top: 4px;
+        }
+        
+        /* Groups for better organization */
+        .group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 20px;
+        }
+        
+        .group-header {
+            background: #34495e;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .sub-level {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* Connection lines */
+        .connector {
+            position: absolute;
+            width: 2px;
+            background: #333;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .connector.down {
+            top: 100%;
+            height: 30px;
+        }
+        
+        .connector.up {
+            bottom: 100%;
+            height: 30px;
+        }
+        
+        .horizontal-line {
+            position: absolute;
+            height: 2px;
+            background: #333;
+            top: -30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>North Central Florida Region - Complete Organizational Chart</h1>
+        
+        <div class="org-chart">
+            <!-- Level 1: Regional Executive -->
+            <div class="level">
+                <div class="position-box executive">
+                    <div class="name">C. Smith</div>
+                    <div class="title">Regional Executive</div>
+                    <div class="location">Jacksonville</div>
+                    <div class="connector down"></div>
+                </div>
+            </div>
+            
+            <!-- Level 2: Direct Reports to Regional Executive -->
+            <div class="level">
+                <div class="position-box">
+                    <div class="name">K. Jones</div>
+                    <div class="title">Executive Assistant</div>
+                    <div class="location">Jacksonville</div>
+                </div>
+                
+                <div class="group">
+                    <div class="position-box chief">
+                        <div class="name">W. Carney</div>
+                        <div class="title">Chief Dev. Officer</div>
+                        <div class="location">Jacksonville</div>
+                        <div class="connector down"></div>
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <div class="position-box chief">
+                        <div class="name">S. Rosario</div>
+                        <div class="title">Regional Chief Operating Officer</div>
+                        <div class="location">Tampa</div>
+                        <div class="connector down"></div>
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <div class="position-box chief">
+                        <div class="name">J. Walker</div>
+                        <div class="title">RVSO</div>
+                        <div class="location">Jacksonville</div>
+                        <div class="connector down"></div>
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <div class="position-box chief">
+                        <div class="name">K. Watt</div>
+                        <div class="title">RDO (interim)</div>
+                        <div class="connector down"></div>
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <div class="position-box director">
+                        <div class="name">G. Scrivens</div>
+                        <div class="title">SAF/Program Director</div>
+                        <div class="location">Tampa</div>
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <div class="position-box director">
+                        <div class="name">A. Bierfreund</div>
+                        <div class="title">Comm Director</div>
+                        <div class="location">Jacksonville</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Level 3: Development Team under W. Carney -->
+            <div class="level">
+                <div class="group">
+                    <div class="group-header">Development Team</div>
+                    <div style="display: flex; gap: 15px;">
+                        <div class="position-box manager">
+                            <div class="name">A. Kennedy</div>
+                            <div class="title">Sr. RPO</div>
+                            <div class="location">Orlando</div>
+                        </div>
+                        <div class="position-box manager">
+                            <div class="name">R. Resler</div>
+                            <div class="title">Sr. RPO</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                        <div class="position-box manager">
+                            <div class="name">H. Marchbanks</div>
+                            <div class="title">RPO</div>
+                            <div class="location">Tallahassee</div>
+                        </div>
+                        <div class="position-box specialist">
+                            <div class="name">D. Roman</div>
+                            <div class="title">Dev Ops Coordinator</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Level 3: Executive Directors under S. Rosario -->
+            <div class="level">
+                <div class="group">
+                    <div class="group-header">Regional Operations - Executive Directors</div>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                        <div class="position-box director">
+                            <div class="name">J. Moran</div>
+                            <div class="title">Executive Director</div>
+                            <div class="location">Orlando</div>
+                        </div>
+                        <div class="position-box director">
+                            <div class="name">M. Brown</div>
+                            <div class="title">Executive Director</div>
+                            <div class="location">Tampa Bay</div>
+                        </div>
+                        <div class="position-box director">
+                            <div class="name">T. Jenkins</div>
+                            <div class="title">Executive Director</div>
+                            <div class="location">Pensacola</div>
+                        </div>
+                        <div class="position-box director">
+                            <div class="name">S. Carraway</div>
+                            <div class="title">Executive Director</div>
+                            <div class="location">Tallahassee</div>
+                        </div>
+                        <div class="position-box vacant">
+                            <div class="name">Vacant</div>
+                            <div class="title">Executive Director</div>
+                            <div class="location">Gainesville</div>
+                        </div>
+                        <div class="position-box vacant">
+                            <div class="name">Vacant</div>
+                            <div class="title">Executive Director</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Level 3: Disaster Team under K. Watt -->
+            <div class="level">
+                <div class="group">
+                    <div class="group-header">Disaster Services Team</div>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                        <div class="position-box manager">
+                            <div class="name">M. Holland</div>
+                            <div class="title">Deputy RDO</div>
+                        </div>
+                        <div class="position-box manager">
+                            <div class="name">D. McNair</div>
+                            <div class="title">Reg DWE Manager</div>
+                        </div>
+                        <div class="position-box manager">
+                            <div class="name">M. Donahue</div>
+                            <div class="title">Regional Mass Care Manager</div>
+                        </div>
+                        <div class="position-box manager">
+                            <div class="name">J. Clairday</div>
+                            <div class="title">Planning & Situational Awareness Manager</div>
+                        </div>
+                        <div class="position-box manager">
+                            <div class="name">Z. Pettis</div>
+                            <div class="title">Regional Client Care Manager</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                        <div class="position-box manager">
+                            <div class="name">A. Cullison</div>
+                            <div class="title">DAT Manager</div>
+                        </div>
+                        <div class="position-box manager">
+                            <div class="name">M. Boyd</div>
+                            <div class="title">Sr. CDPM 1-4</div>
+                        </div>
+                        <div class="position-box manager">
+                            <div class="name">J. Latalladi</div>
+                            <div class="title">Sr. CDPM 5-6</div>
+                        </div>
+                        <div class="position-box manager">
+                            <div class="name">T. Beazer</div>
+                            <div class="title">Sr. CDPM</div>
+                            <div class="location">USVI</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Level 3: Volunteer Services under J. Walker -->
+            <div class="level">
+                <div class="group">
+                    <div class="group-header">Volunteer Services</div>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                        <div class="position-box specialist">
+                            <div class="name">S. Williams</div>
+                            <div class="title">Specialist</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="position-box specialist">
+                            <div class="name">C. Funkhouser</div>
+                            <div class="title">Specialist</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                        <div class="position-box specialist">
+                            <div class="name">A. Lin</div>
+                            <div class="title">Rep II</div>
+                            <div class="location">Orlando/Daytona</div>
+                        </div>
+                        <div class="position-box specialist">
+                            <div class="name">M. Gallagher</div>
+                            <div class="title">Rep III</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                        <div class="position-box vacant">
+                            <div class="name">Vacant</div>
+                            <div class="title">Rep III</div>
+                            <div class="location">Jacksonville/G'ville</div>
+                        </div>
+                        <div class="position-box specialist">
+                            <div class="name">H. Anderson</div>
+                            <div class="title">Rep II</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 20px; background: #ecf0f1; border-radius: 6px;">
+            <h3 style="margin-bottom: 10px;">Legend</h3>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <span class="position-box executive" style="padding: 4px 8px; display: inline-block;">Regional Executive</span>
+                <span class="position-box chief" style="padding: 4px 8px; display: inline-block;">Chief/Senior Officer</span>
+                <span class="position-box director" style="padding: 4px 8px; display: inline-block;">Executive Director</span>
+                <span class="position-box manager" style="padding: 4px 8px; display: inline-block;">Manager</span>
+                <span class="position-box specialist" style="padding: 4px 8px; display: inline-block;">Specialist/Coordinator</span>
+                <span class="position-box vacant" style="padding: 4px 8px; display: inline-block;">Vacant Position</span>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #fff5e6; border-left: 4px solid #ff9800; border-radius: 4px;">
+            <strong>Key Executive Directors:</strong>
+            <ul style="margin-top: 10px; margin-left: 20px;">
+                <li><strong>J. Moran</strong> - Executive Director, Orlando</li>
+                <li><strong>M. Brown</strong> - Executive Director, Tampa Bay</li>
+                <li><strong>T. Jenkins</strong> - Executive Director, Pensacola</li>
+                <li><strong>S. Carraway</strong> - Executive Director, Tallahassee</li>
+                <li>Plus 2 vacant Executive Director positions (Gainesville & Jacksonville)</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

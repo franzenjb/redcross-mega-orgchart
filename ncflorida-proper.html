@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>North/Central Florida - Proper Org Chart</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {packages:["orgchart"]});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Name');
+            data.addColumn('string', 'Manager');
+            data.addColumn('string', 'ToolTip');
+
+            // For v2, set the formatted value of the first column
+            var dataArray = [
+                // Top Level - Division VP
+                [{v:'atrefethen', f:'Division VP<br/>A. Trefethen'}, '', 'Division Vice President'],
+                
+                // Regional Executive level
+                [{v:'csmith', f:'Regional Executive<br/>C. Smith<br/>Jacksonville'}, 'atrefethen', 'Regional Executive'],
+                [{v:'kjones', f:'Executive Assistant<br/>K. Jones<br/>Jacksonville'}, 'csmith', 'Executive Assistant'],
+                
+                // Division-level roles (dotted lines - we'll handle this with styling)
+                [{v:'ddixon', f:'DFVP<br/>D. Dixon'}, 'atrefethen', 'Division Fundraising VP'],
+                [{v:'vbarnett', f:'Director of Division<br/>Fundraising<br/>V. Barnett'}, 'ddixon', 'Director of Division Fundraising'],
+                [{v:'lmims', f:'DCOO<br/>L. Mims'}, 'atrefethen', 'Division COO'],
+                [{v:'kgonzales', f:'Div. SAF<br/>K. Gonzales'}, 'atrefethen', 'Division SAF'],
+                [{v:'cedwards', f:'Div. Comm. Dir<br/>C. Edwards'}, 'atrefethen', 'Division Communications Director'],
+                [{v:'staylor', f:'DVSE<br/>S. Taylor'}, 'atrefethen', 'Division VSE'],
+                
+                // Direct reports to C. Smith
+                [{v:'wcarney', f:'Chief Dev. Officer<br/>W. Carney<br/>Jacksonville'}, 'csmith', 'Chief Development Officer'],
+                [{v:'srosario', f:'Regional Chief<br/>Operating Officer<br/>S. Rosario<br/>Tampa'}, 'csmith', 'Regional COO'],
+                [{v:'jwalker', f:'RVSO<br/>J. Walker<br/>Jacksonville'}, 'csmith', 'Regional Volunteer Services Officer'],
+                [{v:'kwatt', f:'RDO (interim)<br/>K. Watt'}, 'csmith', 'Regional Disaster Officer'],
+                [{v:'gscrivens', f:'SAF/Program Director<br/>G. Scrivens<br/>Tampa'}, 'kgonzales', 'Service to Armed Forces Director'],
+                [{v:'abierfreund', f:'Comm Director<br/>A. Bierfreund<br/>Jacksonville'}, 'cedwards', 'Communications Director'],
+                
+                // Development team under W. Carney
+                [{v:'akennedy', f:'Sr. RPO<br/>A. Kennedy<br/>Orlando'}, 'wcarney', 'Senior RPO'],
+                [{v:'rresler', f:'Sr. RPO<br/>R. Resler<br/>Tampa'}, 'wcarney', 'Senior RPO'],
+                [{v:'hmarchbanks', f:'RPO<br/>H. Marchbanks<br/>Tallahassee'}, 'wcarney', 'RPO'],
+                [{v:'droman', f:'Dev Ops Coordinator<br/>D. Roman'}, 'wcarney', 'Development Operations Coordinator'],
+                
+                // Under A. Kennedy
+                [{v:'mpharazyn', f:'RPO<br/>M. Pharazyn<br/>Orlando'}, 'akennedy', 'RPO'],
+                
+                // Under R. Resler
+                [{v:'cmarasco', f:'RPO<br/>C. Marasco<br/>Tampa'}, 'rresler', 'RPO'],
+                [{v:'zthomas', f:'RPO<br/>Z. Thomas<br/>Jacksonville'}, 'rresler', 'RPO'],
+                
+                // Executive Directors under S. Rosario
+                [{v:'jmoran', f:'Executive Director<br/>J. Moran<br/>Orlando'}, 'srosario', 'Executive Director - Orlando'],
+                [{v:'mbrown', f:'Executive Director<br/>M. Brown<br/>Tampa Bay'}, 'srosario', 'Executive Director - Tampa Bay'],
+                [{v:'tjenkins', f:'Executive Director<br/>T. Jenkins<br/>Pensacola'}, 'srosario', 'Executive Director - Pensacola'],
+                [{v:'scarraway', f:'Executive Director<br/>S. Carraway<br/>Tallahassee'}, 'srosario', 'Executive Director - Tallahassee'],
+                [{v:'vacant1', f:'Executive Director<br/>Vacant<br/>Gainesville'}, 'srosario', 'Vacant - Gainesville'],
+                [{v:'vacant2', f:'Executive Director<br/>Vacant<br/>Jacksonville'}, 'srosario', 'Vacant - Jacksonville'],
+                
+                // Staff under Executive Directors
+                [{v:'dlindo', f:'Comm Spec III<br/>D. Lindo<br/>Orlando'}, 'jmoran', 'Communications Specialist III'],
+                [{v:'jjudkins', f:'Coordinator<br/>J. Judkins<br/>Orlando'}, 'jmoran', 'Coordinator'],
+                [{v:'cmontoya', f:'Sr. Specialist<br/>C. Montoya<br/>Tampa'}, 'mbrown', 'Senior Specialist'],
+                [{v:'dstreeter', f:'Rep III<br/>D. Streeter<br/>Pensacola'}, 'tjenkins', 'Representative III'],
+                [{v:'sfrancois', f:'Coordinator<br/>S. Francois<br/>Tallahassee'}, 'scarraway', 'Coordinator'],
+                [{v:'vwilliams', f:'Sr. Specialist<br/>V. Williams<br/>Tallahassee'}, 'scarraway', 'Senior Specialist'],
+                
+                // Volunteer Services team under J. Walker
+                [{v:'swilliams', f:'Specialist<br/>S. Williams<br/>Jacksonville'}, 'jwalker', 'Specialist'],
+                [{v:'cfunkhouser', f:'Specialist<br/>C. Funkhouser<br/>Tampa'}, 'jwalker', 'Specialist'],
+                [{v:'alin', f:'Rep II<br/>A. Lin<br/>Orlando/Daytona'}, 'jwalker', 'Representative II'],
+                [{v:'mgallagher', f:'Rep III<br/>M. Gallagher<br/>Tampa'}, 'jwalker', 'Representative III'],
+                [{v:'handerson', f:'Rep II<br/>H. Anderson<br/>Jacksonville'}, 'jwalker', 'Representative II'],
+                [{v:'vacant3', f:'Rep III<br/>Vacant<br/>Jacksonville/G\'ville'}, 'jwalker', 'Vacant'],
+                
+                // Service to Armed Forces under G. Scrivens
+                [{v:'abolton', f:'SAF Manager<br/>A. Bolton<br/>Orlando'}, 'gscrivens', 'SAF Manager'],
+                [{v:'ltissicino', f:'Prog. Manager<br/>L. Tissicino<br/>Jacksonville'}, 'gscrivens', 'Program Manager'],
+                [{v:'lsimms', f:'Mobile Program<br/>Manager<br/>L. Simms'}, 'gscrivens', 'Mobile Program Manager'],
+                [{v:'mchavarria', f:'Mobile SAF Spec<br/>M. Chavarria<br/>Tampa'}, 'gscrivens', 'Mobile SAF Specialist'],
+                [{v:'syoungren', f:'SAF Specialist<br/>S. Youngren<br/>Pensacola'}, 'gscrivens', 'SAF Specialist'],
+                [{v:'dmcmillian', f:'Sr. Specialist<br/>D. McMillian<br/>Tallahassee'}, 'gscrivens', 'Senior Specialist'],
+                [{v:'lpendergrass', f:'Coordinator<br/>L. Pendergrass<br/>Daytona'}, 'gscrivens', 'Coordinator'],
+                
+                // Communications under A. Bierfreund
+                [{v:'rnelson', f:'Comm Spec III<br/>R. Nelson'}, 'abierfreund', 'Communications Specialist III'],
+                [{v:'msmith', f:'Rep II<br/>M. Smith<br/>USVI'}, 'abierfreund', 'Representative II - USVI']
+            ];
+
+            data.addRows(dataArray);
+            
+            var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+            
+            // Custom options for better appearance
+            var options = {
+                allowHtml: true,
+                size: 'medium',
+                nodeClass: 'nodeClass',
+                selectedNodeClass: 'selectedNodeClass'
+            };
+            
+            chart.draw(data, options);
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        #chart_div {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: auto;
+        }
+        
+        .google-visualization-orgchart-node {
+            border: 2px solid #0088cc;
+            border-radius: 5px;
+            box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 2px;
+            background: linear-gradient(to bottom, #ffffff, #f3f3f3);
+        }
+        
+        .google-visualization-orgchart-node-medium {
+            font-size: 11px;
+            padding: 5px;
+        }
+        
+        .nodeClass {
+            font-weight: bold;
+        }
+        
+        .selectedNodeClass {
+            background-color: #ffeb3b;
+        }
+        
+        .instructions {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0088cc;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            color: #0088cc;
+        }
+        
+        .instructions ul {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+    </style>
+</head>
+<body>
+    <h1>North/Central Florida Regional Organization</h1>
+    
+    <div class="instructions">
+        <h3>Structure Overview</h3>
+        <ul>
+            <li><strong>Division VP (A. Trefethen)</strong> oversees the entire SE & Caribbean Division</li>
+            <li><strong>Regional Executive (C. Smith)</strong> leads North/Central Florida region</li>
+            <li><strong>Division-level roles</strong> (D. Dixon, L. Mims, etc.) serve across all regions</li>
+            <li><strong>Direct reports to C. Smith:</strong>
+                <ul>
+                    <li>W. Carney - Chief Development Officer</li>
+                    <li>S. Rosario - Regional Chief Operating Officer (oversees Executive Directors)</li>
+                    <li>J. Walker - Regional Volunteer Services Officer</li>
+                    <li>K. Watt - Regional Disaster Officer (interim)</li>
+                </ul>
+            </li>
+            <li><strong>Executive Directors under S. Rosario:</strong> J. Moran (Orlando), M. Brown (Tampa Bay), T. Jenkins (Pensacola), S. Carraway (Tallahassee)</li>
+        </ul>
+    </div>
+    
+    <div id="chart_div" style="width: 100%; height: 800px;"></div>
+</body>
+</html>

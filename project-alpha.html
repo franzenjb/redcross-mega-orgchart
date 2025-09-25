@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Alpha - Dynamic Org Chart</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #d32f2f;
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            background: #1976d2;
+        }
+        
+        .btn.add { background: #4caf50; }
+        .btn.add:hover { background: #45a049; }
+        
+        .btn.delete { background: #f44336; }
+        .btn.delete:hover { background: #d32f2f; }
+        
+        .btn.export { background: #ff9800; }
+        .btn.export:hover { background: #f57c00; }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .org-chart {
+            min-height: 400px;
+            position: relative;
+        }
+        
+        .node {
+            position: absolute;
+            border: 2px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            background: white;
+            min-width: 140px;
+            cursor: move;
+            transition: all 0.3s;
+        }
+        
+        .node:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: scale(1.02);
+        }
+        
+        .node.selected {
+            border-color: #2196f3;
+            box-shadow: 0 0 10px #2196f3;
+        }
+        
+        .node .title {
+            font-weight: bold;
+            font-size: 11px;
+            margin-bottom: 3px;
+        }
+        
+        .node .name {
+            font-size: 13px;
+            font-weight: bold;
+            margin: 3px 0;
+        }
+        
+        .node .location {
+            font-size: 10px;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .node .actions {
+            position: absolute;
+            top: -25px;
+            right: 0;
+            display: none;
+        }
+        
+        .node.selected .actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .mini-btn {
+            width: 20px;
+            height: 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            color: white;
+        }
+        
+        .mini-btn.edit { background: #2196f3; }
+        .mini-btn.delete { background: #f44336; }
+        .mini-btn.add-child { background: #4caf50; }
+        
+        .connection {
+            position: absolute;
+            border-left: 2px solid #333;
+            border-bottom: 2px solid #333;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+        }
+        
+        .modal-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 10px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+        
+        /* Database status */
+        .db-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .db-status.connected {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .db-status.offline {
+            background: #ff9800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="db-status offline" id="dbStatus">Local Storage Mode</div>
+        <h1>PROJECT ALPHA - Dynamic Org Chart Builder</h1>
+        <p style="text-align: center; color: #666; margin-top: 10px;">
+            Full CRUD Operations • Drag & Drop • Auto-Save • Import/Export
+        </p>
+    </div>
+    
+    <div class="controls">
+        <button class="btn add" onclick="addNewNode()">+ Add Box</button>
+        <button class="btn" onclick="toggleEditMode()">Edit Mode</button>
+        <button class="btn delete" onclick="deleteSelected()">Delete Selected</button>
+        <button class="btn export" onclick="exportData()">Export JSON</button>
+        <button class="btn" onclick="importData()">Import JSON</button>
+        <button class="btn" onclick="saveToDatabase()">Save to Database</button>
+        <input type="file" id="importFile" style="display: none;" accept=".json" onchange="handleImport(event)">
+    </div>
+    
+    <div class="container">
+        <div class="org-chart" id="orgChart">
+            <!-- Dynamic content will be rendered here -->
+        </div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">Edit Position</div>
+            <div class="form-group">
+                <label>Title:</label>
+                <input type="text" id="editTitle" placeholder="e.g., Regional Executive">
+            </div>
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" id="editName" placeholder="e.g., John Smith">
+            </div>
+            <div class="form-group">
+                <label>Location:</label>
+                <input type="text" id="editLocation" placeholder="e.g., Atlanta">
+            </div>
+            <div class="form-group">
+                <label>Level:</label>
+                <select id="editLevel">
+                    <option value="chief">Chief/Executive</option>
+                    <option value="director">Director</option>
+                    <option value="manager">Manager</option>
+                    <option value="specialist">Specialist</option>
+                    <option value="coordinator">Coordinator</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" onclick="saveEdit()">Save</button>
+                <button class="btn" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Data structure
+        let orgData = {
+            nodes: [],
+            connections: []
+        };
+        
+        let selectedNode = null;
+        let editMode = false;
+        let nodeIdCounter = 1;
+        
+        // Initialize with sample data
+        function initializeSampleData() {
+            orgData = {
+                nodes: [
+                    {
+                        id: 'node1',
+                        title: 'Regional Chief Executive',
+                        name: 'Sample Executive',
+                        location: 'Headquarters',
+                        level: 'chief',
+                        x: 500,
+                        y: 50,
+                        parentId: null
+                    },
+                    {
+                        id: 'node2',
+                        title: 'Chief Development Officer',
+                        name: 'Sample CDO',
+                        location: 'Headquarters',
+                        level: 'director',
+                        x: 300,
+                        y: 150,
+                        parentId: 'node1'
+                    },
+                    {
+                        id: 'node3',
+                        title: 'Regional Disaster Officer',
+                        name: 'Sample RDO',
+                        location: 'Field Office',
+                        level: 'director',
+                        x: 700,
+                        y: 150,
+                        parentId: 'node1'
+                    }
+                ],
+                connections: [
+                    { from: 'node1', to: 'node2' },
+                    { from: 'node1', to: 'node3' }
+                ]
+            };
+            nodeIdCounter = 4;
+            renderOrgChart();
+        }
+        
+        // Render the org chart
+        function renderOrgChart() {
+            const chart = document.getElementById('orgChart');
+            chart.innerHTML = '';
+            
+            // Render connections first (so they appear behind nodes)
+            orgData.connections.forEach(conn => {
+                const fromNode = orgData.nodes.find(n => n.id === conn.from);
+                const toNode = orgData.nodes.find(n => n.id === conn.to);
+                if (fromNode && toNode) {
+                    drawConnection(fromNode, toNode);
+                }
+            });
+            
+            // Render nodes
+            orgData.nodes.forEach(node => {
+                const nodeEl = createNodeElement(node);
+                chart.appendChild(nodeEl);
+            });
+            
+            saveToLocalStorage();
+        }
+        
+        // Create node element
+        function createNodeElement(node) {
+            const div = document.createElement('div');
+            div.className = 'node ' + node.level;
+            div.id = node.id;
+            div.style.left = node.x + 'px';
+            div.style.top = node.y + 'px';
+            
+            // Set background color based on level
+            const colors = {
+                chief: '#1a472a',
+                director: '#2e7d32',
+                manager: '#4caf50',
+                specialist: '#81c784',
+                coordinator: '#a5d6a7'
+            };
+            div.style.background = colors[node.level] || 'white';
+            div.style.color = ['chief', 'director', 'manager'].includes(node.level) ? 'white' : 'black';
+            
+            div.innerHTML = `
+                <div class="actions">
+                    <button class="mini-btn edit" onclick="editNode('${node.id}')">✏️</button>
+                    <button class="mini-btn add-child" onclick="addChildNode('${node.id}')">+</button>
+                    <button class="mini-btn delete" onclick="deleteNode('${node.id}')">×</button>
+                </div>
+                <div class="title">${node.title}</div>
+                <div class="name">${node.name}</div>
+                <div class="location">${node.location}</div>
+            `;
+            
+            // Make draggable
+            div.onmousedown = (e) => startDrag(e, node);
+            div.onclick = () => selectNode(node.id);
+            
+            return div;
+        }
+        
+        // Draw connection line
+        function drawConnection(fromNode, toNode) {
+            const chart = document.getElementById('orgChart');
+            const line = document.createElement('div');
+            line.className = 'connection';
+            
+            const x1 = fromNode.x + 70; // Center of node
+            const y1 = fromNode.y + 40; // Bottom of node
+            const x2 = toNode.x + 70;
+            const y2 = toNode.y;
+            
+            // Simple L-shaped connection
+            line.style.left = Math.min(x1, x2) + 'px';
+            line.style.top = y1 + 'px';
+            line.style.width = Math.abs(x2 - x1) + 'px';
+            line.style.height = (y2 - y1) + 'px';
+            
+            chart.appendChild(line);
+        }
+        
+        // Drag functionality
+        let dragNode = null;
+        let dragOffset = { x: 0, y: 0 };
+        
+        function startDrag(e, node) {
+            if (!editMode) return;
+            dragNode = node;
+            dragOffset.x = e.clientX - node.x;
+            dragOffset.y = e.clientY - node.y;
+            
+            document.onmousemove = doDrag;
+            document.onmouseup = endDrag;
+            e.preventDefault();
+        }
+        
+        function doDrag(e) {
+            if (!dragNode) return;
+            dragNode.x = e.clientX - dragOffset.x;
+            dragNode.y = e.clientY - dragOffset.y;
+            renderOrgChart();
+        }
+        
+        function endDrag() {
+            dragNode = null;
+            document.onmousemove = null;
+            document.onmouseup = null;
+        }
+        
+        // Node selection
+        function selectNode(nodeId) {
+            document.querySelectorAll('.node').forEach(n => n.classList.remove('selected'));
+            document.getElementById(nodeId).classList.add('selected');
+            selectedNode = nodeId;
+        }
+        
+        // Add new node
+        function addNewNode() {
+            const newNode = {
+                id: 'node' + nodeIdCounter++,
+                title: 'New Position',
+                name: 'New Person',
+                location: 'Location',
+                level: 'specialist',
+                x: 100 + Math.random() * 400,
+                y: 100 + Math.random() * 200,
+                parentId: null
+            };
+            orgData.nodes.push(newNode);
+            renderOrgChart();
+        }
+        
+        // Add child node
+        function addChildNode(parentId) {
+            const parent = orgData.nodes.find(n => n.id === parentId);
+            const newNode = {
+                id: 'node' + nodeIdCounter++,
+                title: 'New Position',
+                name: 'New Person',
+                location: parent.location,
+                level: 'specialist',
+                x: parent.x + 50,
+                y: parent.y + 100,
+                parentId: parentId
+            };
+            orgData.nodes.push(newNode);
+            orgData.connections.push({ from: parentId, to: newNode.id });
+            renderOrgChart();
+        }
+        
+        // Edit node
+        function editNode(nodeId) {
+            const node = orgData.nodes.find(n => n.id === nodeId);
+            document.getElementById('editTitle').value = node.title;
+            document.getElementById('editName').value = node.name;
+            document.getElementById('editLocation').value = node.location;
+            document.getElementById('editLevel').value = node.level;
+            selectedNode = nodeId;
+            document.getElementById('editModal').classList.add('active');
+        }
+        
+        function saveEdit() {
+            const node = orgData.nodes.find(n => n.id === selectedNode);
+            node.title = document.getElementById('editTitle').value;
+            node.name = document.getElementById('editName').value;
+            node.location = document.getElementById('editLocation').value;
+            node.level = document.getElementById('editLevel').value;
+            closeModal();
+            renderOrgChart();
+        }
+        
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('active');
+        }
+        
+        // Delete node
+        function deleteNode(nodeId) {
+            if (confirm('Delete this position and all its connections?')) {
+                orgData.nodes = orgData.nodes.filter(n => n.id !== nodeId);
+                orgData.connections = orgData.connections.filter(
+                    c => c.from !== nodeId && c.to !== nodeId
+                );
+                renderOrgChart();
+            }
+        }
+        
+        function deleteSelected() {
+            if (selectedNode) {
+                deleteNode(selectedNode);
+                selectedNode = null;
+            } else {
+                alert('Please select a box first');
+            }
+        }
+        
+        // Toggle edit mode
+        function toggleEditMode() {
+            editMode = !editMode;
+            const chart = document.getElementById('orgChart');
+            chart.style.background = editMode ? '#fffde7' : 'white';
+            if (!editMode) {
+                document.querySelectorAll('.node').forEach(n => n.classList.remove('selected'));
+            }
+        }
+        
+        // Import/Export
+        function exportData() {
+            const dataStr = JSON.stringify(orgData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'org-chart-data.json';
+            a.click();
+        }
+        
+        function importData() {
+            document.getElementById('importFile').click();
+        }
+        
+        function handleImport(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        orgData = JSON.parse(e.target.result);
+                        renderOrgChart();
+                        alert('Data imported successfully!');
+                    } catch (err) {
+                        alert('Error importing file: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+        
+        // Local Storage
+        function saveToLocalStorage() {
+            localStorage.setItem('orgChartData', JSON.stringify(orgData));
+        }
+        
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('orgChartData');
+            if (saved) {
+                try {
+                    orgData = JSON.parse(saved);
+                    renderOrgChart();
+                } catch (err) {
+                    initializeSampleData();
+                }
+            } else {
+                initializeSampleData();
+            }
+        }
+        
+        // Mock database save
+        function saveToDatabase() {
+            // In a real implementation, this would make an API call
+            alert('Saving to database... (In production, this would sync with a real database)');
+            document.getElementById('dbStatus').textContent = 'Saved to Local Storage';
+            document.getElementById('dbStatus').className = 'db-status connected';
+            setTimeout(() => {
+                document.getElementById('dbStatus').textContent = 'Local Storage Mode';
+                document.getElementById('dbStatus').className = 'db-status offline';
+            }, 3000);
+        }
+        
+        // Initialize on load
+        window.onload = () => {
+            loadFromLocalStorage();
+        };
+    </script>
+</body>
+</html>

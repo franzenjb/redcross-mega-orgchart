@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>North/Central Florida - Organization Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true, theme:'default', flowchart:{curve:'basis'}});</script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .mermaid {
+            text-align: center;
+        }
+        /* Custom node styling */
+        .node rect {
+            stroke-width: 2px !important;
+        }
+        .node.division rect {
+            fill: #ff6b6b !important;
+            stroke: #c92a2a !important;
+        }
+        .node.executive rect {
+            fill: #4dabf7 !important;
+            stroke: #1864ab !important;
+        }
+        .node.chief rect {
+            fill: #69db7c !important;
+            stroke: #2b8a3e !important;
+        }
+        .node.director rect {
+            fill: #9775fa !important;
+            stroke: #5f3dc4 !important;
+        }
+        .node.manager rect {
+            fill: #ffd43b !important;
+            stroke: #e67700 !important;
+        }
+        .node text {
+            fill: white !important;
+            font-size: 11px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>North/Central Florida Regional Organization</h1>
+        
+        <div class="mermaid">
+graph TD
+    %% Division Level
+    DVP[Division VP<br/>A. Trefethen]:::division
+    
+    %% Regional Executive Level
+    DVP --> RE[Regional Executive<br/>C. Smith<br/>Jacksonville]:::executive
+    DVP -.-> DFVP[DFVP<br/>D. Dixon]:::dotted
+    DVP -.-> DFR[Dir. Division Fundraising<br/>V. Barnett]:::dotted
+    DVP -.-> DCOO[DCOO<br/>L. Mims]:::dotted
+    DVP -.-> DSAF[Div. SAF<br/>K. Gonzales]:::dotted
+    DVP -.-> DCD[Div. Comm. Dir<br/>C. Edwards]:::dotted
+    DVP -.-> DVSE[DVSE<br/>S. Taylor]:::dotted
+    
+    RE --> EA[Executive Assistant<br/>K. Jones<br/>Jacksonville]
+    
+    %% Direct Reports to Regional Executive
+    RE --> CDO[Chief Dev. Officer<br/>W. Carney<br/>Jacksonville]:::chief
+    RE --> RCOO[Regional Chief Operating Officer<br/>S. Rosario<br/>Tampa]:::chief
+    RE --> RVSO[RVSO<br/>J. Walker<br/>Jacksonville]:::chief
+    RE --> RDO[RDO interim<br/>K. Watt]:::chief
+    DSAF -.-> SAF[SAF/Program Director<br/>G. Scrivens<br/>Tampa]:::director
+    DCD -.-> COMM[Comm Director<br/>A. Bierfreund<br/>Jacksonville]:::director
+    
+    %% Development Team under W. Carney
+    CDO --> AK[Sr. RPO<br/>A. Kennedy<br/>Orlando]:::manager
+    AK --> MP[RPO<br/>M. Pharazyn<br/>Orlando]
+    CDO --> RR[Sr. RPO<br/>R. Resler<br/>Tampa]:::manager
+    RR --> CM[RPO<br/>C. Marasco<br/>Tampa]
+    RR --> ZT[RPO<br/>Z. Thomas<br/>Jacksonville]
+    CDO --> HM[RPO<br/>H. Marchbanks<br/>Tallahassee]
+    CDO --> DR[Dev Ops Coordinator<br/>D. Roman]
+    
+    %% Executive Directors under S. Rosario
+    RCOO --> JM[Executive Director<br/>J. Moran<br/>Orlando]:::director
+    RCOO --> MB[Executive Director<br/>M. Brown<br/>Tampa Bay]:::director
+    RCOO --> TJ[Executive Director<br/>T. Jenkins<br/>Pensacola]:::director
+    RCOO --> SC[Executive Director<br/>S. Carraway<br/>Tallahassee]:::director
+    RCOO --> V1[Executive Director<br/>Vacant<br/>Gainesville]:::vacant
+    RCOO --> V2[Executive Director<br/>Vacant<br/>Jacksonville]:::vacant
+    
+    %% Staff under Executive Directors
+    JM --> SW[Specialist<br/>S. Williams<br/>Jacksonville]
+    JM --> JJ[Coordinator<br/>J. Judkins<br/>Orlando]
+    MB --> CF[Specialist<br/>C. Funkhouser<br/>Tampa]
+    TJ --> SF[Coordinator<br/>S. Francois<br/>Tallahassee]
+    SC --> CM2[Sr. Specialist<br/>C. Montoya<br/>Tampa]
+    
+    %% Volunteer Services under J. Walker
+    RVSO --> SVS[Supervisor VS]
+    SVS --> DM[Sr. Specialist<br/>D. McMillian<br/>Tallahassee]
+    RVSO --> AL[Rep II<br/>A. Lin<br/>Orlando/Daytona]
+    RVSO --> MG[Rep III<br/>M. Gallagher<br/>Tampa]
+    RVSO --> HA[Rep II<br/>H. Anderson<br/>Jacksonville]
+    RVSO --> V3[Rep III<br/>Vacant<br/>Jacksonville/Gville]:::vacant
+    
+    %% SAF Team under G. Scrivens
+    SAF --> AB[SAF Manager<br/>A. Bolton<br/>Orlando]
+    SAF --> LS[Mobile Program Manager<br/>L. Simms]
+    SAF --> SY[SAF Specialist<br/>S. Youngren<br/>Pensacola]
+    SAF --> LT[Prog. Manager<br/>L. Tissicino<br/>Jacksonville]
+    SAF --> MCH[Mobile SAF Spec<br/>M. Chavarria<br/>Tampa]
+    SAF --> LP[Coordinator<br/>L. Pendergrass<br/>Daytona]
+    
+    %% Communications under A. Bierfreund
+    COMM --> DL[Comm Spec III<br/>D. Lindo<br/>Orlando]
+    COMM --> RN[Comm Spec. III<br/>R. Nelson]
+    
+    %% Style definitions
+    classDef division fill:#e74c3c,stroke:#c0392b,stroke-width:3px,color:#fff
+    classDef executive fill:#3498db,stroke:#2980b9,stroke-width:3px,color:#fff
+    classDef chief fill:#27ae60,stroke:#229954,stroke-width:2px,color:#fff
+    classDef director fill:#8e44ad,stroke:#7d3c98,stroke-width:2px,color:#fff
+    classDef manager fill:#f39c12,stroke:#e67e22,stroke-width:2px,color:#fff
+    classDef dotted fill:#95a5a6,stroke:#7f8c8d,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
+    classDef vacant fill:#ecf0f1,stroke:#95a5a6,stroke-width:2px,stroke-dasharray: 5 5,color:#7f8c8d
+        </div>
+    </div>
+</body>
+</html>
