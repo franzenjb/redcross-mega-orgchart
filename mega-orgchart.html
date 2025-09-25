@@ -344,19 +344,23 @@
             border-radius: 4px;
             margin-bottom: 15px;
             font-size: 12px;
+            color: #333;  /* Ensure text is dark */
         }
         
         .legend-item {
             display: flex;
             align-items: center;
             gap: 5px;
+            color: #333;  /* Dark text color */
+            font-weight: 500;
         }
         
         .legend-color {
             width: 20px;
             height: 20px;
             border-radius: 3px;
-            border: 1px solid #ddd;
+            border: 1px solid #999;  /* Darker border for better visibility */
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);  /* Add slight shadow for depth */
         }
         
         /* Print Styles */
@@ -582,35 +586,35 @@
         <div class="region-legend">
             <div class="legend-item">
                 <div class="legend-color" style="background: linear-gradient(to bottom, #fff5f5, #ffe5e5); border-left: 4px solid #c41230;"></div>
-                <span>Alabama/Mississippi</span>
+                <span style="color: #333;">Alabama/Mississippi</span>
             </div>
             <div class="legend-item">
                 <div class="legend-color" style="background: linear-gradient(to bottom, #f0f8ff, #e6f3ff); border-left: 4px solid #0066cc;"></div>
-                <span>Florida N/C</span>
+                <span style="color: #333;">Florida N/C</span>
             </div>
             <div class="legend-item">
                 <div class="legend-color" style="background: linear-gradient(to bottom, #fff9e6, #fff3cc); border-left: 4px solid #ff9900;"></div>
-                <span>Florida South</span>
+                <span style="color: #333;">Florida South</span>
             </div>
             <div class="legend-item">
                 <div class="legend-color" style="background: linear-gradient(to bottom, #f5fff5, #e5ffe5); border-left: 4px solid #228b22;"></div>
-                <span>Georgia</span>
+                <span style="color: #333;">Georgia</span>
             </div>
             <div class="legend-item">
                 <div class="legend-color" style="background: linear-gradient(to bottom, #f5f5ff, #e5e5ff); border-left: 4px solid #4b0082;"></div>
-                <span>North Carolina</span>
+                <span style="color: #333;">North Carolina</span>
             </div>
             <div class="legend-item">
                 <div class="legend-color" style="background: linear-gradient(to bottom, #ffefff, #ffe0ff); border-left: 4px solid #cc00cc;"></div>
-                <span>Puerto Rico</span>
+                <span style="color: #333;">Puerto Rico</span>
             </div>
             <div class="legend-item">
                 <div class="legend-color" style="background: linear-gradient(to bottom, #fff0f5, #ffe0eb); border-left: 4px solid #dc143c;"></div>
-                <span>South Carolina</span>
+                <span style="color: #333;">South Carolina</span>
             </div>
             <div class="legend-item">
                 <div class="legend-color" style="background: linear-gradient(to bottom, #ffefd5, #ffdead); border-left: 4px solid #d2691e;"></div>
-                <span>Tennessee</span>
+                <span style="color: #333;">Tennessee</span>
             </div>
         </div>
     </div>
