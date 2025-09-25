@@ -35,11 +35,13 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            color: white;
         }
         
         .header .subtitle {
             font-size: 14px;
             opacity: 0.9;
+            color: white;
         }
         
         .main-container {
@@ -351,8 +353,12 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            color: #333;  /* Dark text color */
+            color: #333 !important;  /* Force dark text color */
             font-weight: 500;
+        }
+        
+        .legend-item span {
+            color: #333 !important;  /* Force dark text for spans */
         }
         
         .legend-color {
