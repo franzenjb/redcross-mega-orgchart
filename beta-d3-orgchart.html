@@ -411,26 +411,60 @@
         
         // Load data
         function loadData() {
+            console.log('Loading data...');
             if (typeof completeOrgData !== 'undefined') {
-                const flatData = convertToFlatData(completeOrgData, null, null, '');
+                console.log('Found completeOrgData');
+                currentRegion = 'alabama-mississippi'; // Start with a specific region
+                const flatData = convertToFlatData(completeOrgData, null, currentRegion, '');
                 currentData = flatData;
                 console.log('Loaded data:', currentData.length, 'nodes');
+                console.log('Sample data:', currentData.slice(0, 5));
+                
+                // Update dropdown to match
+                document.getElementById('regionSelect').value = currentRegion;
+                
                 updateChart();
             } else {
                 console.error('completeOrgData not found');
+                // Try loading it directly
+                const script = document.createElement('script');
+                script.src = 'complete-org-data.js';
+                script.onload = () => {
+                    console.log('Script loaded, retrying...');
+                    setTimeout(loadData, 100);
+                };
+                document.head.appendChild(script);
             }
         }
         
         // Update chart with filtered data
         function updateChart() {
-            // Regenerate data for current region selection
-            const flatData = convertToFlatData(completeOrgData, null, currentRegion, '');
-            currentData = flatData;
-            
-            console.log(`Updating chart for region: ${currentRegion}, nodes: ${currentData.length}`);
-            
-            if (chart && currentData.length > 0) {
-                chart.data(currentData).render().fit();
+            try {
+                // Regenerate data for current region selection
+                const flatData = convertToFlatData(completeOrgData, null, currentRegion, '');
+                currentData = flatData;
+                
+                console.log(`Updating chart for region: ${currentRegion}, nodes: ${currentData.length}`);
+                
+                if (chart && currentData.length > 0) {
+                    console.log('Rendering chart...');
+                    chart.data(currentData).render();
+                    setTimeout(() => {
+                        chart.fit();
+                        console.log('Chart rendered and fitted');
+                    }, 500);
+                } else {
+                    console.error('No chart or no data available');
+                }
+            } catch (error) {
+                console.error('Error updating chart:', error);
+                // Show error to user
+                document.getElementById('chart-container').innerHTML = 
+                    `<div style="padding: 50px; text-align: center;">
+                        <h3>Error loading chart</h3>
+                        <p>${error.message}</p>
+                        <p>Please check console for details.</p>
+                    </div>`;
             }
         }
         
