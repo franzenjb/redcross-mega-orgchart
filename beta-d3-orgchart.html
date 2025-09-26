@@ -208,10 +208,13 @@
             
             <input type="text" class="search-box" id="searchBox" placeholder="Search for person...">
             
-            <button class="btn" onclick="expandAll()">Expand All</button>
-            <button class="btn" onclick="collapseAll()">Collapse All</button>
-            <button class="btn btn-secondary" onclick="fitToScreen()">Fit to Screen</button>
-            <button class="btn btn-secondary" onclick="exportChart()">Export PNG</button>
+            <button class="btn" onclick="expandAll()">➕ Expand All</button>
+            <button class="btn" onclick="collapseAll()">➖ Collapse All</button>
+            <button class="btn" onclick="zoomIn()">🔍+ Zoom In</button>
+            <button class="btn" onclick="zoomOut()">🔍- Zoom Out</button>
+            <button class="btn btn-secondary" onclick="fitToScreen()">⤢ Fit to Screen</button>
+            <button class="btn btn-secondary" onclick="centerChart()">⌖ Center</button>
+            <button class="btn btn-secondary" onclick="exportChart()">📸 Export PNG</button>
             <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
         </div>
     </div>
@@ -260,10 +263,26 @@
                 .compactMarginPair((d) => 80)
                 .nodeContent((d, i, arr, state) => {
                     const nodeClass = getNodeClass(d.data);
-                    const textColor = nodeClass === 'executive' ? 'white' : '#333';
+                    let bgColor = '#ffffff';
+                    let textColor = '#333333';
+                    let borderColor = '#dddddd';
+                    
+                    if (nodeClass === 'executive') {
+                        bgColor = '#ed1b2e';
+                        textColor = 'white';
+                        borderColor = '#c41230';
+                    } else if (nodeClass === 'chief') {
+                        bgColor = '#fff5f5';
+                        textColor = '#333';
+                        borderColor = '#ed1b2e';
+                    } else if (nodeClass === 'director') {
+                        bgColor = '#f8f9fa';
+                        textColor = '#333';
+                        borderColor = '#6d6e70';
+                    }
                     
                     return `
-                        <div style="padding:10px; width:${d.width}px; height:${d.height}px;">
+                        <div style="padding:10px; width:${d.width}px; height:${d.height}px; background:${bgColor}; border-radius:8px; border:2px solid ${borderColor};">
                             <div style="color:${textColor}; font-size:14px; font-weight:600;">
                                 ${d.data.name || 'Vacant'}
                             </div>
@@ -272,7 +291,7 @@
                             </div>
                             ${d.data.location ? 
                                 `<div style="color:${textColor}; font-size:11px; margin-top:2px; opacity:0.7;">
-                                    ${d.data.location}
+                                    📍 ${d.data.location}
                                 </div>` : ''
                             }
                         </div>
@@ -415,7 +434,7 @@
             console.log('Loading data...');
             if (typeof completeOrgData !== 'undefined') {
                 console.log('Found completeOrgData');
-                currentRegion = 'alabama-mississippi'; // Start with a specific region
+                currentRegion = 'all'; // Start with ALL regions view
                 const flatData = convertToFlatData(completeOrgData, null, currentRegion, '');
                 currentData = flatData;
                 console.log('Loaded data:', currentData.length, 'nodes');
@@ -471,15 +490,45 @@
         
         // Control functions
         function expandAll() {
-            if (chart) chart.expandAll();
+            if (chart) {
+                chart.expandAll();
+                console.log('Expanded all nodes');
+            }
         }
         
         function collapseAll() {
-            if (chart) chart.collapseAll();
+            if (chart) {
+                chart.collapseAll();
+                console.log('Collapsed all nodes');
+            }
         }
         
         function fitToScreen() {
-            if (chart) chart.fit();
+            if (chart) {
+                chart.fit();
+                console.log('Fitted to screen');
+            }
+        }
+        
+        function zoomIn() {
+            if (chart) {
+                chart.zoomIn();
+                console.log('Zoomed in');
+            }
+        }
+        
+        function zoomOut() {
+            if (chart) {
+                chart.zoomOut();
+                console.log('Zoomed out');
+            }
+        }
+        
+        function centerChart() {
+            if (chart) {
+                chart.center();
+                console.log('Centered chart');
+            }
         }
         
         function exportChart() {
