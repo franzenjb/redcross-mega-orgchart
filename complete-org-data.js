@@ -2,12 +2,168 @@
 // All 8 Regions with Complete Staffing Information
 
 const completeOrgData = {
-    "alabama-mississippi": {
-        name: "M. Beddingfield",
-        title: "Regional Executive",
-        location: "Birmingham/Jackson",
-        type: "alabama-mississippi",
+    "division": {
+        name: "Anna Trefethen",
+        title: "Division Vice President",
+        location: "SE & Caribbean Division",
+        type: "division",
         children: [
+            {
+                name: "Division Executive Staff",
+                title: "Division Leadership Team",
+                type: "division-staff",
+                location: "Division HQ",
+                children: [
+                    {
+                        name: "Ryan Lock", 
+                        title: "Division Disaster Executive",
+                        location: "Division HQ",
+                        type: "executive",
+                        children: [
+                            {
+                                name: "Janice Vannatta",
+                                title: "Chief of Staff",
+                                location: "Division HQ"
+                            },
+                            {
+                                name: "Patricia D'Alessandro",
+                                title: "AD Operations",
+                                location: "Division HQ",
+                                children: [
+                                    { name: "Rick Schou", title: "Zone Coordinator-Zone 1" },
+                                    { name: "Bene Hunter", title: "Zone Coordinator-Zone 2" },
+                                    { name: "Brenda Bridges", title: "HQ Mass Care Chief" }
+                                ]
+                            },
+                            {
+                                name: "Marvin Williams",
+                                title: "AD Logistics",
+                                location: "Division HQ",
+                                children: [
+                                    { name: "Margenia Hatfield", title: "HQ Logistics Chief" },
+                                    { name: "Lee Meyer", title: "HQ Transportation Manager" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "D. Dixon",
+                        title: "Division Chief Development Officer",
+                        location: "Division HQ",
+                        type: "executive",
+                        children: [
+                            {
+                                name: "Regional CDOs",
+                                title: "Regional Development Leaders",
+                                children: [
+                                    { name: "W. Carney", title: "CDO - Florida N/C", location: "Jacksonville" },
+                                    { name: "Tzaicel Hernandez", title: "CDO - Florida South", location: "Miami" },
+                                    { name: "Vacant", title: "CDO - Georgia", location: "Atlanta" },
+                                    { name: "L. Vaughn", title: "CDO - Tennessee", location: "Memphis" },
+                                    { name: "D. Warren", title: "CDO - Alabama/Mississippi", location: "Birmingham" },
+                                    { name: "E. Davis", title: "CDO - North Carolina", location: "Charlotte" },
+                                    { name: "S. Ingraham", title: "CDO - South Carolina" },
+                                    { name: "M. Santiago", title: "CDO - Puerto Rico", location: "San Juan" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "K. Gonzalez",
+                        title: "Division Service to Armed Forces Director",
+                        location: "Division HQ",
+                        type: "executive",
+                        children: [
+                            {
+                                name: "Regional SAF Directors",
+                                title: "Regional SAF Leaders",
+                                children: [
+                                    { name: "G. Scrivens", title: "SAF Director - Florida N/C", location: "Tampa" },
+                                    { name: "Ivan Sterpin", title: "SAF Director - Florida South", location: "Miami" },
+                                    { name: "Victoria Hamrick", title: "SAF Director - Georgia", location: "Atlanta" },
+                                    { name: "A. Ware", title: "SAF Director - Tennessee", location: "Nashville" },
+                                    { name: "N. Ortiz", title: "SAF Lead - Puerto Rico", location: "San Juan" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "S. Taylor",
+                        title: "Division Communications Director",
+                        location: "Division HQ",
+                        type: "executive",
+                        children: [
+                            {
+                                name: "Regional Communications Directors",
+                                title: "Regional Communications Leaders",
+                                children: [
+                                    { name: "A. Bierfreund", title: "Comm Director - Florida N/C", location: "Jacksonville" },
+                                    { name: "Tiffany Gonzalez", title: "Dir Comm - Florida South", location: "Miami" },
+                                    { name: "J. Copeland", title: "Regional External Comms Manager - Georgia", location: "Atlanta" },
+                                    { name: "J. Williams", title: "Dir Comm/Mkt - Tennessee", location: "Nashville" },
+                                    { name: "B. Reynolds", title: "Regional Communications Director - North Carolina", location: "Charlotte" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "C. Edwards",
+                        title: "Division Community Engagement Director",
+                        location: "Division HQ",
+                        type: "executive",
+                        children: [
+                            {
+                                name: "Community Engagement Teams",
+                                title: "Division-wide Programs",
+                                children: [
+                                    { name: "G. Robinson", title: "Sr FSTPM" },
+                                    { name: "D. Eichhorn", title: "Sr Division Govt Relations Officer" },
+                                    { name: "M. Sapp", title: "Volunteer Mobilization Director" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "Division Support Functions",
+                        title: "Division Support Services",
+                        type: "support",
+                        location: "Division HQ",
+                        children: [
+                            {
+                                name: "Human Resources",
+                                title: "Division HR",
+                                children: [
+                                    { name: "P. Foster", title: "DRHRM - Georgia", location: "Atlanta" },
+                                    { name: "L. Turner", title: "Regional HR Director - Alabama/Mississippi", location: "Birmingham" },
+                                    { name: "D. Porter", title: "Regional HR Director - North Carolina", location: "Charlotte" }
+                                ]
+                            },
+                            {
+                                name: "Information Technology",
+                                title: "Division IT",
+                                children: [
+                                    { name: "J. Webb", title: "Regional IT Director - North Carolina", location: "Charlotte" }
+                                ]
+                            },
+                            {
+                                name: "Biomedical Services",
+                                title: "Division Blood Services",
+                                children: [
+                                    { name: "Keith Cofer", title: "RD Biomedical Services - Georgia" },
+                                    { name: "K. Mason", title: "Regional Blood Services Director - North Carolina", location: "Charlotte" },
+                                    { name: "K. Murray", title: "Regional Blood Services Director - South Carolina", location: "Columbia" }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "M. Beddingfield",
+                title: "Regional Executive",
+                location: "Alabama/Mississippi",
+                type: "alabama-mississippi",
+                children: [
             {
                 name: "E. Whitt",
                 title: "Executive Coordinator",
@@ -162,7 +318,7 @@ const completeOrgData = {
             }
         ]
     },
-    "florida-nc": {
+            {
         name: "C. Smith",
         title: "Regional Executive",
         location: "Jacksonville",
@@ -376,7 +532,7 @@ const completeOrgData = {
             }
         ]
     },
-    "florida-south": {
+            {
         name: "Krista Coletti",
         title: "Regional Executive",
         location: "Miami",
@@ -561,7 +717,7 @@ const completeOrgData = {
             }
         ]
     },
-    "georgia": {
+            {
         name: "Alicia Doherty",
         title: "Regional Chief Executive",
         location: "Atlanta",
@@ -630,7 +786,7 @@ const completeOrgData = {
                 ]
             },
             {
-                name: "Greg Scrivens",
+                name: "Vacant",
                 title: "Chief Development Officer",
                 children: [
                     {
@@ -763,7 +919,7 @@ const completeOrgData = {
             }
         ]
     },
-    "north-carolina": {
+            {
         name: "A. Taylor",
         title: "Regional Executive",
         location: "North Carolina",
@@ -975,7 +1131,7 @@ const completeOrgData = {
             }
         ]
     },
-    "puerto-rico": {
+            {
         name: "L. Rodriguez",
         title: "Regional Executive",
         location: "San Juan",
@@ -1034,7 +1190,7 @@ const completeOrgData = {
             }
         ]
     },
-    "south-carolina": {
+            {
         name: "Susan Everitt",
         title: "Regional Executive",
         location: "South Carolina",
@@ -1197,7 +1353,7 @@ const completeOrgData = {
             }
         ]
     },
-    "tennessee": {
+            {
         name: "J. Sullivan",
         title: "Regional Executive",
         location: "Nashville",
@@ -1294,7 +1450,7 @@ const completeOrgData = {
                         location: "Memphis"
                     },
                     {
-                        name: "S. Hudson",
+                        name: "S. Hudson (Knoxville)",
                         title: "Executive Director",
                         location: "Knoxville",
                         children: [
@@ -1440,6 +1596,8 @@ const completeOrgData = {
                     { name: "J. Huff", title: "Fleet Coordinator", location: "Nashville" }
                 ]
             }
+        ]
+    }
         ]
     }
 };

@@ -190,14 +190,155 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Print Styles */
+        @media print {
+            /* Hide everything except the chart */
+            body {
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            /* Hide controls and header */
+            .header {
+                display: none !important;
+            }
+            
+            .legend {
+                display: none !important;
+            }
+            
+            .loading {
+                display: none !important;
+            }
+            
+            /* Make chart full page */
+            #chart-container {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+            }
+            
+            /* Ensure SVG prints properly */
+            svg {
+                width: 100% !important;
+                height: 100vh !important;
+                max-width: none !important;
+                overflow: visible !important;
+            }
+            
+            /* D3 OrgChart specific */
+            .svg-chart-container {
+                background: white !important;
+                transform: scale(0.8) !important;
+                transform-origin: top center !important;
+            }
+            
+            /* Force all nodes to be visible and styled */
+            .node {
+                page-break-inside: avoid !important;
+            }
+            
+            .node foreignObject {
+                overflow: visible !important;
+            }
+            
+            .node-foreign-object-div {
+                background: white !important;
+                border: 1px solid #333 !important;
+            }
+            
+            /* Make text readable */
+            text, div {
+                color: black !important;
+                fill: black !important;
+                opacity: 1 !important;
+                font-size: 10px !important;
+            }
+            
+            /* Ensure connection lines are visible */
+            path, .link {
+                stroke: #666 !important;
+                stroke-width: 1px !important;
+                fill: none !important;
+                opacity: 1 !important;
+            }
+            
+            /* Node content styling for print */
+            [data-node-id] > div {
+                background: white !important;
+                border: 1px solid #333 !important;
+                padding: 5px !important;
+            }
+            
+            /* Print color adjustments */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            
+            @page {
+                size: landscape;
+                margin: 0.5in;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Sidebar Menu -->
+    <div id="sidebar" style="position: fixed; left: -300px; top: 0; width: 300px; height: 100vh; background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.2); z-index: 1000; transition: left 0.3s;">
+        <div style="padding: 20px; border-bottom: 1px solid #ddd;">
+            <h3 style="margin: 0;">🛠️ Tools & Settings</h3>
+            <button onclick="toggleSidebar()" style="position: absolute; right: 10px; top: 20px; background: none; border: none; font-size: 24px; cursor: pointer;">✖</button>
+        </div>
+        
+        <div style="padding: 20px;">
+            <!-- View Controls -->
+            <div style="margin-bottom: 20px;">
+                <h4 style="margin-bottom: 10px;">View Controls</h4>
+                <button class="btn" onclick="expandAll()" style="width: 100%; margin-bottom: 5px;">➕ Expand All</button>
+                <button class="btn" onclick="collapseAll()" style="width: 100%; margin-bottom: 5px;">➖ Collapse All</button>
+                <button class="btn" onclick="fitToScreen()" style="width: 100%; margin-bottom: 5px;">⤢ Fit to Screen</button>
+                <button class="btn" onclick="centerChart()" style="width: 100%;">⌖ Center</button>
+            </div>
+            
+            <!-- Export Options -->
+            <div style="margin-bottom: 20px;">
+                <h4 style="margin-bottom: 10px;">Export & Print</h4>
+                <button class="btn btn-secondary" onclick="exportChart()" style="width: 100%; margin-bottom: 5px;">📸 Export PNG</button>
+                <button class="btn btn-secondary" onclick="printPreview()" style="width: 100%; margin-bottom: 5px;">👁️ Print Preview</button>
+                <button class="btn btn-secondary" onclick="printChart()" style="width: 100%;">🖨️ Print</button>
+            </div>
+            
+            <!-- Data Management -->
+            <div>
+                <h4 style="margin-bottom: 10px;">Data Management</h4>
+                <button class="btn" style="background: #00b894; width: 100%; margin-bottom: 5px;" onclick="saveToLocal()">💾 Save Changes</button>
+                <button class="btn" style="background: #0984e3; width: 100%; margin-bottom: 5px;" onclick="exportData()">📤 Export JSON</button>
+                <button class="btn" style="background: #6c5ce7; width: 100%; margin-bottom: 5px;" onclick="importData()">📥 Import JSON</button>
+                <button class="btn" style="background: #fdcb6e; width: 100%;" onclick="resetData()">🔄 Reset to Original</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Header (Simplified) -->
     <div class="header">
-        <h1>🏥 Red Cross SE & Caribbean Division - Beta Org Chart (D3)</h1>
-        <div class="controls">
+        <button onclick="toggleSidebar()" style="position: absolute; left: 20px; top: 20px; background: #333; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 20px;">☰</button>
+        
+        <h1 style="text-align: center;">🏥 Red Cross SE & Caribbean Division - Beta Org Chart</h1>
+        
+        <div class="controls" style="justify-content: center; padding-top: 10px;">
             <select class="region-select" id="regionSelect">
                 <option value="all">All Regions</option>
+                <option value="division">Division Leadership</option>
                 <option value="alabama-mississippi">Alabama/Mississippi</option>
                 <option value="florida-nc">Florida N/C</option>
                 <option value="florida-south">Florida South</option>
@@ -208,17 +349,20 @@
                 <option value="tennessee">Tennessee</option>
             </select>
             
-            <input type="text" class="search-box" id="searchBox" placeholder="Search for person...">
+            <input type="text" class="search-box" id="searchBox" placeholder="Search for person..." style="width: 250px;">
             
-            <button class="btn" onclick="expandAll()">➕ Expand All</button>
-            <button class="btn" onclick="collapseAll()">➖ Collapse All</button>
-            <button class="btn" onclick="zoomIn()">🔍+ Zoom In</button>
-            <button class="btn" onclick="zoomOut()">🔍- Zoom Out</button>
-            <button class="btn btn-secondary" onclick="fitToScreen()">⤢ Fit to Screen</button>
-            <button class="btn btn-secondary" onclick="centerChart()">⌖ Center</button>
-            <button class="btn btn-secondary" onclick="exportChart()">📸 Export PNG</button>
-            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+            <!-- View Controls in Top Bar -->
+            <button class="btn" onclick="fitToScreen()" title="Fit to Screen">⤢ Fit</button>
+            <button class="btn" onclick="centerChart()" title="Center">⌖ Center</button>
+            <button class="btn" onclick="resetView()" title="Reset View" style="background: #e74c3c;">🔄 Reset</button>
+            <button class="btn" onclick="clearCache()" title="Clear Cache" style="background: #e67e22;">🗑️ Clear Cache</button>
+            
+            <span style="padding: 8px 12px; background: #ffeaa7; border-radius: 4px; font-size: 12px; margin-left: 10px;">
+                💡 Click nodes to expand/collapse | Double-click to edit | Scroll/pinch to zoom
+            </span>
         </div>
+        
+        <input type="file" id="importFile" style="display: none;" accept=".json" onchange="handleFileImport(event)">
     </div>
     
     <div id="chart-container"></div>
@@ -248,6 +392,7 @@
     <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0/build/d3-org-chart.min.js"></script>
     <script src="complete-org-data.js"></script>
+    <script src="divisional-leadership.js"></script>
     
     <script>
         let chart;
@@ -283,34 +428,41 @@
                 .initialZoom(0.7)
                 .nodeContent((d, i, arr, state) => {
                     const nodeClass = getNodeClass(d.data);
-                    let bgColor = '#ffffff';
-                    let textColor = '#333333';
-                    let borderColor = '#dddddd';
+                    const regionColor = getRegionColor(d.data);
+                    let bgColor = regionColor.bg;
+                    let textColor = regionColor.text;
+                    let borderColor = regionColor.border;
+                    let borderWidth = '2px';
                     
-                    if (nodeClass === 'executive') {
-                        bgColor = '#ed1b2e';
-                        textColor = 'white';
-                        borderColor = '#c41230';
-                    } else if (nodeClass === 'chief') {
-                        bgColor = '#fff5f5';
-                        textColor = '#333';
-                        borderColor = '#ed1b2e';
-                    } else if (nodeClass === 'director') {
-                        bgColor = '#f8f9fa';
-                        textColor = '#333';
-                        borderColor = '#6d6e70';
+                    // Special cases for division leadership
+                    if (nodeClass === 'division-vp') {
+                        bgColor = 'linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)';
+                        textColor = 'black';
+                        borderColor = '#ffa000';
+                        borderWidth = '3px';
+                    } else if (d.data.name === "Division Executive Staff") {
+                        bgColor = 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)';
+                        textColor = 'black';
+                        borderColor = '#1976d2';
+                    }
+                    
+                    // For executives, make them slightly different
+                    if (nodeClass === 'executive' && d.data.region) {
+                        // Add a gradient effect for executives
+                        const baseColor = regionColor.bg;
+                        bgColor = `linear-gradient(135deg, ${baseColor} 0%, ${baseColor}dd 100%)`;
                     }
                     
                     return `
-                        <div style="padding:10px; width:${d.width}px; height:${d.height}px; background:${bgColor}; border-radius:8px; border:2px solid ${borderColor};">
+                        <div style="padding:10px; width:${d.width}px; height:${d.height}px; background:${bgColor}; border-radius:8px; border:${borderWidth} solid ${borderColor};">
                             <div style="color:${textColor}; font-size:14px; font-weight:600;">
                                 ${d.data.name || 'Vacant'}
                             </div>
-                            <div style="color:${textColor}; font-size:12px; margin-top:4px; opacity:0.9;">
+                            <div style="color:${textColor}; font-size:12px; margin-top:4px; opacity:0.95;">
                                 ${d.data.title || 'Position'}
                             </div>
                             ${d.data.location ? 
-                                `<div style="color:${textColor}; font-size:11px; margin-top:2px; opacity:0.7;">
+                                `<div style="color:${textColor}; font-size:11px; margin-top:2px; opacity:0.85;">
                                     📍 ${d.data.location}
                                 </div>` : ''
                             }
@@ -343,15 +495,96 @@
                         .attr('stroke-width', 1.5);
                 })
                 .onNodeClick((d) => {
-                    console.log(d);
+                    // Handle double-click manually
+                    if (d.clickTimer) {
+                        clearTimeout(d.clickTimer);
+                        d.clickTimer = null;
+                        // Double click detected
+                        editNode(d);
+                    } else {
+                        // Single click - wait to see if it's a double click
+                        d.clickTimer = setTimeout(() => {
+                            d.clickTimer = null;
+                            console.log('Single clicked - will auto-fit now');
+                            
+                            // After expansion/collapse, auto-fit the view with longer delay
+                            setTimeout(() => {
+                                if (chart && chart.fit) {
+                                    chart.fit();
+                                    console.log('Auto-fitted after expand/collapse');
+                                    // Try fitting again to ensure it worked
+                                    setTimeout(() => {
+                                        chart.fit();
+                                        console.log('Second fit to ensure proper view');
+                                    }, 300);
+                                }
+                            }, 600);
+                        }, 250);
+                    }
                 });
                 
             loadData();
         }
         
+        // Define region colors
+        const regionColors = {
+            'alabama-mississippi': { bg: '#8b0000', border: '#5c0000', text: 'white' }, // Dark red
+            'florida-nc': { bg: '#00796b', border: '#004d40', text: 'white' }, // Teal
+            'florida-south': { bg: '#f57c00', border: '#e65100', text: 'white' }, // Orange
+            'georgia': { bg: '#1976d2', border: '#0d47a1', text: 'white' }, // Blue
+            'north-carolina': { bg: '#388e3c', border: '#1b5e20', text: 'white' }, // Green
+            'puerto-rico': { bg: '#7b1fa2', border: '#4a148c', text: 'white' }, // Purple
+            'south-carolina': { bg: '#c2185b', border: '#880e4f', text: 'white' }, // Pink
+            'tennessee': { bg: '#5d4037', border: '#3e2723', text: 'white' }, // Brown
+            'division': { bg: '#ffd700', border: '#ffa000', text: 'black' }, // Gold for division
+            'division-staff': { bg: '#e3f2fd', border: '#1976d2', text: 'black' } // Light blue for division staff
+        };
+        
+        // Get region color for a node
+        function getRegionColor(data) {
+            // Check the node's region or type
+            let region = data.region || data.type || '';
+            
+            // Map CDOs and regional staff to their specific regions based on title or location
+            if (data.title) {
+                const title = data.title.toLowerCase();
+                const location = (data.location || '').toLowerCase();
+                
+                // Check for regional CDOs, SAF Directors, Communications Directors, etc.
+                if (title.includes('florida n/c') || location.includes('jacksonville') || location.includes('tampa')) {
+                    region = 'florida-nc';
+                } else if (title.includes('florida south') || location.includes('miami')) {
+                    region = 'florida-south';
+                } else if ((title.includes('georgia') && !title.includes('strait')) || location.includes('atlanta')) {
+                    region = 'georgia';
+                } else if (title.includes('tennessee') || location.includes('nashville') || location.includes('memphis')) {
+                    region = 'tennessee';
+                } else if (title.includes('alabama') || title.includes('mississippi') || location.includes('birmingham') || location.includes('jackson')) {
+                    region = 'alabama-mississippi';
+                } else if ((title.includes('north carolina') && !title.includes('florida')) || location.includes('charlotte')) {
+                    region = 'north-carolina';
+                } else if ((title.includes('south carolina') && !title.includes('north')) || location.includes('columbia')) {
+                    region = 'south-carolina';
+                } else if (title.includes('puerto rico') || location.includes('san juan')) {
+                    region = 'puerto-rico';
+                }
+            }
+            
+            return regionColors[region] || { bg: '#ffffff', border: '#cccccc', text: '#333333' };
+        }
+        
         // Get node class based on title
         function getNodeClass(data) {
             const title = (data.title || '').toLowerCase();
+            const type = (data.type || '').toLowerCase();
+            
+            // Special styling for division nodes
+            if (type === 'division') {
+                return 'division-vp';
+            }
+            if (type === 'division-staff') {
+                return 'division-staff';
+            }
             if (title.includes('executive') || title.includes('vp') || title.includes('vice president')) {
                 return 'executive';
             }
@@ -385,7 +618,8 @@
                     name: node.name || 'Vacant',
                     title: node.title || 'Position',
                     location: node.location || '',
-                    region: currentRegion
+                    region: node.region || node.type || currentRegion,
+                    type: node.type || currentRegion
                 };
                 
                 result.push(nodeData);
@@ -394,19 +628,50 @@
                 if (node.children) {
                     if (Array.isArray(node.children)) {
                         node.children.forEach((child, index) => {
-                            processNode(child, id, currentRegion, `${path}-${index}`);
+                            // Pass the child's region if it has one, otherwise use current region
+                            const childRegion = child.region || currentRegion;
+                            processNode(child, id, childRegion, `${path}-${index}`);
                         });
                     } else if (typeof node.children === 'object') {
                         Object.keys(node.children).forEach((key, index) => {
-                            processNode(node.children[key], id, currentRegion, `${path}-${key}`);
+                            const childRegion = node.children[key].region || currentRegion;
+                            processNode(node.children[key], id, childRegion, `${path}-${key}`);
                         });
                     }
                 }
             }
             
-            // Start processing from top level
-            if (typeof data === 'object' && !data.name && !data.title) {
-                // This is the regions object
+            // Check if data has the new structure with division at the top
+            if (data && data.division) {
+                // New structure with Anna Trefethen at top
+                const divisionNode = data.division;
+                
+                if (currentRegion === 'all') {
+                    // Process entire hierarchy starting with Anna Trefethen
+                    processNode(divisionNode, null, 'division', 'division');
+                } else if (currentRegion === 'division') {
+                    // Load Division Leadership from divisional-leadership.js if available
+                    if (window.divisionalLeadership && window.divisionalLeadership['division-leadership']) {
+                        const divLeadershipData = window.divisionalLeadership['division-leadership'];
+                        processNode(divLeadershipData, null, 'division', 'division');
+                    } else {
+                        // Fallback: Show division leadership structure from main data
+                        processNode(divisionNode, null, 'division', 'division');
+                    }
+                } else {
+                    // Find the specific region in the children array
+                    if (divisionNode.children && Array.isArray(divisionNode.children)) {
+                        // Skip the Division Executive Staff node and look in regional executives
+                        for (let child of divisionNode.children) {
+                            if (child.type === currentRegion) {
+                                processNode(child, null, currentRegion, currentRegion);
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else if (typeof data === 'object' && !data.name && !data.title) {
+                // Old structure - regions object at top level
                 if (currentRegion === 'all') {
                     // Create a root node for all regions
                     const rootId = 'root';
@@ -452,26 +717,56 @@
         // Load data
         function loadData() {
             console.log('Loading data...');
+            
+            // SKIP localStorage to ensure fresh data without Virginia Mewborn
+            // const savedData = localStorage.getItem('orgChartData');
+            // if (savedData) {
+            //     try {
+            //         window.completeOrgData = JSON.parse(savedData);
+            //         console.log('Using saved data from localStorage');
+            //     } catch(e) {
+            //         console.log('Failed to parse saved data:', e);
+            //     }
+            // }
+            
+            // Clear any old cached data with Virginia Mewborn
+            localStorage.removeItem('orgChartData');
+            
+            // Load divisional leadership data if needed
+            if (currentRegion === 'division' && !window.divisionalLeadership) {
+                const divScript = document.createElement('script');
+                divScript.src = 'divisional-leadership.js';
+                divScript.onload = () => {
+                    console.log('Divisional Leadership script loaded');
+                };
+                document.head.appendChild(divScript);
+            }
+            
             if (typeof completeOrgData !== 'undefined') {
-                console.log('Found completeOrgData');
-                currentRegion = 'all'; // Start with ALL regions view
+                console.log('Found completeOrgData:', completeOrgData);
+                currentRegion = document.getElementById('regionSelect')?.value || 'all';
                 const flatData = convertToFlatData(completeOrgData, null, currentRegion, '');
                 currentData = flatData;
                 console.log('Loaded data:', currentData.length, 'nodes');
                 console.log('Sample data:', currentData.slice(0, 5));
                 
                 // Update dropdown to match
-                document.getElementById('regionSelect').value = currentRegion;
+                if (document.getElementById('regionSelect')) {
+                    document.getElementById('regionSelect').value = currentRegion;
+                }
                 
                 updateChart();
             } else {
-                console.error('completeOrgData not found');
+                console.error('completeOrgData not found, loading script...');
                 // Try loading it directly
                 const script = document.createElement('script');
                 script.src = 'complete-org-data.js';
                 script.onload = () => {
-                    console.log('Script loaded, retrying...');
+                    console.log('Script loaded, completeOrgData available:', typeof completeOrgData !== 'undefined');
                     setTimeout(loadData, 100);
+                };
+                script.onerror = () => {
+                    console.error('Failed to load complete-org-data.js');
                 };
                 document.head.appendChild(script);
             }
@@ -514,8 +809,24 @@
                     if (chart && chart.fit) {
                         chart.fit();
                         console.log('Chart rendered and fitted');
+                        
+                        // Special handling for Division Leadership view to ensure proper fit
+                        if (currentRegion === 'division') {
+                            setTimeout(() => {
+                                chart.fit();
+                                // Expand first level to show VPs
+                                const rootNode = currentData.find(d => !d.parentId);
+                                if (rootNode) {
+                                    chart.setExpanded(rootNode.id).render();
+                                    setTimeout(() => {
+                                        chart.fit();
+                                        console.log('Division Leadership expanded and fitted');
+                                    }, 500);
+                                }
+                            }, 500);
+                        }
                     }
-                }, 1000);
+                }, 800);
             } catch (error) {
                 console.error('Error updating chart:', error);
                 // Show error to user
@@ -528,23 +839,78 @@
             }
         }
         
+        // Track expansion level
+        let currentExpansionLevel = 1;
+        
         // Control functions
         function expandAll() {
-            if (chart) {
-                chart.expandAll();
-                console.log('Expanded all nodes');
+            if (chart && currentData) {
+                // Get nodes at the next level to expand
+                const nodesToExpand = [];
+                
+                // Find all currently expanded nodes
+                const expandedNodes = new Set();
+                currentData.forEach(node => {
+                    // Check if node is expanded (has children and they're visible)
+                    const nodeElement = chart.getChartState().allNodes?.find(n => n.id === node.id);
+                    if (nodeElement && nodeElement._expanded) {
+                        expandedNodes.add(node.id);
+                    }
+                });
+                
+                // If nothing is expanded, start with root
+                if (expandedNodes.size === 0) {
+                    const rootNode = currentData.find(d => !d.parentId);
+                    if (rootNode) {
+                        nodesToExpand.push(rootNode.id);
+                    }
+                } else {
+                    // Find children of expanded nodes to expand next
+                    currentData.forEach(node => {
+                        if (expandedNodes.has(node.parentId) && !expandedNodes.has(node.id)) {
+                            // This node's parent is expanded but this node isn't
+                            nodesToExpand.push(node.id);
+                        }
+                    });
+                }
+                
+                // Expand the next level
+                if (nodesToExpand.length > 0) {
+                    nodesToExpand.forEach(nodeId => {
+                        chart.setExpanded(nodeId);
+                    });
+                    chart.render();
+                    
+                    console.log(`Expanded ${nodesToExpand.length} nodes at level ${currentExpansionLevel}`);
+                    currentExpansionLevel++;
+                    
+                    // Auto-fit after expansion
+                    setTimeout(() => {
+                        chart.fit();
+                        console.log('Auto-fitted after expand level');
+                    }, 500);
+                } else {
+                    console.log('All nodes already expanded');
+                }
             }
         }
         
         function collapseAll() {
             if (chart) {
                 chart.collapseAll();
+                currentExpansionLevel = 1; // Reset expansion level
                 console.log('Collapsed all nodes');
+                // Auto-fit after collapse
+                setTimeout(() => {
+                    chart.fit();
+                    console.log('Auto-fitted after collapse all');
+                }, 500);
             }
         }
         
         function fitToScreen() {
             if (chart) {
+                // Simple fit that works
                 chart.fit();
                 console.log('Fitted to screen');
             }
@@ -552,22 +918,67 @@
         
         function zoomIn() {
             if (chart) {
-                chart.zoomIn();
-                console.log('Zoomed in');
+                // Use the chart's built-in zoom methods
+                const currentZoom = chart.getChartState().initialZoom || 1;
+                const newZoom = currentZoom * 1.2;
+                chart.initialZoom(newZoom).render();
+                console.log('Zoomed in to', newZoom);
             }
         }
         
         function zoomOut() {
             if (chart) {
-                chart.zoomOut();
-                console.log('Zoomed out');
+                // Use the chart's built-in zoom methods
+                const currentZoom = chart.getChartState().initialZoom || 1;
+                const newZoom = currentZoom * 0.8;
+                chart.initialZoom(newZoom).render();
+                console.log('Zoomed out to', newZoom);
             }
         }
         
         function centerChart() {
             if (chart) {
-                chart.center();
-                console.log('Centered chart');
+                // Center on the root node
+                const rootNode = currentData.find(d => !d.parentId);
+                if (rootNode) {
+                    chart.setCentered(rootNode.id).render();
+                    console.log('Centered on root node');
+                } else {
+                    chart.fit();
+                    console.log('Centered chart via fit');
+                }
+            }
+        }
+        
+        function clearCache() {
+            // Clear all localStorage data
+            localStorage.removeItem('orgChartData');
+            console.log('Cache cleared - reloading fresh data');
+            alert('Cache cleared! The page will reload with fresh data.');
+            location.reload();
+        }
+        
+        function resetView() {
+            if (chart) {
+                // Reset zoom to initial
+                chart.initialZoom(0.7).render();
+                
+                // Collapse all nodes
+                chart.collapseAll();
+                
+                // Expand just the first two levels
+                setTimeout(() => {
+                    const rootNode = currentData.find(d => !d.parentId);
+                    if (rootNode) {
+                        chart.setExpanded(rootNode.id);
+                        // Expand first level children
+                        currentData
+                            .filter(d => d.parentId === rootNode.id)
+                            .forEach(node => chart.setExpanded(node.id));
+                    }
+                    chart.render().fit();
+                    console.log('View reset to default');
+                }, 300);
             }
         }
         
@@ -586,44 +997,531 @@
             }
         }
         
-        // Search functionality
+        function printChart() {
+            // Print exactly what's currently visible
+            if (chart) {
+                // Just print as-is, no changes
+                window.print();
+            } else {
+                window.print();
+            }
+        }
+        
+        function printPreview() {
+            if (chart) {
+                // Create a preview window
+                const previewWindow = window.open('', 'Print Preview', 'width=1200,height=800');
+                
+                // Clone the current document structure
+                const htmlContent = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Print Preview - Red Cross Org Chart</title>
+                        <style>
+                            ${document.querySelector('style').innerHTML}
+                            
+                            /* Preview specific styles */
+                            body {
+                                margin: 0;
+                                padding: 20px;
+                                background: white;
+                            }
+                            .header, .legend, .loading {
+                                display: none !important;
+                            }
+                            #chart-container {
+                                width: 100%;
+                                height: 100vh;
+                                background: white;
+                            }
+                            .preview-header {
+                                position: fixed;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                background: #f8f9fa;
+                                padding: 10px 20px;
+                                border-bottom: 2px solid #dee2e6;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                z-index: 1000;
+                            }
+                            .preview-title {
+                                font-size: 18px;
+                                font-weight: bold;
+                                color: #333;
+                            }
+                            .preview-buttons {
+                                display: flex;
+                                gap: 10px;
+                            }
+                            .preview-btn {
+                                padding: 8px 16px;
+                                background: #007bff;
+                                color: white;
+                                border: none;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                font-size: 14px;
+                            }
+                            .preview-btn:hover {
+                                background: #0056b3;
+                            }
+                            .preview-btn.cancel {
+                                background: #6c757d;
+                            }
+                            .preview-btn.cancel:hover {
+                                background: #5a6268;
+                            }
+                            #preview-container {
+                                margin-top: 60px;
+                                width: 100%;
+                                height: calc(100vh - 60px);
+                                overflow: auto;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="preview-header">
+                            <div class="preview-title">🖨️ Print Preview - Current View</div>
+                            <div class="preview-buttons">
+                                <button class="preview-btn" onclick="window.print()">🖨️ Print</button>
+                                <button class="preview-btn cancel" onclick="window.close()">✖️ Close</button>
+                            </div>
+                        </div>
+                        <div id="preview-container">
+                            ${document.getElementById('chart-container').innerHTML}
+                        </div>
+                    </body>
+                    </html>
+                `;
+                
+                previewWindow.document.open();
+                previewWindow.document.write(htmlContent);
+                previewWindow.document.close();
+            }
+        }
+        
+        // Function to show search results dropdown
+        function showSearchResults(matches, searchTerm) {
+            // Remove existing dropdown if any
+            const existingDropdown = document.getElementById('searchResultsDropdown');
+            if (existingDropdown) {
+                existingDropdown.remove();
+            }
+            
+            // Create dropdown
+            const dropdown = document.createElement('div');
+            dropdown.id = 'searchResultsDropdown';
+            dropdown.style.cssText = `
+                position: absolute;
+                top: 60px;
+                left: 400px;
+                background: white;
+                border: 2px solid #007bff;
+                border-radius: 4px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                max-height: 300px;
+                overflow-y: auto;
+                z-index: 1000;
+                min-width: 350px;
+            `;
+            
+            // Add header
+            const header = document.createElement('div');
+            header.style.cssText = `
+                padding: 10px;
+                background: #007bff;
+                color: white;
+                font-weight: bold;
+                border-bottom: 1px solid #ddd;
+            `;
+            header.textContent = `Found ${matches.length} matches for "${searchTerm}"`;
+            dropdown.appendChild(header);
+            
+            // Add results
+            matches.forEach((person, index) => {
+                const item = document.createElement('div');
+                item.style.cssText = `
+                    padding: 10px;
+                    cursor: pointer;
+                    border-bottom: 1px solid #eee;
+                    transition: background 0.2s;
+                `;
+                item.innerHTML = `
+                    <strong>${person.name}</strong><br>
+                    <small style="color: #666;">${person.title}</small>
+                    ${person.location ? '<br><small style="color: #999;">📍 ' + person.location + '</small>' : ''}
+                `;
+                
+                item.addEventListener('mouseenter', () => {
+                    item.style.background = '#f0f8ff';
+                });
+                item.addEventListener('mouseleave', () => {
+                    item.style.background = 'white';
+                });
+                item.addEventListener('click', () => {
+                    // Navigate to this person
+                    navigateToNode(person);
+                    dropdown.remove();
+                    document.getElementById('searchBox').value = person.name;
+                });
+                
+                dropdown.appendChild(item);
+            });
+            
+            document.body.appendChild(dropdown);
+            
+            // Close dropdown on click outside
+            setTimeout(() => {
+                document.addEventListener('click', function closeDropdown(e) {
+                    if (!dropdown.contains(e.target) && e.target.id !== 'searchBox') {
+                        dropdown.remove();
+                        document.removeEventListener('click', closeDropdown);
+                    }
+                });
+            }, 100);
+        }
+        
+        // Function to navigate to a specific node
+        function navigateToNode(node) {
+            if (!chart) return;
+            
+            // Build the path from root to the found node
+            const buildPath = (nodeId) => {
+                const path = [];
+                let current = currentData.find(d => d.id === nodeId);
+                while (current) {
+                    path.unshift(current.id);
+                    if (current.parentId) {
+                        current = currentData.find(d => d.id === current.parentId);
+                    } else {
+                        break;
+                    }
+                }
+                return path;
+            };
+            
+            const pathToNode = buildPath(node.id);
+            
+            // Expand all nodes in the path
+            pathToNode.forEach(nodeId => {
+                chart.setExpanded(nodeId);
+            });
+            
+            // Wait for expansion to complete
+            setTimeout(() => {
+                // Highlight found node
+                chart.clearHighlighting();
+                chart.setHighlighted(node.id);
+                
+                // Center on the node
+                chart.setCentered(node.id).render();
+                
+                // Then zoom in close (2x to 3x zoom)
+                setTimeout(() => {
+                    chart.initialZoom(2.5).render();
+                    // Re-center after zoom
+                    setTimeout(() => {
+                        chart.setCentered(node.id).render();
+                    }, 200);
+                }, 500);
+            }, 600);
+        }
+        
+        // Search functionality with duplicate handling
         document.getElementById('searchBox').addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
+            
+            // Remove dropdown if search is cleared
+            if (searchTerm.length < 3) {
+                const dropdown = document.getElementById('searchResultsDropdown');
+                if (dropdown) dropdown.remove();
+                if (chart) chart.clearHighlighting();
+                return;
+            }
+            
             if (searchTerm.length > 2) {
                 const found = currentData.filter(d => 
                     d.name && d.name.toLowerCase().includes(searchTerm)
                 );
                 
                 if (found.length > 0 && chart) {
-                    // Highlight found nodes
-                    chart.clearHighlighting();
-                    found.forEach(node => {
-                        chart.setHighlighted(node.id);
-                    });
-                    
-                    // Center on first result
-                    if (found[0]) {
-                        chart.setCentered(found[0].id);
+                    // If multiple matches found, show dropdown
+                    if (found.length > 1) {
+                        console.log(`Found ${found.length} matches for "${searchTerm}":`);
+                        found.forEach(p => console.log(`  - ${p.name} (${p.title}) ${p.location || ''}`));
+                        showSearchResults(found, searchTerm);
+                    } else if (found[0]) {
+                        // Single match - navigate directly
+                        const dropdown = document.getElementById('searchResultsDropdown');
+                        if (dropdown) dropdown.remove();
+                        navigateToNode(found[0]);
                     }
                 }
             } else if (chart) {
                 chart.clearHighlighting();
+                // Reset zoom when search is cleared
+                chart.setZoom(0.7);
+                chart.fit();
             }
         });
         
         // Region selector
         document.getElementById('regionSelect').addEventListener('change', (e) => {
             currentRegion = e.target.value;
-            updateChart(); // Update chart for new region
+            
+            // Load divisional leadership if needed
+            if (currentRegion === 'division' && !window.divisionalLeadership) {
+                const divScript = document.createElement('script');
+                divScript.src = 'divisional-leadership.js';
+                divScript.onload = () => {
+                    console.log('Divisional Leadership script loaded');
+                    updateChart();
+                };
+                document.head.appendChild(divScript);
+            } else {
+                updateChart(); // Update chart for new region
+            }
         });
+        
+        // Toggle sidebar function
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const currentLeft = sidebar.style.left;
+            sidebar.style.left = currentLeft === '0px' ? '-300px' : '0px';
+        }
         
         // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
             console.log('DOM loaded, initializing chart...');
-            setTimeout(() => {
-                initChart();
-            }, 100);
+            
+            // Load saved data if exists
+            loadFromLocal();
+            
+            // Initialize chart immediately
+            initChart();
+            
+            // Add context menu for right-click
+            addContextMenu();
         });
+        
+        // Edit node function
+        function editNode(node) {
+            const currentNode = currentData.find(d => d.id === node.data.id);
+            if (!currentNode) return;
+            
+            const form = document.createElement('div');
+            form.innerHTML = `
+                <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                     background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 10000;">
+                    <h3 style="margin-bottom: 15px;">Edit Employee</h3>
+                    <input type="text" id="edit-name" placeholder="Name" value="${currentNode.name || ''}" 
+                           style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <input type="text" id="edit-title" placeholder="Title" value="${currentNode.title || ''}"
+                           style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <input type="text" id="edit-location" placeholder="Location" value="${currentNode.location || ''}"
+                           style="width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px;">
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="saveNodeEdit('${node.data.id}')" 
+                                style="padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            Save
+                        </button>
+                        <button onclick="closeEditForm()" 
+                                style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            Cancel
+                        </button>
+                        <button onclick="deleteNode('${node.data.id}')" 
+                                style="padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999;"
+                     onclick="closeEditForm()"></div>
+            `;
+            form.id = 'edit-form';
+            document.body.appendChild(form);
+            document.getElementById('edit-name').focus();
+        }
+        
+        function saveNodeEdit(nodeId) {
+            const node = currentData.find(d => d.id === nodeId);
+            if (node) {
+                node.name = document.getElementById('edit-name').value;
+                node.title = document.getElementById('edit-title').value;
+                node.location = document.getElementById('edit-location').value;
+                
+                updateChart();
+                saveToLocal();
+                closeEditForm();
+            }
+        }
+        
+        function closeEditForm() {
+            const form = document.getElementById('edit-form');
+            if (form) form.remove();
+        }
+        
+        function deleteNode(nodeId) {
+            if (confirm('Are you sure you want to delete this employee and all their reports?')) {
+                // Remove node and update parent's children
+                currentData = currentData.filter(d => d.id !== nodeId);
+                
+                // Remove as child from parent
+                currentData.forEach(node => {
+                    if (node.children) {
+                        node.children = node.children.filter(child => child.id !== nodeId);
+                    }
+                });
+                
+                updateChart();
+                saveToLocal();
+                closeEditForm();
+            }
+        }
+        
+        function addNode(parentId) {
+            const parent = currentData.find(d => d.id === parentId);
+            if (!parent) return;
+            
+            const newNode = {
+                id: 'node-' + Date.now(),
+                parentId: parentId,
+                name: 'New Employee',
+                title: 'Position',
+                location: parent.location || '',
+                region: parent.region
+            };
+            
+            currentData.push(newNode);
+            updateChart();
+            saveToLocal();
+            
+            // Edit the new node immediately
+            setTimeout(() => {
+                const d3Node = { data: newNode };
+                editNode(d3Node);
+            }, 500);
+        }
+        
+        // Save/Load functions
+        function saveToLocal() {
+            localStorage.setItem('orgChartData', JSON.stringify(completeOrgData));
+            localStorage.setItem('orgChartFlat', JSON.stringify(currentData));
+            
+            // Show save confirmation
+            const msg = document.createElement('div');
+            msg.innerHTML = '✅ Changes saved locally!';
+            msg.style.cssText = 'position: fixed; top: 80px; right: 20px; background: #28a745; color: white; padding: 10px 20px; border-radius: 4px; z-index: 10000;';
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 2000);
+        }
+        
+        function loadFromLocal() {
+            const saved = localStorage.getItem('orgChartData');
+            if (saved) {
+                try {
+                    completeOrgData = JSON.parse(saved);
+                    console.log('Loaded saved data from local storage');
+                } catch (e) {
+                    console.error('Error loading saved data:', e);
+                }
+            }
+        }
+        
+        function exportData() {
+            const dataStr = JSON.stringify(completeOrgData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `org-chart-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+        
+        function importData() {
+            document.getElementById('importFile').click();
+        }
+        
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        completeOrgData = JSON.parse(e.target.result);
+                        loadData();
+                        saveToLocal();
+                        alert('Data imported successfully!');
+                    } catch (err) {
+                        alert('Error importing file: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+        
+        function resetData() {
+            if (confirm('Reset to original data? All changes will be lost!')) {
+                localStorage.removeItem('orgChartData');
+                localStorage.removeItem('orgChartFlat');
+                location.reload();
+            }
+        }
+        
+        // Context menu for right-click
+        function addContextMenu() {
+            document.addEventListener('contextmenu', (e) => {
+                // Check if right-clicked on a node
+                const nodeElement = e.target.closest('[data-node-id]');
+                if (nodeElement) {
+                    e.preventDefault();
+                    
+                    const nodeId = nodeElement.getAttribute('data-node-id');
+                    
+                    // Remove existing menu
+                    const existing = document.getElementById('context-menu');
+                    if (existing) existing.remove();
+                    
+                    const menu = document.createElement('div');
+                    menu.id = 'context-menu';
+                    menu.innerHTML = `
+                        <div style="position: fixed; left: ${e.pageX}px; top: ${e.pageY}px; 
+                             background: white; border: 1px solid #ddd; border-radius: 4px; 
+                             box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 10000;">
+                            <div onclick="addNode('${nodeId}')" style="padding: 8px 16px; cursor: pointer; hover: background: #f0f0f0;">
+                                ➕ Add Employee Below
+                            </div>
+                            <div onclick="editNodeById('${nodeId}')" style="padding: 8px 16px; cursor: pointer; hover: background: #f0f0f0;">
+                                ✏️ Edit Employee
+                            </div>
+                            <div onclick="deleteNode('${nodeId}')" style="padding: 8px 16px; cursor: pointer; color: #dc3545; hover: background: #f0f0f0;">
+                                🗑️ Delete Employee
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(menu);
+                    
+                    // Remove menu on click elsewhere
+                    setTimeout(() => {
+                        document.addEventListener('click', function removeMenu() {
+                            menu.remove();
+                            document.removeEventListener('click', removeMenu);
+                        });
+                    }, 100);
+                }
+            });
+        }
+        
+        function editNodeById(nodeId) {
+            const node = currentData.find(d => d.id === nodeId);
+            if (node) {
+                editNode({ data: node });
+            }
+        }
     </script>
 </body>
 </html>

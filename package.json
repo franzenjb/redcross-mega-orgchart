@@ -1,0 +1,40 @@
+{
+  "name": "redcross-mega-orgchart",
+  "version": "1.0.0",
+  "description": "Red Cross Mega Organizational Chart System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build": "echo 'Building production assets...'",
+    "test": "echo 'Running tests...'",
+    "generate-pdf": "python3 python-org-generator.py",
+    "install-python-deps": "pip3 install graphviz pandas openpyxl"
+  },
+  "devDependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "csv-parser": "^3.2.0",
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "nodemon": "^3.1.10",
+    "sqlite3": "^5.1.7"
+  },
+  "keywords": [
+    "orgchart",
+    "organization",
+    "hierarchy",
+    "redcross",
+    "disaster-response"
+  ],
+  "author": "Red Cross Digital Operations",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/franzenjb/redcross-mega-orgchart.git"
+  },
+  "bugs": {
+    "url": "https://github.com/franzenjb/redcross-mega-orgchart/issues"
+  },
+  "homepage": "https://github.com/franzenjb/redcross-mega-orgchart#readme"
+}

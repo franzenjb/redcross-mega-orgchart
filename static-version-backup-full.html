@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SE & Caribbean Division - Complete Organizational Chart</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        /* Header and Controls */
+        .header {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: #1a472a;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .region-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .region-btn {
+            padding: 8px 15px;
+            border: 2px solid #2e7d32;
+            background: white;
+            color: #2e7d32;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .region-btn:hover {
+            background: #e8f5e9;
+        }
+        
+        .region-btn.active {
+            background: #2e7d32;
+            color: white;
+        }
+        
+        /* Region-specific colors */
+        .region-btn.alabama { border-color: #c2185b; color: #c2185b; }
+        .region-btn.alabama.active { background: #c2185b; }
+        
+        .region-btn.ncflorida { border-color: #388e3c; color: #388e3c; }
+        .region-btn.ncflorida.active { background: #388e3c; }
+        
+        .region-btn.sflorida { border-color: #00796b; color: #00796b; }
+        .region-btn.sflorida.active { background: #00796b; }
+        
+        .region-btn.georgia { border-color: #1976d2; color: #1976d2; }
+        .region-btn.georgia.active { background: #1976d2; }
+        
+        .region-btn.northcarolina { border-color: #f57c00; color: #f57c00; }
+        .region-btn.northcarolina.active { background: #f57c00; }
+        
+        .region-btn.puertorico { border-color: #0097a7; color: #0097a7; }
+        .region-btn.puertorico.active { background: #0097a7; }
+        
+        .region-btn.southcarolina { border-color: #d32f2f; color: #d32f2f; }
+        .region-btn.southcarolina.active { background: #d32f2f; }
+        
+        .region-btn.tennessee { border-color: #7b1fa2; color: #7b1fa2; }
+        .region-btn.tennessee.active { background: #7b1fa2; }
+        
+        .search-box {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .search-input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+            font-size: 12px;
+        }
+        
+        .search-btn, .print-btn, .edit-btn {
+            padding: 8px 15px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .search-btn:hover, .print-btn:hover, .edit-btn:hover {
+            background: #45a049;
+        }
+        
+        .print-btn {
+            background: #757575;
+        }
+        
+        .print-btn:hover {
+            background: #616161;
+        }
+        
+        .edit-btn {
+            background: #ff9800;
+        }
+        
+        .edit-btn:hover {
+            background: #f57c00;
+        }
+        
+        .edit-btn.active {
+            background: #e65100;
+        }
+        
+        /* Stats */
+        .stats {
+            text-align: center;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 12px;
+            color: #2e7d32;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Region sections - hidden by default */
+        .region-section {
+            display: none;
+        }
+        
+        .region-section.active {
+            display: block;
+        }
+        
+        /* Executive and direct reports row */
+        .executive-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .executive-section {
+            text-align: center;
+            margin: 0 20px;
+        }
+        
+        /* Direct reports - leaders only */
+        .leaders-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        /* Node styling */
+        .node {
+            border: 2px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+            background: white;
+            min-width: 120px;
+            transition: all 0.3s;
+            cursor: default;
+        }
+        
+        .node.editable {
+            cursor: pointer;
+        }
+        
+        .node.editable:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .node.chief {
+            background: #1a472a;
+            color: white;
+            border-color: #0d2315;
+            min-width: 150px;
+        }
+        
+        .node.director {
+            background: #2e7d32;
+            color: white;
+            border-color: #1b5e20;
+            min-width: 140px;
+        }
+        
+        .node.manager {
+            background: #4caf50;
+            color: white;
+            border-color: #388e3c;
+        }
+        
+        .node.specialist {
+            background: #81c784;
+            color: black;
+            border-color: #4caf50;
+        }
+        
+        .node.coordinator {
+            background: #a5d6a7;
+            color: black;
+            border-color: #81c784;
+        }
+        
+        .node.vacant {
+            background: #ffeb3b;
+            color: black;
+            border-color: #fbc02d;
+            font-style: italic;
+        }
+        
+        .node.highlight {
+            box-shadow: 0 0 15px #ff9800;
+            border-color: #ff9800;
+            transform: scale(1.05);
+        }
+        
+        .node .title {
+            font-weight: bold;
+            font-size: 10px;
+            margin-bottom: 3px;
+        }
+        
+        .node .name {
+            font-size: 12px;
+            font-weight: bold;
+            margin: 3px 0;
+        }
+        
+        .node .location {
+            font-size: 9px;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .node.chief .location,
+        .node.director .location,
+        .node.manager .location {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        /* Discipline sections - stacked */
+        .disciplines-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .discipline-section {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            background: #fafafa;
+        }
+        
+        .discipline-header {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 15px;
+            padding: 8px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .sub-team {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #ccc;
+        }
+        
+        .sub-team-header {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 10px;
+            color: #333;
+            background: rgba(0,0,0,0.03);
+            padding: 5px;
+            border-radius: 3px;
+        }
+        
+        /* Edit mode input styling */
+        .node input {
+            width: 100%;
+            border: 1px solid #4caf50;
+            padding: 2px;
+            margin: 2px 0;
+            font-size: 11px;
+            border-radius: 2px;
+        }
+        
+        /* Print styles */
+        @media print {
+            .header {
+                position: static;
+                page-break-after: avoid;
+            }
+            
+            .controls {
+                display: none;
+            }
+            
+            .stats {
+                display: none;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 10px;
+            }
+            
+            .node {
+                page-break-inside: avoid;
+            }
+            
+            .discipline-section {
+                page-break-inside: avoid;
+            }
+            
+            @page {
+                size: portrait;
+                margin: 0.5in;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>SE & Caribbean Division - Complete Organizational Chart</h1>
+        <div class="controls">
+            <div class="region-buttons">
+                <!-- Alphabetically ordered with Florida regions grouped -->
+                <button class="region-btn alabama" onclick="showRegion('alabama')">Alabama/MS</button>
+                <button class="region-btn ncflorida active" onclick="showRegion('ncflorida')">Florida N/C</button>
+                <button class="region-btn sflorida" onclick="showRegion('sflorida')">Florida South</button>
+                <button class="region-btn georgia" onclick="showRegion('georgia')">Georgia</button>
+                <button class="region-btn northcarolina" onclick="showRegion('northcarolina')">North Carolina</button>
+                <button class="region-btn puertorico" onclick="showRegion('puertorico')">Puerto Rico</button>
+                <button class="region-btn southcarolina" onclick="showRegion('southcarolina')">South Carolina</button>
+                <button class="region-btn tennessee" onclick="showRegion('tennessee')">Tennessee</button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search for a person...">
+                <button onclick="searchPerson()" class="search-btn">Search</button>
+                <button onclick="toggleEditMode()" class="edit-btn" id="editBtn">Edit Mode</button>
+                <button onclick="window.print()" class="print-btn">Print</button>
+            </div>
+        </div>
+        <div class="stats" id="stats">Loading...</div>
+    </div>
+    
+    <div class="container">
+        
+        <!-- North Central Florida Region -->
+        <div class="region-section ncflorida active" id="ncflorida">
+            <h2 style="text-align: center; color: #388e3c; margin-bottom: 20px;">North Central Florida Region</h2>
+            
+            <!-- Top leadership -->
+            <div class="executive-row">
+                <div class="executive-section">
+                    <div class="node chief editable">
+                        <div class="title">Regional Executive</div>
+                        <div class="name">C. Smith</div>
+                        <div class="location">Jacksonville</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Direct reports - leaders only -->
+            <div class="leaders-row">
+                <div class="node director editable">
+                    <div class="title">Chief Development Officer</div>
+                    <div class="name">W. Carney</div>
+                    <div class="location">Jacksonville</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Chief Operating Officer</div>
+                    <div class="name">S. Rosario</div>
+                    <div class="location">Jacksonville</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Regional Disaster Officer</div>
+                    <div class="name">K. Watt</div>
+                    <div class="location">Jacksonville</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Finance Director</div>
+                    <div class="name">T. Hintze</div>
+                    <div class="location">Jacksonville</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Sr Manager VS & Biomed</div>
+                    <div class="name">K. Wims</div>
+                    <div class="location">Jacksonville</div>
+                </div>
+            </div>
+            
+            <!-- Stacked discipline sections -->
+            <div class="disciplines-stack">
+                
+                <!-- Development Section -->
+                <div class="discipline-section" style="background: #fce4ec;">
+                    <div class="discipline-header">DEVELOPMENT (W. Carney)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Sr Dir of Development</div>
+                            <div class="name">M. Brown</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Dir Major Gifts</div>
+                            <div class="name">J. Moran</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Dir Annual Giving</div>
+                            <div class="name">T. Sweeten</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Foundation Relations Officer</div>
+                            <div class="name">L. Smith</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-team">
+                        <div class="sub-team-header">Major Gifts Team</div>
+                        <div class="team-grid">
+                            <div class="node specialist editable">
+                                <div class="title">Major Gifts Officer</div>
+                                <div class="name">S. Johnson</div>
+                                <div class="location">Jacksonville</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">Major Gifts Officer</div>
+                                <div class="name">R. Williams</div>
+                                <div class="location">Gainesville</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">Planned Giving Officer</div>
+                                <div class="name">K. Davis</div>
+                                <div class="location">Jacksonville</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Operations Section -->
+                <div class="discipline-section" style="background: #e8f5e9;">
+                    <div class="discipline-header">OPERATIONS (S. Rosario)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">HR Director</div>
+                            <div class="name">M. Wilson</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">IT Manager</div>
+                            <div class="name">J. Chen</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Facilities Manager</div>
+                            <div class="name">D. Rodriguez</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Real Estate Executive</div>
+                            <div class="name">P. Anderson</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">RVSO</div>
+                            <div class="name">J. Walker</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-team">
+                        <div class="sub-team-header">Executive Directors</div>
+                        <div class="team-grid">
+                            <div class="node manager editable">
+                                <div class="title">Executive Director</div>
+                                <div class="name">M. Reid</div>
+                                <div class="location">Orlando</div>
+                            </div>
+                            <div class="node manager editable">
+                                <div class="title">Executive Director</div>
+                                <div class="name">C. Anderson</div>
+                                <div class="location">Tampa</div>
+                            </div>
+                            <div class="node manager editable">
+                                <div class="title">Executive Director</div>
+                                <div class="name">T. Hinchliffe</div>
+                                <div class="location">Tallahassee</div>
+                            </div>
+                            <div class="node manager editable">
+                                <div class="title">Executive Director</div>
+                                <div class="name">C. Funk</div>
+                                <div class="location">Pensacola</div>
+                            </div>
+                            <div class="node manager editable">
+                                <div class="title">Executive Director</div>
+                                <div class="name">A. Yates</div>
+                                <div class="location">Gainesville</div>
+                            </div>
+                            <div class="node vacant editable">
+                                <div class="title">Executive Director</div>
+                                <div class="name">Vacant</div>
+                                <div class="location">Jacksonville</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-team">
+                        <div class="sub-team-header">Volunteer Services Team</div>
+                        <div class="team-grid">
+                            <div class="node specialist editable">
+                                <div class="title">VS Specialist</div>
+                                <div class="name">S. Williams</div>
+                                <div class="location">Jacksonville</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">VS Specialist</div>
+                                <div class="name">C. Funkhouser</div>
+                                <div class="location">Tampa</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">VS Rep II</div>
+                                <div class="name">A. Lin</div>
+                                <div class="location">Orlando/Daytona</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">VS Rep III</div>
+                                <div class="name">M. Gallagher</div>
+                                <div class="location">Tampa</div>
+                            </div>
+                            <div class="node vacant editable">
+                                <div class="title">VS Rep III</div>
+                                <div class="name">Vacant</div>
+                                <div class="location">Jacksonville/G'ville</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">VS Rep II</div>
+                                <div class="name">H. Anderson</div>
+                                <div class="location">Jacksonville</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Disaster Operations -->
+                <div class="discipline-section" style="background: #e3f2fd;">
+                    <div class="discipline-header">DISASTER OPERATIONS (K. Watt - RDO Interim)</div>
+                    
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Deputy RDO</div>
+                            <div class="name">M. Holland</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Reg DWE Manager</div>
+                            <div class="name">D. McNair</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Regional Mass Care Manager</div>
+                            <div class="name">M. Donahue</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Planning & Situational Awareness Manager</div>
+                            <div class="name">J. Clairday</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Regional Client Care Manager</div>
+                            <div class="name">Z. Pettis</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">DAT Manager</div>
+                            <div class="name">A. Cullison</div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-team">
+                        <div class="sub-team-header">M. Boyd - Sr. CDPM 1-4</div>
+                        <div class="team-grid">
+                            <div class="node specialist editable">
+                                <div class="title">CDPM</div>
+                                <div class="name">A. Cornett</div>
+                                <div class="location">Pensacola</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">CDPM</div>
+                                <div class="name">K. Bland</div>
+                                <div class="location">Tallahassee</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">CDPM</div>
+                                <div class="name">A. Martain</div>
+                                <div class="location">Gainesville</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">CDPM</div>
+                                <div class="name">D. Gee</div>
+                                <div class="location">Jacksonville</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">CDPM</div>
+                                <div class="name">M. Giannini</div>
+                                <div class="location">Jacksonville</div>
+                            </div>
+                            <div class="node vacant editable">
+                                <div class="title">CDPM</div>
+                                <div class="name">Vacant</div>
+                                <div class="location">Gainesville</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-team">
+                        <div class="sub-team-header">J. Latalladi - Sr. CDPM 5-6</div>
+                        <div class="team-grid">
+                            <div class="node specialist editable">
+                                <div class="title">CDPM</div>
+                                <div class="name">S. Thompson</div>
+                                <div class="location">Orlando</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">CDPM</div>
+                                <div class="name">K. Abel</div>
+                                <div class="location">Orlando</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">CDPM</div>
+                                <div class="name">X. Reeves</div>
+                                <div class="location">Tampa</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">CDPM</div>
+                                <div class="name">S. Poreda</div>
+                                <div class="location">Tampa</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-team">
+                        <div class="sub-team-header">T. Beazer - Sr. CDPM USVI</div>
+                        <div class="team-grid">
+                            <div class="node vacant editable">
+                                <div class="title">CDPM</div>
+                                <div class="name">Vacant</div>
+                                <div class="location">USVI</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">CDPM</div>
+                                <div class="name">S. Hensley</div>
+                                <div class="location">USVI</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-team">
+                        <div class="sub-team-header">CDPS Teams</div>
+                        <div class="team-grid">
+                            <div class="node vacant editable">
+                                <div class="title">CDPS</div>
+                                <div class="name">Vacant</div>
+                                <div class="location">Pensacola</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">CDPS</div>
+                                <div class="name">R. Barkley</div>
+                                <div class="location">Tallahassee</div>
+                            </div>
+                            <div class="node vacant editable">
+                                <div class="title">CDPS</div>
+                                <div class="name">Vacant</div>
+                                <div class="location">Gainesville</div>
+                            </div>
+                            <div class="node vacant editable">
+                                <div class="title">CDPS</div>
+                                <div class="name">Vacant</div>
+                                <div class="location">Jacksonville</div>
+                            </div>
+                            <div class="node vacant editable">
+                                <div class="title">CDPS</div>
+                                <div class="name">Vacant</div>
+                                <div class="location">St. Augustine</div>
+                            </div>
+                            <div class="node vacant editable">
+                                <div class="title">CDPS</div>
+                                <div class="name">Vacant</div>
+                                <div class="location">Orlando</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">CDPS</div>
+                                <div class="name">R. McGuire</div>
+                                <div class="location">Orlando</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">CDPS</div>
+                                <div class="name">A. Quinones</div>
+                                <div class="location">Tampa</div>
+                            </div>
+                            <div class="node vacant editable">
+                                <div class="title">CDPS</div>
+                                <div class="name">Vacant</div>
+                                <div class="location">Tampa</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">Reg DWE Specialist</div>
+                                <div class="name">A. Young</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Service to Armed Forces -->
+                <div class="discipline-section" style="background: #e1f5fe;">
+                    <div class="discipline-header">SERVICE TO ARMED FORCES (G. Scrivens)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">SAF Manager</div>
+                            <div class="name">A. Bolton</div>
+                            <div class="location">Orlando</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Program Manager</div>
+                            <div class="name">L. Tissicino</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Mobile Program Manager</div>
+                            <div class="name">L. Simms</div>
+                        </div>
+                        <div class="node specialist editable">
+                            <div class="title">Mobile SAF Specialist</div>
+                            <div class="name">M. Chavarria</div>
+                            <div class="location">Tampa</div>
+                        </div>
+                        <div class="node specialist editable">
+                            <div class="title">SAF Specialist</div>
+                            <div class="name">S. Youngren</div>
+                            <div class="location">Pensacola</div>
+                        </div>
+                        <div class="node specialist editable">
+                            <div class="title">Sr. Specialist</div>
+                            <div class="name">D. McMillian</div>
+                            <div class="location">Tallahassee</div>
+                        </div>
+                        <div class="node vacant editable">
+                            <div class="title">Sr. Specialist</div>
+                            <div class="name">Vacant</div>
+                            <div class="location">Daytona/Orlando</div>
+                        </div>
+                        <div class="node coordinator editable">
+                            <div class="title">SAF Coordinator</div>
+                            <div class="name">L. Pendergrass</div>
+                            <div class="location">Daytona</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Communications -->
+                <div class="discipline-section" style="background: #f3e5f5;">
+                    <div class="discipline-header">COMMUNICATIONS</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Communications Director</div>
+                            <div class="name">A. Bierfreund</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node specialist editable">
+                            <div class="title">Comm Specialist III</div>
+                            <div class="name">R. Nelson</div>
+                        </div>
+                        <div class="node specialist editable">
+                            <div class="title">Rep II</div>
+                            <div class="name">M. Smith</div>
+                            <div class="location">USVI</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Volunteer & Biomedical Services -->
+                <div class="discipline-section" style="background: #fff3e0;">
+                    <div class="discipline-header">VOLUNTEER SERVICES & BIOMEDICAL (K. Wims)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Volunteer Coordinator</div>
+                            <div class="name">M. Thompson</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Blood Drive Coordinator</div>
+                            <div class="name">S. Williams</div>
+                            <div class="location">Jacksonville</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Community Outreach</div>
+                            <div class="name">J. Robinson</div>
+                            <div class="location">Gainesville</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Alabama/Mississippi Region -->
+        <div class="region-section alabama" id="alabama">
+            <h2 style="text-align: center; color: #c2185b; margin-bottom: 20px;">Alabama/Mississippi Region</h2>
+            
+            <!-- Top leadership -->
+            <div class="executive-row">
+                <div class="executive-section">
+                    <div class="node chief editable">
+                        <div class="title">Regional Executive</div>
+                        <div class="name">M. Beddingfield</div>
+                        <div class="location">Birmingham</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Direct reports - leaders only -->
+            <div class="leaders-row">
+                <div class="node director editable">
+                    <div class="title">Chief Development Officer</div>
+                    <div class="name">D. Warren</div>
+                    <div class="location">Birmingham</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Regional Disaster Officer</div>
+                    <div class="name">F. Harrison</div>
+                    <div class="location">Birmingham</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Executive Coordinator</div>
+                    <div class="name">E. Whitt</div>
+                    <div class="location">Birmingham</div>
+                </div>
+            </div>
+            
+            <!-- Stacked discipline sections -->
+            <div class="disciplines-stack">
+                
+                <!-- Development Section -->
+                <div class="discipline-section" style="background: #fce4ec;">
+                    <div class="discipline-header">DEVELOPMENT (D. Warren)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Sr. Regional Philanthropy Officer</div>
+                            <div class="name">M. Williams</div>
+                            <div class="location">Birmingham</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Sr. Regional Philanthropy Officer</div>
+                            <div class="name">L. Hollingsworth</div>
+                            <div class="location">Jackson</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Sr. Regional Philanthropy Officer</div>
+                            <div class="name">L. Gordon</div>
+                            <div class="location">Huntsville</div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-team">
+                        <div class="sub-team-header">Birmingham Team (M. Williams)</div>
+                        <div class="team-grid">
+                            <div class="node specialist editable">
+                                <div class="title">Regional Philanthropy Officer</div>
+                                <div class="name">L. Phillips</div>
+                                <div class="location">Birmingham</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">Regional Philanthropy Officer</div>
+                                <div class="name">K. Pitts</div>
+                                <div class="location">Birmingham</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">Regional Philanthropy Officer</div>
+                                <div class="name">J. Wood</div>
+                                <div class="location">Birmingham</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">Regional Philanthropy Officer</div>
+                                <div class="name">J. Copeland</div>
+                                <div class="location">Mobile</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">Regional Philanthropy Officer</div>
+                                <div class="name">K. Tompkins</div>
+                                <div class="location">Montgomery</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-team">
+                        <div class="sub-team-header">Mississippi Team (L. Hollingsworth)</div>
+                        <div class="team-grid">
+                            <div class="node specialist editable">
+                                <div class="title">Regional Philanthropy Officer</div>
+                                <div class="name">T. Goolsby</div>
+                                <div class="location">Jackson</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">Regional Philanthropy Officer</div>
+                                <div class="name">T. Wright</div>
+                                <div class="location">Meridian</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">Regional Philanthropy Officer</div>
+                                <div class="name">D. Taylor</div>
+                                <div class="location">Tupelo</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">Regional Philanthropy Officer</div>
+                                <div class="name">K. Shaw</div>
+                                <div class="location">Gulfport</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-team">
+                        <div class="sub-team-header">Huntsville Team (L. Gordon)</div>
+                        <div class="team-grid">
+                            <div class="node specialist editable">
+                                <div class="title">Regional Philanthropy Officer</div>
+                                <div class="name">M. Mitchell</div>
+                                <div class="location">Huntsville</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">Regional Philanthropy Officer</div>
+                                <div class="name">K. Stinson</div>
+                                <div class="location">Decatur</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Disaster Operations -->
+                <div class="discipline-section" style="background: #e3f2fd;">
+                    <div class="discipline-header">DISASTER OPERATIONS (F. Harrison)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Disaster Program Manager</div>
+                            <div class="name">T. Clark</div>
+                            <div class="location">Birmingham</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Emergency Services Manager</div>
+                            <div class="name">R. Thompson</div>
+                            <div class="location">Jackson</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Mass Care Coordinator</div>
+                            <div class="name">J. Davis</div>
+                            <div class="location">Mobile</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- South Florida Region -->
+        <div class="region-section sflorida" id="sflorida">
+            <h2 style="text-align: center; color: #00796b; margin-bottom: 20px;">South Florida Region</h2>
+            
+            <!-- Top leadership -->
+            <div class="executive-row">
+                <div class="executive-section">
+                    <div class="node chief editable">
+                        <div class="title">Regional Chief Executive</div>
+                        <div class="name">J. McSweeney</div>
+                        <div class="location">West Palm Beach</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Direct reports - leaders only -->
+            <div class="leaders-row">
+                <div class="node director editable">
+                    <div class="title">Chief Development Officer</div>
+                    <div class="name">K. Murray</div>
+                    <div class="location">West Palm Beach</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Regional Disaster Officer</div>
+                    <div class="name">T. Rodriguez</div>
+                    <div class="location">Miami</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">CFO</div>
+                    <div class="name">L. Chen</div>
+                    <div class="location">West Palm Beach</div>
+                </div>
+            </div>
+            
+            <!-- Stacked discipline sections -->
+            <div class="disciplines-stack">
+                
+                <!-- Development Section -->
+                <div class="discipline-section" style="background: #fce4ec;">
+                    <div class="discipline-header">DEVELOPMENT (K. Murray)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Major Gifts Director</div>
+                            <div class="name">R. Lopez</div>
+                            <div class="location">Miami</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Corporate Partnerships</div>
+                            <div class="name">S. Martinez</div>
+                            <div class="location">Fort Lauderdale</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Annual Giving Manager</div>
+                            <div class="name">D. Williams</div>
+                            <div class="location">West Palm Beach</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Disaster Operations -->
+                <div class="discipline-section" style="background: #e3f2fd;">
+                    <div class="discipline-header">DISASTER OPERATIONS (T. Rodriguez)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Emergency Services Dir</div>
+                            <div class="name">M. Gonzalez</div>
+                            <div class="location">Miami</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Mass Care Manager</div>
+                            <div class="name">J. Perez</div>
+                            <div class="location">Fort Myers</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Logistics Coordinator</div>
+                            <div class="name">A. Smith</div>
+                            <div class="location">West Palm Beach</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Georgia Region -->
+        <div class="region-section georgia" id="georgia">
+            <h2 style="text-align: center; color: #1976d2; margin-bottom: 20px;">Georgia Region</h2>
+            
+            <!-- Top leadership -->
+            <div class="executive-row">
+                <div class="executive-section">
+                    <div class="node chief editable">
+                        <div class="title">Regional Chief Executive</div>
+                        <div class="name">Alicia Doherty</div>
+                        <div class="location">Atlanta</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Direct reports - leaders only -->
+            <div class="leaders-row">
+                <div class="node director editable">
+                    <div class="title">Regional Disaster Officer</div>
+                    <div class="name">Adelaide Kirk</div>
+                    <div class="location">Columbus</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Chief Development Officer</div>
+                    <div class="name">Greg Scrivens</div>
+                    <div class="location">Atlanta</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">RD Biomedical Services</div>
+                    <div class="name">Keith Cofer</div>
+                    <div class="location">Atlanta</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Regional HR Officer</div>
+                    <div class="name">M. Babin</div>
+                    <div class="location">Atlanta</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Regional Finance Officer</div>
+                    <div class="name">J. Garlington</div>
+                    <div class="location">Atlanta</div>
+                </div>
+            </div>
+            
+            <!-- Stacked discipline sections -->
+            <div class="disciplines-stack">
+                
+                <!-- Disaster Section -->
+                <div class="discipline-section" style="background: #e3f2fd;">
+                    <div class="discipline-header">DISASTER OPERATIONS (Adelaide Kirk)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Deputy Regional Disaster Officer</div>
+                            <div class="name">Jeremy McLendon</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Sr Community Disaster PM</div>
+                            <div class="name">Kelly Crane</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Regional Mass Care Manager</div>
+                            <div class="name">T. Norbut</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Sr Regional Workforce Engagement Manager</div>
+                            <div class="name">V. Griffin</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Regional Disaster Program Manager</div>
+                            <div class="name">K. Ross</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-team">
+                        <div class="sub-team-header">Community Disaster Programs</div>
+                        <div class="team-grid">
+                            <div class="node specialist editable">
+                                <div class="title">Sr CDPM</div>
+                                <div class="name">C. Williams</div>
+                                <div class="location">Atlanta</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">Sr CDPM</div>
+                                <div class="name">M. Morrison</div>
+                                <div class="location">SW GA</div>
+                            </div>
+                            <div class="node vacant editable">
+                                <div class="title">Sr CDPM</div>
+                                <div class="name">Vacant</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">CDPM</div>
+                                <div class="name">R. Oaks</div>
+                                <div class="location">Atlanta</div>
+                            </div>
+                            <div class="node manager editable">
+                                <div class="title">Sr Disaster Recovery Mgr</div>
+                                <div class="name">M. Ruff</div>
+                                <div class="location">Atlanta</div>
+                            </div>
+                            <div class="node specialist editable">
+                                <div class="title">Case Supervisor</div>
+                                <div class="name">K. Grant</div>
+                                <div class="location">Atlanta</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Development Section -->
+                <div class="discipline-section" style="background: #fce4ec;">
+                    <div class="discipline-header">DEVELOPMENT (Greg Scrivens)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Sr Philanthropy Officer</div>
+                            <div class="name">C. Rucker</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Philanthropy Officer</div>
+                            <div class="name">L. Knight</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Sr Gift Planning Officer</div>
+                            <div class="name">M. James</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Director Major Gifts</div>
+                            <div class="name">S. Croskey</div>
+                            <div class="location">Atlanta</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Regional Philanthropy Officer</div>
+                            <div class="name">A. Stancil</div>
+                            <div class="location">Savannah</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tennessee Region -->
+        <div class="region-section tennessee" id="tennessee">
+            <h2 style="text-align: center; color: #7b1fa2; margin-bottom: 20px;">Tennessee Region</h2>
+            
+            <!-- Top leadership -->
+            <div class="executive-row">
+                <div class="executive-section">
+                    <div class="node chief editable">
+                        <div class="title">Regional Executive</div>
+                        <div class="name">B. Thomas</div>
+                        <div class="location">Nashville</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Direct reports - leaders only -->
+            <div class="leaders-row">
+                <div class="node director editable">
+                    <div class="title">Chief Development Officer</div>
+                    <div class="name">M. Anderson</div>
+                    <div class="location">Nashville</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Regional Disaster Officer</div>
+                    <div class="name">J. Wilson</div>
+                    <div class="location">Memphis</div>
+                </div>
+            </div>
+            
+            <!-- Stacked discipline sections -->
+            <div class="disciplines-stack">
+                
+                <!-- Development Section -->
+                <div class="discipline-section" style="background: #fce4ec;">
+                    <div class="discipline-header">DEVELOPMENT (M. Anderson)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Major Gifts Manager</div>
+                            <div class="name">L. Davis</div>
+                            <div class="location">Nashville</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Corporate Relations</div>
+                            <div class="name">K. Brown</div>
+                            <div class="location">Knoxville</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Disaster Operations -->
+                <div class="discipline-section" style="background: #e3f2fd;">
+                    <div class="discipline-header">DISASTER OPERATIONS (J. Wilson)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Emergency Manager</div>
+                            <div class="name">R. Jackson</div>
+                            <div class="location">Memphis</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Mass Care Coordinator</div>
+                            <div class="name">S. Miller</div>
+                            <div class="location">Chattanooga</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- North Carolina Region -->
+        <div class="region-section northcarolina" id="northcarolina">
+            <h2 style="text-align: center; color: #f57c00; margin-bottom: 20px;">North Carolina Region</h2>
+            
+            <!-- Top leadership -->
+            <div class="executive-row">
+                <div class="executive-section">
+                    <div class="node chief editable">
+                        <div class="title">Regional CEO</div>
+                        <div class="name">P. Graham</div>
+                        <div class="location">Charlotte</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Direct reports - leaders only -->
+            <div class="leaders-row">
+                <div class="node director editable">
+                    <div class="title">Chief Development Officer</div>
+                    <div class="name">T. Matthews</div>
+                    <div class="location">Charlotte</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Regional Disaster Officer</div>
+                    <div class="name">K. Robinson</div>
+                    <div class="location">Raleigh</div>
+                </div>
+            </div>
+            
+            <!-- Stacked discipline sections -->
+            <div class="disciplines-stack">
+                
+                <!-- Development Section -->
+                <div class="discipline-section" style="background: #fce4ec;">
+                    <div class="discipline-header">DEVELOPMENT (T. Matthews)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Major Gifts Director</div>
+                            <div class="name">J. Thompson</div>
+                            <div class="location">Charlotte</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Annual Fund Manager</div>
+                            <div class="name">L. White</div>
+                            <div class="location">Raleigh</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Disaster Operations -->
+                <div class="discipline-section" style="background: #e3f2fd;">
+                    <div class="discipline-header">DISASTER OPERATIONS (K. Robinson)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Emergency Response Manager</div>
+                            <div class="name">M. Taylor</div>
+                            <div class="location">Raleigh</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Mass Care Specialist</div>
+                            <div class="name">D. Johnson</div>
+                            <div class="location">Asheville</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- South Carolina Region -->
+        <div class="region-section southcarolina" id="southcarolina">
+            <h2 style="text-align: center; color: #d32f2f; margin-bottom: 20px;">South Carolina Region</h2>
+            
+            <!-- Top leadership -->
+            <div class="executive-row">
+                <div class="executive-section">
+                    <div class="node chief editable">
+                        <div class="title">Regional Executive</div>
+                        <div class="name">L. Copeland</div>
+                        <div class="location">Columbia</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Direct reports - leaders only -->
+            <div class="leaders-row">
+                <div class="node director editable">
+                    <div class="title">Chief Development Officer</div>
+                    <div class="name">R. Harris</div>
+                    <div class="location">Columbia</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Regional Disaster Officer</div>
+                    <div class="name">M. Lewis</div>
+                    <div class="location">Charleston</div>
+                </div>
+            </div>
+            
+            <!-- Stacked discipline sections -->
+            <div class="disciplines-stack">
+                
+                <!-- Development Section -->
+                <div class="discipline-section" style="background: #fce4ec;">
+                    <div class="discipline-header">DEVELOPMENT (R. Harris)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Major Gifts Officer</div>
+                            <div class="name">S. Clark</div>
+                            <div class="location">Columbia</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Corporate Partnerships</div>
+                            <div class="name">J. Martin</div>
+                            <div class="location">Charleston</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Disaster Operations -->
+                <div class="discipline-section" style="background: #e3f2fd;">
+                    <div class="discipline-header">DISASTER OPERATIONS (M. Lewis)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Emergency Manager</div>
+                            <div class="name">T. Walker</div>
+                            <div class="location">Charleston</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Response Coordinator</div>
+                            <div class="name">B. Young</div>
+                            <div class="location">Greenville</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Puerto Rico Region -->
+        <div class="region-section puertorico" id="puertorico">
+            <h2 style="text-align: center; color: #0097a7; margin-bottom: 20px;">Puerto Rico Region</h2>
+            
+            <!-- Top leadership -->
+            <div class="executive-row">
+                <div class="executive-section">
+                    <div class="node chief editable">
+                        <div class="title">Regional Executive</div>
+                        <div class="name">L. Rodriguez</div>
+                        <div class="location">San Juan</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Direct reports - leaders only -->
+            <div class="leaders-row">
+                <div class="node director editable">
+                    <div class="title">Chief Development Officer</div>
+                    <div class="name">M. Santiago</div>
+                    <div class="location">San Juan</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Regional Disaster Officer</div>
+                    <div class="name">J. Colon</div>
+                    <div class="location">San Juan</div>
+                </div>
+                <div class="node director editable">
+                    <div class="title">Regional Program Officer</div>
+                    <div class="name">P. Torres</div>
+                    <div class="location">San Juan</div>
+                </div>
+            </div>
+            
+            <!-- Stacked discipline sections -->
+            <div class="disciplines-stack">
+                
+                <!-- Development Section -->
+                <div class="discipline-section" style="background: #fce4ec;">
+                    <div class="discipline-header">DEVELOPMENT (M. Santiago)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Dir. Major Gifts</div>
+                            <div class="name">A. Martinez</div>
+                            <div class="location">San Juan</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Dir. Corporate Partnerships</div>
+                            <div class="name">C. Rivera</div>
+                            <div class="location">San Juan</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Disaster Operations -->
+                <div class="discipline-section" style="background: #e3f2fd;">
+                    <div class="discipline-header">DISASTER OPERATIONS (J. Colon)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Emergency Services Manager</div>
+                            <div class="name">R. Hernandez</div>
+                            <div class="location">San Juan</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Disaster Response Lead</div>
+                            <div class="name">E. Gonzalez</div>
+                            <div class="location">Ponce</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Program Services -->
+                <div class="discipline-section" style="background: #e8f5e9;">
+                    <div class="discipline-header">PROGRAM SERVICES (P. Torres)</div>
+                    <div class="team-grid">
+                        <div class="node manager editable">
+                            <div class="title">Community Services Manager</div>
+                            <div class="name">D. Lopez</div>
+                            <div class="location">San Juan</div>
+                        </div>
+                        <div class="node manager editable">
+                            <div class="title">Service to Armed Forces Lead</div>
+                            <div class="name">N. Ortiz</div>
+                            <div class="location">San Juan</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <script>
+        let editMode = false;
+        
+        // Toggle edit mode
+        function toggleEditMode() {
+            editMode = !editMode;
+            const editBtn = document.getElementById('editBtn');
+            editBtn.classList.toggle('active');
+            editBtn.textContent = editMode ? 'Exit Edit Mode' : 'Edit Mode';
+            
+            const nodes = document.querySelectorAll('.node.editable');
+            nodes.forEach(node => {
+                if (editMode) {
+                    node.style.cursor = 'pointer';
+                    node.onclick = () => editNode(node);
+                } else {
+                    node.style.cursor = 'default';
+                    node.onclick = null;
+                }
+            });
+        }
+        
+        // Edit a node
+        function editNode(node) {
+            if (!editMode) return;
+            
+            const titleDiv = node.querySelector('.title');
+            const nameDiv = node.querySelector('.name');
+            const locationDiv = node.querySelector('.location');
+            
+            const originalTitle = titleDiv ? titleDiv.textContent : '';
+            const originalName = nameDiv ? nameDiv.textContent : '';
+            const originalLocation = locationDiv ? locationDiv.textContent : '';
+            
+            if (titleDiv) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = originalTitle;
+                input.onblur = () => saveEdit(titleDiv, input, originalTitle);
+                input.onkeypress = (e) => {
+                    if (e.key === 'Enter') input.blur();
+                    if (e.key === 'Escape') {
+                        titleDiv.textContent = originalTitle;
+                        titleDiv.style.display = 'block';
+                        input.remove();
+                    }
+                };
+                titleDiv.style.display = 'none';
+                titleDiv.parentNode.insertBefore(input, titleDiv.nextSibling);
+                input.focus();
+            }
+            
+            if (nameDiv) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = originalName;
+                input.onblur = () => saveEdit(nameDiv, input, originalName);
+                input.onkeypress = (e) => {
+                    if (e.key === 'Enter') input.blur();
+                    if (e.key === 'Escape') {
+                        nameDiv.textContent = originalName;
+                        nameDiv.style.display = 'block';
+                        input.remove();
+                    }
+                };
+                nameDiv.style.display = 'none';
+                nameDiv.parentNode.insertBefore(input, nameDiv.nextSibling);
+            }
+            
+            if (locationDiv) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = originalLocation;
+                input.onblur = () => saveEdit(locationDiv, input, originalLocation);
+                input.onkeypress = (e) => {
+                    if (e.key === 'Enter') input.blur();
+                    if (e.key === 'Escape') {
+                        locationDiv.textContent = originalLocation;
+                        locationDiv.style.display = 'block';
+                        input.remove();
+                    }
+                };
+                locationDiv.style.display = 'none';
+                locationDiv.parentNode.insertBefore(input, locationDiv.nextSibling);
+            }
+        }
+        
+        // Save edit
+        function saveEdit(div, input, originalValue) {
+            const newValue = input.value.trim();
+            if (newValue) {
+                div.textContent = newValue;
+            } else {
+                div.textContent = originalValue;
+            }
+            div.style.display = 'block';
+            input.remove();
+        }
+        
+        // Count positions in active region
+        function countPositions() {
+            const activeRegion = document.querySelector('.region-section.active');
+            if (activeRegion) {
+                const nodes = activeRegion.querySelectorAll('.node');
+                return nodes.length;
+            }
+            return 0;
+        }
+        
+        // Show/hide regions
+        function showRegion(regionId) {
+            document.querySelectorAll('.region-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(regionId).classList.add('active');
+            document.querySelector('.region-btn.' + regionId).classList.add('active');
+            
+            const count = countPositions();
+            const regionName = document.querySelector('.region-btn.' + regionId).textContent;
+            document.getElementById('stats').textContent = 
+                `Viewing: ${regionName} | Positions shown: ${count}`;
+        }
+        
+        // Search functionality
+        function searchPerson() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (!searchTerm) return;
+            
+            let found = false;
+            document.querySelectorAll('.node').forEach(node => {
+                node.classList.remove('highlight');
+            });
+            
+            document.querySelectorAll('.region-section').forEach(region => {
+                const nodes = region.querySelectorAll('.node');
+                nodes.forEach(node => {
+                    const text = node.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        showRegion(region.id);
+                        node.classList.add('highlight');
+                        node.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        found = true;
+                    }
+                });
+            });
+            
+            if (!found) {
+                alert('Person not found.');
+            }
+        }
+        
+        // Allow search on Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchPerson();
+            }
+        });
+        
+        // Initialize on load
+        window.onload = () => {
+            showRegion('ncflorida');
+        };
+    </script>
+</body>
+</html>
