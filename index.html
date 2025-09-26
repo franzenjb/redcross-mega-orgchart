@@ -1,377 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Red Cross SE & Caribbean Division - Org Chart System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Cross SE & Caribbean Division - Organizational Chart</title>
+    <meta http-equiv="refresh" content="0; url=beta-d3-orgchart.html">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        
-        /* Tab Navigation */
-        .tab-container {
-            background: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        
-        .tab-header {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .logo {
-            width: 50px;
-            height: 50px;
-            background: #ed1b2e;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 24px;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #1f2937;
-        }
-        
-        .subtitle {
-            font-size: 14px;
-            color: #6b7280;
-            margin-top: 2px;
-        }
-        
-        .tabs {
-            display: flex;
-            gap: 10px;
-            padding: 0 20px;
-            background: #f9fafb;
-        }
-        
-        .tab {
-            padding: 15px 30px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            color: #6b7280;
-            transition: all 0.3s;
-            position: relative;
-            border-bottom: 3px solid transparent;
-        }
-        
-        .tab:hover {
-            color: #374151;
-        }
-        
-        .tab.active {
-            color: #1f2937;
-            border-bottom-color: #ed1b2e;
-        }
-        
-        .tab-badge {
-            display: inline-block;
-            background: #10b981;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            margin-left: 8px;
-            font-weight: bold;
-        }
-        
-        .tab-badge.beta {
-            background: #f59e0b;
-        }
-        
-        /* Content Area */
-        .content {
-            display: none;
-            animation: fadeIn 0.3s;
-        }
-        
-        .content.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        iframe {
-            width: 100%;
-            height: calc(100vh - 150px);
-            border: none;
-        }
-        
-        /* Welcome Screen */
-        .welcome {
-            padding: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .welcome-card {
+        .redirect-message {
             background: white;
-            border-radius: 12px;
             padding: 40px;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
         }
-        
-        .welcome-title {
-            font-size: 32px;
-            font-weight: bold;
-            color: #1f2937;
+        h1 {
+            color: #333;
             margin-bottom: 20px;
         }
-        
-        .welcome-text {
-            font-size: 18px;
-            line-height: 1.6;
-            color: #4b5563;
-            margin-bottom: 30px;
+        p {
+            color: #666;
+            margin-bottom: 20px;
         }
-        
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-        
-        .feature-card {
-            background: white;
-            border-radius: 8px;
-            padding: 25px;
-            border: 1px solid #e5e7eb;
-            transition: all 0.3s;
-        }
-        
-        .feature-card:hover {
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        
-        .feature-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-        
-        .feature-icon.static {
-            background: #dbeafe;
-            color: #2563eb;
-        }
-        
-        .feature-icon.dynamic {
-            background: #fef3c7;
-            color: #d97706;
-        }
-        
-        .feature-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #1f2937;
-            margin-bottom: 10px;
-        }
-        
-        .feature-desc {
-            color: #6b7280;
-            line-height: 1.5;
-        }
-        
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-        
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: #ed1b2e;
+        a {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #667eea;
             color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
         }
-        
-        .btn-primary:hover {
-            background: #dc2626;
+        a:hover {
+            background: #764ba2;
         }
-        
-        .btn-secondary {
-            background: white;
-            color: #374151;
-            border: 2px solid #e5e7eb;
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
-        
-        .btn-secondary:hover {
-            background: #f9fafb;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="tab-container">
-        <div class="tab-header">
-            <div class="logo-section">
-                <div class="logo">+</div>
-                <div>
-                    <div class="title">SE & Caribbean Division</div>
-                    <div class="subtitle">American Red Cross Organizational Chart System</div>
-                </div>
-            </div>
-        </div>
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('welcome')">Welcome</button>
-            <button class="tab" onclick="showTab('division')">
-                Division Leadership
-                <span class="tab-badge">Important</span>
-            </button>
-            <button class="tab" onclick="showTab('static')">
-                Regional Charts
-                <span class="tab-badge">Complete</span>
-            </button>
-            <button class="tab" onclick="showTab('alpha')">
-                Project Alpha
-                <span class="tab-badge beta">Beta</span>
-            </button>
-        </div>
+    <div class="redirect-message">
+        <h1>Red Cross SE & Caribbean Division</h1>
+        <h2>Organizational Chart</h2>
+        <div class="spinner"></div>
+        <p>Redirecting to the interactive org chart...</p>
+        <p>If you are not redirected automatically, <a href="beta-d3-orgchart.html">click here</a>.</p>
     </div>
-    
-    <!-- Welcome Content -->
-    <div class="content active" id="welcome">
-        <div class="welcome">
-            <div class="welcome-card">
-                <div class="welcome-title">Welcome to the Org Chart System</div>
-                <div class="welcome-text">
-                    This comprehensive organizational chart system provides two powerful ways to visualize and manage the SE & Caribbean Division structure.
-                </div>
-                
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon static">📊</div>
-                        <div class="feature-title">Static Version</div>
-                        <div class="feature-desc">
-                            The production-ready organizational chart with all regions fully populated. Features include:
-                            <ul style="margin-top: 10px; margin-left: 20px; color: #6b7280;">
-                                <li>Complete data for all 8 regions</li>
-                                <li>Search functionality</li>
-                                <li>Edit mode for quick changes</li>
-                                <li>Print-friendly layout</li>
-                                <li>Alphabetically organized regions</li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon dynamic">🚀</div>
-                        <div class="feature-title">Project Alpha (Beta)</div>
-                        <div class="feature-desc">
-                            Interactive D3.js organizational chart with professional features:
-                            <ul style="margin-top: 10px; margin-left: 20px; color: #6b7280;">
-                                <li>Expand/collapse nodes</li>
-                                <li>Smooth zoom and pan</li>
-                                <li>Interactive search with highlighting</li>
-                                <li>Export to PNG image</li>
-                                <li>Region filtering</li>
-                                <li>Print-optimized layout</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="showTab('static')">
-                        View Static Version
-                    </button>
-                    <button class="btn btn-secondary" onclick="showTab('alpha')">
-                        Try Project Alpha
-                    </button>
-                </div>
-            </div>
-            
-            <div class="welcome-card" style="background: #fef3c7; border: 1px solid #fbbf24;">
-                <div style="font-weight: bold; color: #92400e; margin-bottom: 10px;">
-                    📝 Quick Start Guide
-                </div>
-                <div style="color: #78350f; line-height: 1.6;">
-                    <strong>Static Version:</strong> Best for viewing and printing the current organizational structure. Use Edit Mode to make temporary changes to individual boxes.
-                    <br><br>
-                    <strong>Project Alpha:</strong> Best for planning reorganizations or creating new structures. Changes are saved locally and can be exported as JSON files.
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Static Version Content -->
-    <div class="content" id="static">
-        <iframe src="static-version.html"></iframe>
-    </div>
-    
-    <!-- Project Alpha Content -->
-    <div class="content" id="alpha">
-        <iframe src="beta-d3-orgchart.html"></iframe>
-    </div>
-    
-    <!-- Division Leadership Content -->
-    <div class="content" id="division">
-        <iframe src="division-leadership.html"></iframe>
-    </div>
-    
-    <script>
-        function showTab(tabName) {
-            // Hide all content
-            document.querySelectorAll('.content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // Remove active from all tabs
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Show selected content
-            document.getElementById(tabName).classList.add('active');
-            
-            // Add active to selected tab
-            event.target.classList.add('active');
-        }
-    </script>
 </body>
 </html>
