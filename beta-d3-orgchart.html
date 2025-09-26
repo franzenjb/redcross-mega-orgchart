@@ -325,77 +325,112 @@
         }
         
         // Convert nested data to flat format for d3-org-chart
-        function convertToFlatData(data, parentId = null, region = null) {
+        function convertToFlatData(data, parentId = null, region = null, idPrefix = '') {
             let result = [];
+            let nodeId = 1;
             
-            if (!data) return result;
+            // Helper to create unique IDs
+            function createId(prefix, index) {
+                return `${prefix}-${index}`;
+            }
             
-            // Handle single node
-            if (data.name || data.title) {
-                const node = {
-                    id: generateId(),
-                    parentId: parentId,
-                    name: data.name,
-                    title: data.title,
-                    location: data.location,
-                    region: region
-                };
-                result.push(node);
+            // Process a single node and its children
+            function processNode(node, parentId, currentRegion, path = '') {
+                if (!node) return;
                 
-                // Process children
-                if (data.children && Array.isArray(data.children)) {
-                    data.children.forEach(child => {
-                        result = result.concat(convertToFlatData(child, node.id, region));
-                    });
-                } else if (data.children && typeof data.children === 'object') {
-                    Object.values(data.children).forEach(child => {
-                        result = result.concat(convertToFlatData(child, node.id, region));
-                    });
+                const id = createId(path || currentRegion || 'node', nodeId++);
+                const nodeData = {
+                    id: id,
+                    parentId: parentId,
+                    name: node.name || 'Vacant',
+                    title: node.title || 'Position',
+                    location: node.location || '',
+                    region: currentRegion
+                };
+                
+                result.push(nodeData);
+                
+                // Process children if they exist
+                if (node.children) {
+                    if (Array.isArray(node.children)) {
+                        node.children.forEach((child, index) => {
+                            processNode(child, id, currentRegion, `${path}-${index}`);
+                        });
+                    } else if (typeof node.children === 'object') {
+                        Object.keys(node.children).forEach((key, index) => {
+                            processNode(node.children[key], id, currentRegion, `${path}-${key}`);
+                        });
+                    }
                 }
             }
-            // Handle object with multiple regions
-            else if (typeof data === 'object') {
-                Object.keys(data).forEach(key => {
-                    result = result.concat(convertToFlatData(data[key], parentId, key));
-                });
+            
+            // Start processing from top level
+            if (typeof data === 'object' && !data.name && !data.title) {
+                // This is the regions object
+                if (currentRegion === 'all') {
+                    // Create a root node for all regions
+                    const rootId = 'root';
+                    result.push({
+                        id: rootId,
+                        parentId: null,
+                        name: 'SE & Caribbean Division',
+                        title: 'All Regions',
+                        location: '',
+                        region: 'all'
+                    });
+                    
+                    // Process each region
+                    Object.keys(data).forEach(regionKey => {
+                        const regionData = data[regionKey];
+                        if (regionData) {
+                            const regionId = createId(regionKey, 0);
+                            // Add region as a node
+                            result.push({
+                                id: regionId,
+                                parentId: rootId,
+                                name: regionKey.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                                title: 'Regional Organization',
+                                location: '',
+                                region: regionKey
+                            });
+                            // Process region's children
+                            processNode(regionData, regionId, regionKey, regionKey);
+                        }
+                    });
+                } else if (data[currentRegion]) {
+                    // Process single region
+                    processNode(data[currentRegion], null, currentRegion, currentRegion);
+                }
+            } else {
+                // Process as a single node
+                processNode(data, parentId, region || 'unknown', idPrefix);
             }
             
             return result;
         }
         
-        let idCounter = 0;
-        function generateId() {
-            return `node-${++idCounter}`;
-        }
-        
         // Load data
         function loadData() {
             if (typeof completeOrgData !== 'undefined') {
-                const flatData = convertToFlatData(completeOrgData);
+                const flatData = convertToFlatData(completeOrgData, null, null, '');
                 currentData = flatData;
+                console.log('Loaded data:', currentData.length, 'nodes');
                 updateChart();
+            } else {
+                console.error('completeOrgData not found');
             }
         }
         
         // Update chart with filtered data
         function updateChart() {
-            let filteredData = currentData;
+            // Regenerate data for current region selection
+            const flatData = convertToFlatData(completeOrgData, null, currentRegion, '');
+            currentData = flatData;
             
-            // Filter by region
-            if (currentRegion !== 'all') {
-                filteredData = currentData.filter(d => d.region === currentRegion);
-                
-                // Add root node if filtering
-                if (filteredData.length > 0 && !filteredData.find(d => !d.parentId)) {
-                    const regionRoot = filteredData.find(d => d.parentId && !filteredData.find(p => p.id === d.parentId));
-                    if (regionRoot) {
-                        regionRoot.parentId = null;
-                    }
-                }
-            }
+            console.log(`Updating chart for region: ${currentRegion}, nodes: ${currentData.length}`);
             
-            if (chart && filteredData.length > 0) {
-                chart.data(filteredData).render().fit();
+            if (chart && currentData.length > 0) {
+                chart.data(currentData).render().fit();
             }
         }
         
@@ -455,8 +490,7 @@
         // Region selector
         document.getElementById('regionSelect').addEventListener('change', (e) => {
             currentRegion = e.target.value;
-            idCounter = 0; // Reset ID counter
-            loadData(); // Reload data for new region
+            updateChart(); // Update chart for new region
         });
         
         // Initialize on load
