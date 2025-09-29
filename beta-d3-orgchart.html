@@ -326,14 +326,16 @@
             
             <!-- Editing Guide -->
             <div style="margin-bottom: 20px;">
-                <h4 style="margin-bottom: 10px;">✏️ How to Edit</h4>
+                <h4 style="margin-bottom: 10px;">✏️ Corrections</h4>
                 <div style="background: #e8f5e9; padding: 10px; border-radius: 5px; font-size: 13px;">
-                    <p style="margin: 5px 0;"><strong>Double-click:</strong> Edit person's info</p>
-                    <p style="margin: 5px 0;"><strong>Right-click:</strong> Add child or delete</p>
+                    <p style="margin: 5px 0;"><strong>Double-click:</strong> Fix name/title</p>
+                    <p style="margin: 5px 0;"><strong>Right-click:</strong> Edit menu</p>
                     <p style="margin: 5px 0;"><strong>Export JSON:</strong> Save current chart</p>
-                    <p style="margin: 5px 0;"><strong>Edit JSON:</strong> Open in text editor</p>
-                    <p style="margin: 5px 0;"><strong>Import JSON:</strong> Load edited file</p>
-                    <p style="margin: 5px 0; color: #666;">Changes save automatically!</p>
+                    <p style="margin: 5px 0; color: #666;">Corrections save automatically!</p>
+                    <hr style="margin: 10px 0; border: none; border-top: 1px solid #ddd;">
+                    <p style="margin: 5px 0; color: #e74c3c;"><strong>🔒 Admin Only:</strong></p>
+                    <p style="margin: 5px 0; color: #999;">• Add/Delete positions</p>
+                    <p style="margin: 5px 0; color: #999;">• Structural changes</p>
                 </div>
                 <details style="margin-top: 10px;">
                     <summary style="cursor: pointer; color: #0984e3;">📝 JSON Editing Tips</summary>
@@ -396,7 +398,7 @@
             <button class="btn" onclick="clearCache()" title="Clear Cache" style="background: #e67e22;">🗑️ Clear Cache</button>
             
             <span style="padding: 8px 12px; background: #ffeaa7; border-radius: 4px; font-size: 12px; margin-left: 10px;">
-                💡 <strong>Edit:</strong> Double-click to edit • Right-click to add/delete • <strong>Navigate:</strong> Click to expand/collapse • Scroll to zoom
+                💡 <strong>Corrections:</strong> Double-click to fix names/titles • <strong>Navigate:</strong> Click to expand/collapse • Scroll to zoom
             </span>
         </div>
         
@@ -1430,13 +1432,21 @@
             
             // Always include the top-level VP if available
             if (window.completeOrgData) {
-                // Get data from all regions
+                // Get data from all regions INCLUDING Anna Trefethen
                 const allRegionsData = convertToFlatData(completeOrgData, null, 'all', '');
                 allData = allData.concat(allRegionsData);
-            }
-            
-            // If no data available, fall back to current data
-            if (allData.length === 0) {
+                
+                // Also search in current view data in case it has different entries
+                if (currentData && currentData.length > 0) {
+                    currentData.forEach(node => {
+                        // Add if not already in allData
+                        if (!allData.find(n => n.id === node.id)) {
+                            allData.push(node);
+                        }
+                    });
+                }
+            } else {
+                // If no complete data available, fall back to current data
                 allData = currentData;
             }
             
@@ -1618,8 +1628,18 @@
             x2 -= containerRect.left;
             y2 -= containerRect.top;
             
-            // Get all node elements
-            const nodes = container.querySelectorAll('.node-rect-cls-0');
+            // Try multiple selectors to find nodes
+            let nodes = container.querySelectorAll('.node-rect-cls-0');
+            if (nodes.length === 0) {
+                // Try alternative selectors used by d3-org-chart
+                nodes = container.querySelectorAll('rect[class*="node"]');
+            }
+            if (nodes.length === 0) {
+                // Try getting all rect elements within g elements
+                nodes = container.querySelectorAll('g rect');
+            }
+            
+            console.log(`Found ${nodes.length} node elements to check`);
             
             nodes.forEach(node => {
                 const rect = node.getBoundingClientRect();
@@ -1628,13 +1648,19 @@
                 
                 // Check if node center is within selection
                 if (nodeX >= x1 && nodeX <= x2 && nodeY >= y1 && nodeY <= y2) {
-                    const nodeData = d3.select(node.parentElement).datum();
-                    if (nodeData) {
-                        selectedNodes.push(nodeData);
+                    // Try to get node data from parent g element
+                    const gElement = node.closest('g');
+                    if (gElement) {
+                        const nodeData = d3.select(gElement).datum();
+                        if (nodeData && nodeData.data) {
+                            selectedNodes.push(nodeData);
+                            console.log('Selected node:', nodeData.data.name);
+                        }
                     }
                 }
             });
             
+            console.log(`Selected ${selectedNodes.length} nodes in total`);
             return selectedNodes;
         }
         
@@ -1908,14 +1934,11 @@
                         <div style="position: fixed; left: ${e.pageX}px; top: ${e.pageY}px; 
                              background: white; border: 1px solid #ddd; border-radius: 4px; 
                              box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 10000;">
-                            <div onclick="addNode('${nodeId}')" style="padding: 8px 16px; cursor: pointer; hover: background: #f0f0f0;">
-                                ➕ Add Employee Below
-                            </div>
                             <div onclick="editNodeById('${nodeId}')" style="padding: 8px 16px; cursor: pointer; hover: background: #f0f0f0;">
-                                ✏️ Edit Employee
+                                ✏️ Edit Name/Title
                             </div>
-                            <div onclick="deleteNode('${nodeId}')" style="padding: 8px 16px; cursor: pointer; color: #dc3545; hover: background: #f0f0f0;">
-                                🗑️ Delete Employee
+                            <div style="padding: 8px 16px; color: #999; font-size: 12px; border-top: 1px solid #eee;">
+                                Add/Delete requires admin access
                             </div>
                         </div>
                     `;
