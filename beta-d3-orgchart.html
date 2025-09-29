@@ -355,11 +355,12 @@
             </div>
             
             <!-- Data Management -->
-            <div>
+            <div style="margin-bottom: 20px;">
                 <h4 style="margin-bottom: 10px;">Data Management</h4>
                 <button class="btn" style="background: #00b894; width: 100%; margin-bottom: 5px;" onclick="saveToLocal()">💾 Save Changes</button>
                 <button class="btn" style="background: #0984e3; width: 100%; margin-bottom: 5px;" onclick="exportData()">📤 Export JSON</button>
                 <button class="btn" style="background: #6c5ce7; width: 100%; margin-bottom: 5px;" onclick="importData()">📥 Import JSON</button>
+                <button class="btn" style="background: #e74c3c; width: 100%; margin-bottom: 5px;" onclick="openSimpleEditor()">✏️ Simple Editor (NEW)</button>
                 <button class="btn" style="background: #fdcb6e; width: 100%;" onclick="resetData()">🔄 Reset to Original</button>
             </div>
         </div>
@@ -411,6 +412,43 @@
     <svg id="selectionOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; z-index: 999;">
         <rect id="selectionRect" fill="rgba(0, 123, 255, 0.2)" stroke="rgba(0, 123, 255, 0.8)" stroke-width="2" stroke-dasharray="5,5" />
     </svg>
+    
+    <!-- Simple JSON Editor Modal -->
+    <div id="simpleEditorModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10001;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 800px; height: 80%; background: white; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
+            <div style="padding: 20px; background: #2c3e50; color: white; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0;">🛠️ Simple Organization Editor</h2>
+                <button onclick="closeSimpleEditor()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">✖</button>
+            </div>
+            
+            <div style="padding: 20px; background: #ecf0f1; border-bottom: 1px solid #bdc3c7;">
+                <p style="margin: 0; color: #7f8c8d;">📌 Click on any person to edit their details. Changes are saved automatically.</p>
+            </div>
+            
+            <div style="flex: 1; display: flex; overflow: hidden;">
+                <!-- Tree View -->
+                <div style="flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa;">
+                    <div id="editorTreeView"></div>
+                </div>
+                
+                <!-- Edit Form -->
+                <div style="width: 350px; padding: 20px; background: white; border-left: 1px solid #ddd; overflow-y: auto;">
+                    <h3 style="margin-top: 0;">Edit Person</h3>
+                    <div id="editorForm">
+                        <p style="color: #999;">← Select a person from the tree to edit</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="padding: 15px; background: #ecf0f1; border-top: 1px solid #bdc3c7; display: flex; justify-content: space-between;">
+                <button onclick="addNewPerson()" style="padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer;">➕ Add Person (Admin Only)</button>
+                <div>
+                    <button onclick="saveEditorChanges()" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">💾 Save All Changes</button>
+                    <button onclick="closeSimpleEditor()" style="padding: 10px 20px; background: #95a5a6; color: white; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- Legend removed - not needed -->
     
@@ -1972,6 +2010,142 @@
             if (node) {
                 editNode({ data: node });
             }
+        }
+        
+        // Simple Editor Functions
+        let editorData = null;
+        let selectedEditorNode = null;
+        
+        function openSimpleEditor() {
+            // Get current data structure
+            editorData = JSON.parse(JSON.stringify(currentData)); // Deep clone
+            document.getElementById('simpleEditorModal').style.display = 'block';
+            renderEditorTree();
+        }
+        
+        function closeSimpleEditor() {
+            document.getElementById('simpleEditorModal').style.display = 'none';
+            selectedEditorNode = null;
+        }
+        
+        function renderEditorTree() {
+            const treeView = document.getElementById('editorTreeView');
+            
+            // Build hierarchical structure from flat data
+            const hierarchy = buildHierarchy(editorData);
+            
+            // Render as expandable tree
+            treeView.innerHTML = renderTreeNode(hierarchy);
+        }
+        
+        function buildHierarchy(flatData) {
+            const map = {};
+            const roots = [];
+            
+            // Create map of all nodes
+            flatData.forEach(node => {
+                map[node.id] = { ...node, children: [] };
+            });
+            
+            // Build tree structure
+            flatData.forEach(node => {
+                if (node.parentId && map[node.parentId]) {
+                    map[node.parentId].children.push(map[node.id]);
+                } else if (!node.parentId) {
+                    roots.push(map[node.id]);
+                }
+            });
+            
+            return roots;
+        }
+        
+        function renderTreeNode(nodes, level = 0) {
+            if (!nodes || nodes.length === 0) return '';
+            
+            let html = '<ul style="list-style: none; padding-left: ' + (level * 20) + 'px;">';
+            
+            nodes.forEach(node => {
+                const hasChildren = node.children && node.children.length > 0;
+                html += `
+                    <li style="margin: 5px 0;">
+                        <div onclick="selectEditorNode('${node.id}')" 
+                             style="cursor: pointer; padding: 8px; border-radius: 5px; background: ${selectedEditorNode === node.id ? '#3498db' : '#fff'}; 
+                                    color: ${selectedEditorNode === node.id ? 'white' : 'black'}; border: 1px solid #ddd; margin-bottom: 5px;">
+                            ${hasChildren ? '▼' : '•'} <strong>${node.name || 'Unnamed'}</strong>
+                            <br><small style="color: ${selectedEditorNode === node.id ? '#ecf0f1' : '#7f8c8d'};">${node.title || 'No title'}</small>
+                        </div>
+                        ${hasChildren ? renderTreeNode(node.children, level + 1) : ''}
+                    </li>
+                `;
+            });
+            
+            html += '</ul>';
+            return html;
+        }
+        
+        function selectEditorNode(nodeId) {
+            selectedEditorNode = nodeId;
+            renderEditorTree(); // Re-render to show selection
+            
+            // Show edit form for selected node
+            const node = editorData.find(n => n.id === nodeId);
+            if (node) {
+                showEditorForm(node);
+            }
+        }
+        
+        function showEditorForm(node) {
+            const form = document.getElementById('editorForm');
+            form.innerHTML = `
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Name:</label>
+                    <input type="text" id="editor-name" value="${node.name || ''}" 
+                           style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"
+                           onchange="updateEditorNode('name', this.value)">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Title:</label>
+                    <input type="text" id="editor-title" value="${node.title || ''}" 
+                           style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"
+                           onchange="updateEditorNode('title', this.value)">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Location:</label>
+                    <input type="text" id="editor-location" value="${node.location || ''}" 
+                           style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"
+                           onchange="updateEditorNode('location', this.value)" disabled>
+                    <small style="color: #999;">Location editing requires admin access</small>
+                </div>
+                <div style="padding: 15px; background: #fff3cd; border-radius: 5px; margin-top: 20px;">
+                    <small style="color: #856404;">💡 Tip: Changes are saved in memory. Click "Save All Changes" when done.</small>
+                </div>
+            `;
+        }
+        
+        function updateEditorNode(field, value) {
+            const node = editorData.find(n => n.id === selectedEditorNode);
+            if (node) {
+                node[field] = value;
+                renderEditorTree(); // Re-render tree with updated name
+            }
+        }
+        
+        function saveEditorChanges() {
+            // Apply editor changes to main data
+            currentData = JSON.parse(JSON.stringify(editorData));
+            
+            // Update the chart
+            updateChart();
+            
+            // Save to localStorage
+            saveToLocal();
+            
+            alert('Changes saved successfully!');
+            closeSimpleEditor();
+        }
+        
+        function addNewPerson() {
+            alert('Adding new people requires admin access. Please contact your administrator.');
         }
     </script>
 </body>
