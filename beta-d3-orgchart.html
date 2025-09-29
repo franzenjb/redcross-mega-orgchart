@@ -337,7 +337,6 @@
         
         <div class="controls" style="justify-content: center; padding-top: 10px;">
             <select class="region-select" id="regionSelect">
-                <option value="all">All Regions</option>
                 <option value="division">Division Leadership</option>
                 <option value="alabama-mississippi">Alabama/Mississippi</option>
                 <option value="florida-nc">Florida N/C</option>
@@ -347,6 +346,7 @@
                 <option value="puerto-rico">Puerto Rico</option>
                 <option value="south-carolina">South Carolina</option>
                 <option value="tennessee">Tennessee</option>
+                <option value="all">All Regions</option>
             </select>
             
             <input type="text" class="search-box" id="searchBox" placeholder="Search for person..." style="width: 250px;">
@@ -507,16 +507,18 @@
                             d.clickTimer = null;
                             console.log('Single clicked - will auto-fit now');
                             
-                            // After expansion/collapse, auto-fit the view with longer delay
+                            // After expansion/collapse, center on the clicked node and fit
                             setTimeout(() => {
-                                if (chart && chart.fit) {
-                                    chart.fit();
-                                    console.log('Auto-fitted after expand/collapse');
-                                    // Try fitting again to ensure it worked
+                                if (chart) {
+                                    // First center on the clicked node
+                                    chart.setCentered(d.data.id).render();
+                                    console.log('Centered on clicked node:', d.data.name);
+                                    
+                                    // Then fit to show all visible nodes
                                     setTimeout(() => {
                                         chart.fit();
-                                        console.log('Second fit to ensure proper view');
-                                    }, 300);
+                                        console.log('Fitted view after centering');
+                                    }, 400);
                                 }
                             }, 600);
                         }, 250);
@@ -540,13 +542,43 @@
             'division-staff': { bg: '#e3f2fd', border: '#1976d2', text: 'black' } // Light blue for division staff
         };
         
+        // Detect region from node data
+        function detectRegionFromData(node) {
+            if (!node) return '';
+            
+            const title = (node.title || '').toLowerCase();
+            const location = (node.location || '').toLowerCase();
+            const name = (node.name || '').toLowerCase();
+            
+            // Check for regional indicators
+            if (title.includes('florida n/c') || location.includes('jacksonville') || location.includes('tampa')) {
+                return 'florida-nc';
+            } else if (title.includes('florida south') || location.includes('miami')) {
+                return 'florida-south';
+            } else if ((title.includes('georgia') && !title.includes('strait')) || location.includes('atlanta')) {
+                return 'georgia';
+            } else if (title.includes('tennessee') || location.includes('nashville') || location.includes('memphis')) {
+                return 'tennessee';
+            } else if (title.includes('alabama') || title.includes('mississippi') || location.includes('birmingham') || location.includes('jackson')) {
+                return 'alabama-mississippi';
+            } else if ((title.includes('north carolina') && !title.includes('florida')) || location.includes('charlotte')) {
+                return 'north-carolina';
+            } else if ((title.includes('south carolina') && !title.includes('north')) || location.includes('columbia')) {
+                return 'south-carolina';
+            } else if (title.includes('puerto rico') || location.includes('san juan')) {
+                return 'puerto-rico';
+            }
+            
+            return '';
+        }
+        
         // Get region color for a node
         function getRegionColor(data) {
-            // Check the node's region or type
-            let region = data.region || data.type || '';
+            // Check the node's region or type first, then detect from data
+            let region = data.region || data.type || detectRegionFromData(data) || '';
             
-            // Map CDOs and regional staff to their specific regions based on title or location
-            if (data.title) {
+            // Additional detection based on title/location if still not determined
+            if (!region && data.title) {
                 const title = data.title.toLowerCase();
                 const location = (data.location || '').toLowerCase();
                 
@@ -618,7 +650,7 @@
                     name: node.name || 'Vacant',
                     title: node.title || 'Position',
                     location: node.location || '',
-                    region: node.region || node.type || currentRegion,
+                    region: node.region || node.type || currentRegion || detectRegionFromData(node),
                     type: node.type || currentRegion
                 };
                 
@@ -628,14 +660,15 @@
                 if (node.children) {
                     if (Array.isArray(node.children)) {
                         node.children.forEach((child, index) => {
-                            // Pass the child's region if it has one, otherwise use current region
-                            const childRegion = child.region || currentRegion;
+                            // Pass the child's region if it has one, otherwise detect it or use current region
+                            const childRegion = child.region || child.type || detectRegionFromData(child) || currentRegion;
                             processNode(child, id, childRegion, `${path}-${index}`);
                         });
                     } else if (typeof node.children === 'object') {
                         Object.keys(node.children).forEach((key, index) => {
-                            const childRegion = node.children[key].region || currentRegion;
-                            processNode(node.children[key], id, childRegion, `${path}-${key}`);
+                            const childData = node.children[key];
+                            const childRegion = childData.region || childData.type || detectRegionFromData(childData) || currentRegion;
+                            processNode(childData, id, childRegion, `${path}-${key}`);
                         });
                     }
                 }
