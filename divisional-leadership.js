@@ -46,11 +46,7 @@ const divisionalLeadership = {
                         location: "Division HQ",
                         type: "executive",
                         children: [
-                            {
-                                name: "Regional CDOs",
-                                title: "Regional Development Leaders",
-                                children: [
-                                                    { name: "W. Carney", title: "CDO - Florida N/C", location: "Jacksonville", region: "florida-nc" },
+                                    { name: "W. Carney", title: "CDO - Florida N/C", location: "Jacksonville", region: "florida-nc" },
                                     { name: "Tzaicel Hernandez", title: "CDO - Florida South", location: "Miami", region: "florida-south" },
                                     { name: "Vacant", title: "CDO - Georgia", location: "Atlanta", region: "georgia" },
                                     { name: "L. Vaughn", title: "CDO - Tennessee", location: "Memphis", region: "tennessee" },
@@ -58,8 +54,6 @@ const divisionalLeadership = {
                                     { name: "E. Davis", title: "CDO - North Carolina", location: "Charlotte", region: "north-carolina" },
                                     { name: "S. Ingraham", title: "CDO - South Carolina", region: "south-carolina" },
                                     { name: "M. Santiago", title: "CDO - Puerto Rico", location: "San Juan", region: "puerto-rico" }
-                                ]
-                            }
                 ]
             },
             {
@@ -68,17 +62,11 @@ const divisionalLeadership = {
                         location: "Division HQ",
                         type: "executive",
                         children: [
-                            {
-                                name: "Regional SAF Directors",
-                                title: "Regional SAF Leaders",
-                                children: [
                                     { name: "G. Scrivens", title: "SAF Director - Florida N/C", location: "Tampa", region: "florida-nc" },
                                     { name: "Ivan Sterpin", title: "SAF Director - Florida South", location: "Miami", region: "florida-south" },
                                     { name: "Victoria Hamrick", title: "SAF Director - Georgia", location: "Atlanta", region: "georgia" },
                                     { name: "A. Ware", title: "SAF Director - Tennessee", location: "Nashville", region: "tennessee" },
                                     { name: "N. Ortiz", title: "SAF Lead - Puerto Rico", location: "San Juan", region: "puerto-rico" }
-                                ]
-                            }
                 ]
             },
             {
@@ -87,17 +75,11 @@ const divisionalLeadership = {
                         location: "Division HQ",
                         type: "executive",
                         children: [
-                            {
-                                name: "Regional Communications Directors",
-                                title: "Regional Communications Leaders",
-                                children: [
                                     { name: "A. Bierfreund", title: "Comm Director - Florida N/C", location: "Jacksonville", region: "florida-nc" },
                                     { name: "Tiffany Gonzalez", title: "Dir Comm - Florida South", location: "Miami", region: "florida-south" },
                                     { name: "J. Copeland", title: "Regional External Comms Manager - Georgia", location: "Atlanta", region: "georgia" },
                                     { name: "J. Williams", title: "Dir Comm/Mkt - Tennessee", location: "Nashville", region: "tennessee" },
                                     { name: "B. Reynolds", title: "Regional Communications Director - North Carolina", location: "Charlotte", region: "north-carolina" }
-                                ]
-                            }
                 ]
             },
             {
@@ -106,15 +88,9 @@ const divisionalLeadership = {
                         location: "Division HQ",
                         type: "executive",
                         children: [
-                            {
-                                name: "Community Engagement Teams",
-                                title: "Division-wide Programs",
-                                children: [
                                     { name: "G. Robinson", title: "Sr FSTPM" },
                                     { name: "D. Eichhorn", title: "Sr Division Govt Relations Officer" },
                                     { name: "M. Sapp", title: "Volunteer Mobilization Director" }
-                                ]
-                            }
                 ]
             },
             {
@@ -122,31 +98,13 @@ const divisionalLeadership = {
                         title: "Division Support",
                         type: "support",
                         children: [
-                            {
-                                name: "Human Resources",
-                                title: "Division HR",
-                                children: [
                                     { name: "P. Foster", title: "DRHRM - Georgia", location: "Atlanta", region: "georgia" },
                                     { name: "L. Turner", title: "Regional HR Director - Alabama/Mississippi", location: "Birmingham", region: "alabama-mississippi" },
-                                    { name: "D. Porter", title: "Regional HR Director - North Carolina", location: "Charlotte", region: "north-carolina" }
-                                ]
-                            },
-                            {
-                                name: "Information Technology",
-                                title: "Division IT",
-                                children: [
-                                    { name: "J. Webb", title: "Regional IT Director - North Carolina", location: "Charlotte", region: "north-carolina" }
-                                ]
-                            },
-                            {
-                                name: "Biomedical Services",
-                                title: "Division Blood Services",
-                                children: [
+                                    { name: "D. Porter", title: "Regional HR Director - North Carolina", location: "Charlotte", region: "north-carolina" },
+                                    { name: "J. Webb", title: "Regional IT Director - North Carolina", location: "Charlotte", region: "north-carolina" },
                                     { name: "Keith Cofer", title: "RD Biomedical Services - Georgia", region: "georgia" },
                                     { name: "K. Mason", title: "Regional Blood Services Director - North Carolina", location: "Charlotte", region: "north-carolina" },
                                     { name: "K. Murray", title: "Regional Blood Services Director - South Carolina", location: "Columbia", region: "south-carolina" }
-                                ]
-                            }
                 ]
             },
             {
