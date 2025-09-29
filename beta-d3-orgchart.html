@@ -1432,7 +1432,19 @@
             
             // Always include the top-level VP if available
             if (window.completeOrgData) {
-                // Get data from all regions INCLUDING Anna Trefethen
+                // MANUALLY add Anna Trefethen first since she's the top VP
+                if (window.completeOrgData.division) {
+                    allData.push({
+                        id: 'division-vp',
+                        parentId: null,
+                        name: window.completeOrgData.division.name || 'Anna Trefethen',
+                        title: window.completeOrgData.division.title || 'Division Vice President',
+                        location: window.completeOrgData.division.location || 'SE & Caribbean Division',
+                        region: 'division'
+                    });
+                }
+                
+                // Get data from all regions  
                 const allRegionsData = convertToFlatData(completeOrgData, null, 'all', '');
                 allData = allData.concat(allRegionsData);
                 
