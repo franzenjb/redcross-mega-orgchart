@@ -798,13 +798,30 @@
                     // Process entire hierarchy starting with Anna Trefethen
                     processNode(divisionNode, null, 'division', 'division');
                 } else if (currentRegion === 'division') {
-                    // Load Division Leadership from divisional-leadership.js if available
+                    // ALWAYS show Anna Trefethen at the top
+                    const annaId = 'division-vp';
+                    result.push({
+                        id: annaId,
+                        parentId: null,
+                        name: divisionNode.name || 'Anna Trefethen',
+                        title: divisionNode.title || 'Division Vice President',
+                        location: divisionNode.location || 'SE & Caribbean Division',
+                        region: 'division',
+                        type: 'division-vp'
+                    });
+                    
+                    // Load Division Leadership under Anna
                     if (window.divisionalLeadership && window.divisionalLeadership['division-leadership']) {
                         const divLeadershipData = window.divisionalLeadership['division-leadership'];
-                        processNode(divLeadershipData, null, 'division', 'division');
+                        // Process division leadership as child of Anna
+                        processNode(divLeadershipData, annaId, 'division', 'division');
                     } else {
-                        // Fallback: Show division leadership structure from main data
-                        processNode(divisionNode, null, 'division', 'division');
+                        // Fallback: Show division's children under Anna
+                        if (divisionNode.children) {
+                            divisionNode.children.forEach((child, index) => {
+                                processNode(child, annaId, 'division', `division-${index}`);
+                            });
+                        }
                     }
                 } else {
                     // Find the specific region in the children array
