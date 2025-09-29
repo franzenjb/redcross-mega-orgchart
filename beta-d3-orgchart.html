@@ -425,7 +425,7 @@
                 .childrenMargin((d) => 40)
                 .compactMarginBetween((d) => 15)
                 .compactMarginPair((d) => 80)
-                .initialZoom(0.7)
+                .initialZoom(0.6)
                 .nodeContent((d, i, arr, state) => {
                     const nodeClass = getNodeClass(d.data);
                     const regionColor = getRegionColor(d.data);
@@ -519,17 +519,28 @@
                             d.clickTimer = null;
                             console.log('Single clicked - will auto-fit now');
                             
-                            // After expansion/collapse, center on the clicked node and fit
+                            // After expansion/collapse, properly fit the view
                             setTimeout(() => {
                                 if (chart) {
-                                    // First center on the clicked node
-                                    chart.setCentered(d.data.id).render();
-                                    console.log('Centered on clicked node:', d.data.name);
+                                    // Use fit with a smaller zoom level for expanded nodes
+                                    const hasExpandedChildren = currentData.some(node => 
+                                        node.parentId === d.data.id
+                                    );
                                     
-                                    // Then fit to show all visible nodes
+                                    if (hasExpandedChildren) {
+                                        // If we just expanded, fit all visible nodes
+                                        chart.fit().render();
+                                        console.log('Fitted expanded view for:', d.data.name);
+                                    } else {
+                                        // If we collapsed, center on the node
+                                        chart.setCentered(d.data.id).render();
+                                        console.log('Centered on collapsed node:', d.data.name);
+                                    }
+                                    
+                                    // Extra fit to ensure proper view
                                     setTimeout(() => {
                                         chart.fit();
-                                        console.log('Fitted view after centering');
+                                        console.log('Final fit adjustment');
                                     }, 400);
                                 }
                             }, 600);
