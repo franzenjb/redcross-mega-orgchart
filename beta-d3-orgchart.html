@@ -352,6 +352,7 @@
             <div style="display: flex; align-items: center; gap: 5px;">
                 <span style="font-size: 14px; color: #666;">🔍 Search:</span>
                 <input type="text" class="search-box" id="searchBox" placeholder="Enter name..." style="width: 200px;">
+                <button class="btn" onclick="performSearch()" style="padding: 5px 10px; font-size: 14px;">Search</button>
             </div>
             
             <!-- View Controls in Top Bar -->
@@ -1335,45 +1336,53 @@
                 chart.clearHighlighting();
                 chart.setHighlighted(node.id);
                 
-                // Center on the node
-                chart.setCentered(node.id).render();
+                // First fit all visible content
+                chart.fit().render();
                 
-                // Then zoom in close (2x to 3x zoom)
+                // Then center on the specific node with moderate zoom
                 setTimeout(() => {
-                    chart.initialZoom(2.5).render();
-                    // Re-center after zoom
+                    chart.setCentered(node.id).render();
+                    chart.initialZoom(1.5).render();
+                    
+                    // Final fit to ensure everything is visible
                     setTimeout(() => {
-                        chart.setCentered(node.id).render();
-                    }, 200);
-                }, 500);
+                        chart.fit().render();
+                    }, 300);
+                }, 400);
             }, 600);
+        }
+        
+        // Search function that can be called by button or Enter key
+        function performSearch() {
+            const searchBox = document.getElementById('searchBox');
+            const searchTerm = searchBox.value.trim();
+            
+            if (searchTerm.length === 0) {
+                return;
+            }
+            
+            // Case-insensitive search with partial matching
+            const searchLower = searchTerm.toLowerCase();
+            const found = currentData.filter(d => 
+                d.name && d.name.toLowerCase().includes(searchLower)
+            );
+            
+            if (found.length > 0) {
+                console.log(`Found ${found.length} matches for "${searchTerm}":`);
+                found.forEach(p => console.log(`  - ${p.name} (${p.title}) ${p.location || ''}`));
+                
+                // ALWAYS show dropdown for user to select, even with single match
+                showSearchResults(found, searchTerm);
+            } else {
+                alert(`No matches found for "${searchTerm}"`);
+            }
         }
         
         // Search functionality - works on Enter key
         document.getElementById('searchBox').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                const searchTerm = e.target.value.trim();
-                
-                if (searchTerm.length === 0) {
-                    return;
-                }
-                
-                // Case-insensitive search with partial matching
-                const searchLower = searchTerm.toLowerCase();
-                const found = currentData.filter(d => 
-                    d.name && d.name.toLowerCase().includes(searchLower)
-                );
-                
-                if (found.length > 0) {
-                    console.log(`Found ${found.length} matches for "${searchTerm}":`);
-                    found.forEach(p => console.log(`  - ${p.name} (${p.title}) ${p.location || ''}`));
-                    
-                    // ALWAYS show dropdown for user to select, even with single match
-                    showSearchResults(found, searchTerm);
-                } else {
-                    alert(`No matches found for "${searchTerm}"`);
-                }
+                performSearch();
             }
         });
         
