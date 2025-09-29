@@ -1359,22 +1359,11 @@
                     return;
                 }
                 
-                // Case-insensitive search that matches whole words only
+                // Case-insensitive search with partial matching
                 const searchLower = searchTerm.toLowerCase();
-                const found = currentData.filter(d => {
-                    if (!d.name) return false;
-                    
-                    const nameLower = d.name.toLowerCase();
-                    const words = nameLower.split(/\s+/);
-                    
-                    // Check if search term matches any complete word in the name
-                    return words.some(word => word === searchLower) || 
-                           // Also check if search term matches the full name
-                           nameLower === searchLower ||
-                           // Check if search term matches first name or last name exactly
-                           (nameLower.startsWith(searchLower + ' ') || 
-                            nameLower.endsWith(' ' + searchLower));
-                });
+                const found = currentData.filter(d => 
+                    d.name && d.name.toLowerCase().includes(searchLower)
+                );
                 
                 if (found.length > 0) {
                     console.log(`Found ${found.length} matches for "${searchTerm}":`);
