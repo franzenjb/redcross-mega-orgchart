@@ -819,8 +819,25 @@
                     // Load Division Leadership under Anna
                     if (window.divisionalLeadership && window.divisionalLeadership['division-leadership']) {
                         const divLeadershipData = window.divisionalLeadership['division-leadership'];
-                        // Process division leadership as child of Anna
-                        processNode(divLeadershipData, annaId, 'division', 'division');
+                        
+                        // Add Division Leadership box as a child of Anna
+                        const divLeadershipId = 'division-leadership';
+                        result.push({
+                            id: divLeadershipId,
+                            parentId: annaId,
+                            name: divLeadershipData.name || 'Division Leadership',
+                            title: divLeadershipData.title || 'SE & Caribbean Division',
+                            location: divLeadershipData.location || 'Division HQ',
+                            region: 'division',
+                            type: 'division'
+                        });
+                        
+                        // Process all the division leadership children
+                        if (divLeadershipData.children && Array.isArray(divLeadershipData.children)) {
+                            divLeadershipData.children.forEach((child, index) => {
+                                processNode(child, divLeadershipId, 'division', `division-leadership-${index}`);
+                            });
+                        }
                     } else {
                         // Fallback: Show division's children under Anna
                         if (divisionNode.children) {
