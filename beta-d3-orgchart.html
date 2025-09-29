@@ -1354,17 +1354,23 @@
                 chart.clearHighlighting();
                 chart.setHighlighted(node.id);
                 
-                // First fit all visible content
-                chart.fit().render();
+                // First render the expansion
+                chart.render();
                 
-                // Then center on the specific node with moderate zoom
+                // Then center directly on the found node
                 setTimeout(() => {
+                    console.log(`Centering on found node: ${node.name}`);
                     chart.setCentered(node.id).render();
-                    chart.initialZoom(1.5).render();
                     
-                    // Final fit to ensure everything is visible
+                    // Zoom in slightly for better visibility
                     setTimeout(() => {
-                        chart.fit().render();
+                        chart.initialZoom(2.0).render();
+                        
+                        // Final re-center to ensure node is in view
+                        setTimeout(() => {
+                            chart.setCentered(node.id).render();
+                            console.log(`Final center on: ${node.name}`);
+                        }, 300);
                     }, 300);
                 }, 400);
             }, 600);
