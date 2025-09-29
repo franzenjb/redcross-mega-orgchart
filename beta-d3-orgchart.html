@@ -816,26 +816,15 @@
                         type: 'division-vp'
                     });
                     
-                    // Load Division Leadership under Anna
+                    // Load Division Leadership directly under Anna (no intermediate node)
                     if (window.divisionalLeadership && window.divisionalLeadership['division-leadership']) {
                         const divLeadershipData = window.divisionalLeadership['division-leadership'];
                         
-                        // Add Division Leadership box as a child of Anna
-                        const divLeadershipId = 'division-leadership';
-                        result.push({
-                            id: divLeadershipId,
-                            parentId: annaId,
-                            name: divLeadershipData.name || 'Division Leadership',
-                            title: divLeadershipData.title || 'SE & Caribbean Division',
-                            location: divLeadershipData.location || 'Division HQ',
-                            region: 'division',
-                            type: 'division'
-                        });
-                        
-                        // Process all the division leadership children
+                        // Process all the division leadership children directly under Anna
                         if (divLeadershipData.children && Array.isArray(divLeadershipData.children)) {
                             divLeadershipData.children.forEach((child, index) => {
-                                processNode(child, divLeadershipId, 'division', `division-leadership-${index}`);
+                                // Each executive reports directly to Anna
+                                processNode(child, annaId, 'division', `division-exec-${index}`);
                             });
                         }
                     } else {
@@ -1001,20 +990,14 @@
                         // Special handling for Division Leadership view to ensure proper fit
                         if (currentRegion === 'division') {
                             setTimeout(() => {
-                                // Expand first level to show VPs
+                                // Auto-expand Anna to show all division executives
                                 const rootNode = currentData.find(d => !d.parentId);
                                 if (rootNode) {
                                     chart.setExpanded(rootNode.id).render();
                                     setTimeout(() => {
-                                        // Center on the root node first
-                                        chart.setCentered(rootNode.id).render();
-                                        console.log('Centered on Division Leadership root');
-                                        
-                                        // Then fit to show all expanded content
-                                        setTimeout(() => {
-                                            chart.fit();
-                                            console.log('Division Leadership expanded and fitted');
-                                        }, 300);
+                                        // Center and fit to show all executives
+                                        chart.fit();
+                                        console.log('Division Leadership expanded and fitted');
                                     }, 500);
                                 }
                             }, 500);
