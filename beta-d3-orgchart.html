@@ -1306,6 +1306,24 @@
         
         // Function to navigate to a specific node
         function navigateToNode(node) {
+            // First check if we need to switch regions
+            // If the node isn't in current data, switch to "All Regions" view
+            if (!currentData.find(d => d.id === node.id)) {
+                console.log('Node not in current view, switching to All Regions');
+                document.getElementById('regionSelect').value = 'all';
+                currentRegion = 'all';
+                updateChart();
+                
+                // Wait for chart update then navigate
+                setTimeout(() => {
+                    navigateToNodeInternal(node);
+                }, 800);
+            } else {
+                navigateToNodeInternal(node);
+            }
+        }
+        
+        function navigateToNodeInternal(node) {
             if (!chart) return;
             
             // Build the path from root to the found node
@@ -1361,9 +1379,25 @@
                 return;
             }
             
+            // Search across ALL data, not just current view
+            // First create a complete data set from all regions
+            let allData = [];
+            
+            // Always include the top-level VP if available
+            if (window.completeOrgData) {
+                // Get data from all regions
+                const allRegionsData = convertToFlatData(completeOrgData, null, 'all', '');
+                allData = allData.concat(allRegionsData);
+            }
+            
+            // If no data available, fall back to current data
+            if (allData.length === 0) {
+                allData = currentData;
+            }
+            
             // Case-insensitive search with partial matching
             const searchLower = searchTerm.toLowerCase();
-            const found = currentData.filter(d => 
+            const found = allData.filter(d => 
                 d.name && d.name.toLowerCase().includes(searchLower)
             );
             
