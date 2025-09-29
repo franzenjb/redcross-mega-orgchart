@@ -330,10 +330,26 @@
                 <div style="background: #e8f5e9; padding: 10px; border-radius: 5px; font-size: 13px;">
                     <p style="margin: 5px 0;"><strong>Double-click:</strong> Edit person's info</p>
                     <p style="margin: 5px 0;"><strong>Right-click:</strong> Add child or delete</p>
-                    <p style="margin: 5px 0;"><strong>Import JSON:</strong> Load external data</p>
-                    <p style="margin: 5px 0;"><strong>Export JSON:</strong> Save to file</p>
+                    <p style="margin: 5px 0;"><strong>Export JSON:</strong> Save current chart</p>
+                    <p style="margin: 5px 0;"><strong>Edit JSON:</strong> Open in text editor</p>
+                    <p style="margin: 5px 0;"><strong>Import JSON:</strong> Load edited file</p>
                     <p style="margin: 5px 0; color: #666;">Changes save automatically!</p>
                 </div>
+                <details style="margin-top: 10px;">
+                    <summary style="cursor: pointer; color: #0984e3;">📝 JSON Editing Tips</summary>
+                    <div style="background: #fff; padding: 10px; margin-top: 5px; border-left: 3px solid #0984e3; font-size: 12px;">
+                        <p style="margin: 5px 0;">Each person has:</p>
+                        <code style="display: block; background: #f5f5f5; padding: 5px; margin: 5px 0;">
+{
+  "name": "John Doe",
+  "title": "Director",
+  "location": "Atlanta",
+  "children": []
+}
+                        </code>
+                        <p style="margin: 5px 0;">Add people to "children" array</p>
+                    </div>
+                </details>
             </div>
             
             <!-- Data Management -->
@@ -1846,12 +1862,41 @@
         // Context menu for right-click
         function addContextMenu() {
             document.addEventListener('contextmenu', (e) => {
-                // Check if right-clicked on a node
-                const nodeElement = e.target.closest('[data-node-id]');
+                // Check if right-clicked on a node - look for d3 org chart node elements
+                const nodeElement = e.target.closest('.node-rect-cls-0') || 
+                                   e.target.closest('g[data-id]') || 
+                                   e.target.closest('.node');
+                
                 if (nodeElement) {
                     e.preventDefault();
+                    e.stopPropagation();
                     
-                    const nodeId = nodeElement.getAttribute('data-node-id');
+                    // Try to get node data from D3
+                    let nodeData = null;
+                    let nodeId = null;
+                    
+                    // Try different ways to get the node data
+                    const gElement = nodeElement.closest('g[data-id]');
+                    if (gElement) {
+                        nodeId = gElement.getAttribute('data-id');
+                        nodeData = currentData.find(d => d.id === nodeId);
+                    } else {
+                        // Try to get from D3 datum
+                        const d3Node = d3.select(nodeElement.closest('g'));
+                        if (d3Node && d3Node.datum()) {
+                            nodeData = d3Node.datum();
+                            nodeId = nodeData.data ? nodeData.data.id : nodeData.id;
+                        }
+                    }
+                    
+                    if (!nodeId && nodeData) {
+                        nodeId = nodeData.id || (nodeData.data && nodeData.data.id);
+                    }
+                    
+                    if (!nodeId) {
+                        console.log('Could not find node ID for context menu');
+                        return;
+                    }
                     
                     // Remove existing menu
                     const existing = document.getElementById('context-menu');
