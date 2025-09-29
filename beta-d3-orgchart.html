@@ -620,20 +620,26 @@
                                     );
                                     
                                     if (hasExpandedChildren) {
-                                        // If we just expanded, fit all visible nodes
-                                        chart.fit().render();
-                                        console.log('Fitted expanded view for:', d.data.name);
+                                        // If we just expanded, first center on the clicked node
+                                        chart.setCentered(d.data.id).render();
+                                        console.log('Centered on expanded node:', d.data.name);
+                                        
+                                        // Then fit to show all children with appropriate zoom
+                                        setTimeout(() => {
+                                            chart.fit().render();
+                                            console.log('Fitted view to show all children');
+                                            
+                                            // Final center adjustment to ensure clicked node is visible
+                                            setTimeout(() => {
+                                                chart.setCentered(d.data.id).render();
+                                                console.log('Final center on parent:', d.data.name);
+                                            }, 300);
+                                        }, 300);
                                     } else {
                                         // If we collapsed, center on the node
                                         chart.setCentered(d.data.id).render();
                                         console.log('Centered on collapsed node:', d.data.name);
                                     }
-                                    
-                                    // Extra fit to ensure proper view
-                                    setTimeout(() => {
-                                        chart.fit();
-                                        console.log('Final fit adjustment');
-                                    }, 400);
                                 }
                             }, 600);
                         }, 250);
@@ -978,14 +984,20 @@
                         // Special handling for Division Leadership view to ensure proper fit
                         if (currentRegion === 'division') {
                             setTimeout(() => {
-                                chart.fit();
                                 // Expand first level to show VPs
                                 const rootNode = currentData.find(d => !d.parentId);
                                 if (rootNode) {
                                     chart.setExpanded(rootNode.id).render();
                                     setTimeout(() => {
-                                        chart.fit();
-                                        console.log('Division Leadership expanded and fitted');
+                                        // Center on the root node first
+                                        chart.setCentered(rootNode.id).render();
+                                        console.log('Centered on Division Leadership root');
+                                        
+                                        // Then fit to show all expanded content
+                                        setTimeout(() => {
+                                            chart.fit();
+                                            console.log('Division Leadership expanded and fitted');
+                                        }, 300);
                                     }, 500);
                                 }
                             }, 500);
