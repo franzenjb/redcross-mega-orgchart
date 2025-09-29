@@ -315,7 +315,13 @@
                 <h4 style="margin-bottom: 10px;">Export & Print</h4>
                 <button class="btn btn-secondary" onclick="exportChart()" style="width: 100%; margin-bottom: 5px;">📸 Export PNG</button>
                 <button class="btn btn-secondary" onclick="printPreview()" style="width: 100%; margin-bottom: 5px;">👁️ Print Preview</button>
-                <button class="btn btn-secondary" onclick="printChart()" style="width: 100%;">🖨️ Print</button>
+                <button class="btn btn-secondary" onclick="printChart()" style="width: 100%; margin-bottom: 5px;">🖨️ Print</button>
+                <button class="btn" onclick="toggleSelectionMode()" style="background: #e17055; width: 100%; margin-top: 10px;" id="selectionModeBtn">
+                    <span id="selectionBtnText">🎯 Select Area (Beta)</span>
+                </button>
+                <div id="selectionHelp" style="display: none; margin-top: 10px; padding: 10px; background: #fee; border-radius: 5px; font-size: 12px;">
+                    Click and drag to select an area to print. Press ESC to cancel.
+                </div>
             </div>
             
             <!-- Data Management -->
@@ -370,6 +376,11 @@
     </div>
     
     <div id="chart-container"></div>
+    
+    <!-- Selection overlay for area printing -->
+    <svg id="selectionOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; z-index: 999;">
+        <rect id="selectionRect" fill="rgba(0, 123, 255, 0.2)" stroke="rgba(0, 123, 255, 0.8)" stroke-width="2" stroke-dasharray="5,5" />
+    </svg>
     
     <!-- Legend removed - not needed -->
     
@@ -1457,6 +1468,189 @@
             const sidebar = document.getElementById('sidebar');
             const currentLeft = sidebar.style.left;
             sidebar.style.left = currentLeft === '0px' ? '-300px' : '0px';
+        }
+        
+        // Selection mode variables
+        let selectionMode = false;
+        let selectionStart = null;
+        let selectionEnd = null;
+        
+        // Toggle selection mode
+        function toggleSelectionMode() {
+            selectionMode = !selectionMode;
+            const btn = document.getElementById('selectionModeBtn');
+            const btnText = document.getElementById('selectionBtnText');
+            const help = document.getElementById('selectionHelp');
+            const overlay = document.getElementById('selectionOverlay');
+            const container = document.getElementById('chart-container');
+            
+            if (selectionMode) {
+                btn.style.background = '#00b894';
+                btnText.textContent = '✓ Selection Mode Active';
+                help.style.display = 'block';
+                overlay.style.display = 'block';
+                overlay.style.pointerEvents = 'auto';
+                container.style.cursor = 'crosshair';
+                
+                // Add mouse event listeners
+                overlay.addEventListener('mousedown', startSelection);
+                overlay.addEventListener('mousemove', updateSelection);
+                overlay.addEventListener('mouseup', endSelection);
+                
+                // ESC key to cancel
+                document.addEventListener('keydown', handleSelectionEscape);
+            } else {
+                btn.style.background = '#e17055';
+                btnText.textContent = '🎯 Select Area (Beta)';
+                help.style.display = 'none';
+                overlay.style.display = 'none';
+                overlay.style.pointerEvents = 'none';
+                container.style.cursor = 'default';
+                
+                // Remove event listeners
+                overlay.removeEventListener('mousedown', startSelection);
+                overlay.removeEventListener('mousemove', updateSelection);
+                overlay.removeEventListener('mouseup', endSelection);
+                document.removeEventListener('keydown', handleSelectionEscape);
+                
+                // Clear selection
+                clearSelection();
+            }
+        }
+        
+        function startSelection(e) {
+            if (!selectionMode) return;
+            selectionStart = { x: e.clientX, y: e.clientY };
+            selectionEnd = null;
+        }
+        
+        function updateSelection(e) {
+            if (!selectionMode || !selectionStart) return;
+            
+            const rect = document.getElementById('selectionRect');
+            const x = Math.min(selectionStart.x, e.clientX);
+            const y = Math.min(selectionStart.y, e.clientY);
+            const width = Math.abs(e.clientX - selectionStart.x);
+            const height = Math.abs(e.clientY - selectionStart.y);
+            
+            rect.setAttribute('x', x);
+            rect.setAttribute('y', y);
+            rect.setAttribute('width', width);
+            rect.setAttribute('height', height);
+        }
+        
+        function endSelection(e) {
+            if (!selectionMode || !selectionStart) return;
+            
+            selectionEnd = { x: e.clientX, y: e.clientY };
+            
+            // Calculate selected area
+            const x1 = Math.min(selectionStart.x, selectionEnd.x);
+            const y1 = Math.min(selectionStart.y, selectionEnd.y);
+            const x2 = Math.max(selectionStart.x, selectionEnd.x);
+            const y2 = Math.max(selectionStart.y, selectionEnd.y);
+            
+            // Find nodes within selection
+            const selectedNodes = findNodesInSelection(x1, y1, x2, y2);
+            
+            if (selectedNodes.length > 0) {
+                printSelectedArea(selectedNodes);
+            } else {
+                alert('No nodes selected. Please try again.');
+            }
+            
+            // Exit selection mode
+            toggleSelectionMode();
+        }
+        
+        function clearSelection() {
+            const rect = document.getElementById('selectionRect');
+            rect.setAttribute('x', 0);
+            rect.setAttribute('y', 0);
+            rect.setAttribute('width', 0);
+            rect.setAttribute('height', 0);
+            selectionStart = null;
+            selectionEnd = null;
+        }
+        
+        function handleSelectionEscape(e) {
+            if (e.key === 'Escape' && selectionMode) {
+                toggleSelectionMode();
+            }
+        }
+        
+        function findNodesInSelection(x1, y1, x2, y2) {
+            const selectedNodes = [];
+            const container = document.getElementById('chart-container');
+            const containerRect = container.getBoundingClientRect();
+            
+            // Adjust coordinates relative to container
+            x1 -= containerRect.left;
+            y1 -= containerRect.top;
+            x2 -= containerRect.left;
+            y2 -= containerRect.top;
+            
+            // Get all node elements
+            const nodes = container.querySelectorAll('.node-rect-cls-0');
+            
+            nodes.forEach(node => {
+                const rect = node.getBoundingClientRect();
+                const nodeX = rect.left - containerRect.left + rect.width / 2;
+                const nodeY = rect.top - containerRect.top + rect.height / 2;
+                
+                // Check if node center is within selection
+                if (nodeX >= x1 && nodeX <= x2 && nodeY >= y1 && nodeY <= y2) {
+                    const nodeData = d3.select(node.parentElement).datum();
+                    if (nodeData) {
+                        selectedNodes.push(nodeData);
+                    }
+                }
+            });
+            
+            return selectedNodes;
+        }
+        
+        function printSelectedArea(nodes) {
+            console.log(`Printing ${nodes.length} selected nodes:`, nodes);
+            
+            // Create a temporary container for selected nodes
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Selected Area - Red Cross Org Chart</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; }
+                        h1 { color: #ed1b2e; }
+                        .node { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+                        .node-name { font-weight: bold; }
+                        .node-title { color: #666; }
+                        @media print {
+                            body { margin: 0; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>Red Cross SE & Caribbean Division - Selected Area</h1>
+                    <p>Selected ${nodes.length} positions:</p>
+                    ${nodes.map(n => `
+                        <div class="node">
+                            <div class="node-name">${n.data.name || 'Unknown'}</div>
+                            <div class="node-title">${n.data.title || ''}</div>
+                            <div class="node-location">${n.data.location || ''}</div>
+                        </div>
+                    `).join('')}
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            
+            // Trigger print dialog
+            setTimeout(() => {
+                printWindow.print();
+            }, 500);
         }
         
         // Initialize on load
