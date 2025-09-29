@@ -294,13 +294,13 @@
 </head>
 <body>
     <!-- Sidebar Menu -->
-    <div id="sidebar" style="position: fixed; left: -300px; top: 0; width: 300px; height: 100vh; background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.2); z-index: 1000; transition: left 0.3s;">
-        <div style="padding: 20px; border-bottom: 1px solid #ddd;">
+    <div id="sidebar" style="position: fixed; left: -300px; top: 0; width: 300px; height: 100vh; background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.2); z-index: 1000; transition: left 0.3s; display: flex; flex-direction: column;">
+        <div style="padding: 20px; border-bottom: 1px solid #ddd; flex-shrink: 0;">
             <h3 style="margin: 0;">🛠️ Tools & Settings</h3>
             <button onclick="toggleSidebar()" style="position: absolute; right: 10px; top: 20px; background: none; border: none; font-size: 24px; cursor: pointer;">✖</button>
         </div>
         
-        <div style="padding: 20px;">
+        <div style="padding: 20px; overflow-y: auto; flex: 1;">
             <!-- View Controls -->
             <div style="margin-bottom: 20px;">
                 <h4 style="margin-bottom: 10px;">View Controls</h4>
