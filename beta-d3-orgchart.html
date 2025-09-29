@@ -358,10 +358,16 @@
             <div style="margin-bottom: 20px;">
                 <h4 style="margin-bottom: 10px;">Data Management</h4>
                 <button class="btn" style="background: #00b894; width: 100%; margin-bottom: 5px;" onclick="saveToLocal()">💾 Save Changes</button>
-                <button class="btn" style="background: #0984e3; width: 100%; margin-bottom: 5px;" onclick="exportData()">📤 Export JSON</button>
+                <button class="btn" style="background: #0984e3; width: 100%; margin-bottom: 5px;" onclick="exportData()">📤 Export Current Version</button>
                 <button class="btn" style="background: #6c5ce7; width: 100%; margin-bottom: 5px;" onclick="importData()">📥 Import JSON</button>
                 <button class="btn" style="background: #e74c3c; width: 100%; margin-bottom: 5px;" onclick="openSimpleEditor()">✏️ Simple Editor (NEW)</button>
+                <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
+                <button class="btn" style="background: #f39c12; width: 100%; margin-bottom: 5px;" onclick="createBackup()">🔒 Create Backup</button>
+                <button class="btn" style="background: #3498db; width: 100%; margin-bottom: 5px;" onclick="showBackups()">📚 View Backups</button>
                 <button class="btn" style="background: #fdcb6e; width: 100%;" onclick="resetData()">🔄 Reset to Original</button>
+                <div style="margin-top: 10px; padding: 10px; background: #d4edda; border-radius: 5px; font-size: 12px;">
+                    <strong>✅ Protected:</strong> Original data always safe
+                </div>
             </div>
         </div>
     </div>
@@ -412,6 +418,22 @@
     <svg id="selectionOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; z-index: 999;">
         <rect id="selectionRect" fill="rgba(0, 123, 255, 0.2)" stroke="rgba(0, 123, 255, 0.8)" stroke-width="2" stroke-dasharray="5,5" />
     </svg>
+    
+    <!-- Backup History Modal -->
+    <div id="backupModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; max-height: 80%; background: white; border-radius: 10px; overflow: hidden;">
+            <div style="padding: 20px; background: #2c3e50; color: white;">
+                <h3 style="margin: 0;">📚 Backup History</h3>
+                <button onclick="closeBackupModal()" style="position: absolute; right: 20px; top: 20px; background: none; border: none; color: white; font-size: 24px; cursor: pointer;">✖</button>
+            </div>
+            <div id="backupList" style="padding: 20px; max-height: 400px; overflow-y: auto;">
+                <!-- Backups will be listed here -->
+            </div>
+            <div style="padding: 15px; background: #ecf0f1; border-top: 1px solid #bdc3c7;">
+                <small>💡 Tip: Create backups before major changes. You can always restore from any backup.</small>
+            </div>
+        </div>
+    </div>
     
     <!-- Simple JSON Editor Modal -->
     <div id="simpleEditorModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10001;">
@@ -2146,6 +2168,113 @@
         
         function addNewPerson() {
             alert('Adding new people requires admin access. Please contact your administrator.');
+        }
+        
+        // Backup and History Functions
+        function createBackup() {
+            const timestamp = new Date().toISOString();
+            const backupName = prompt('Name this backup (optional):', `Backup ${new Date().toLocaleDateString()}`);
+            
+            if (backupName !== null) {
+                const backups = JSON.parse(localStorage.getItem('orgChartBackups') || '[]');
+                
+                backups.push({
+                    name: backupName || 'Unnamed Backup',
+                    date: timestamp,
+                    data: JSON.stringify(currentData)
+                });
+                
+                // Keep only last 10 backups
+                if (backups.length > 10) {
+                    backups.shift();
+                }
+                
+                localStorage.setItem('orgChartBackups', JSON.stringify(backups));
+                alert(`Backup "${backupName}" created successfully!`);
+            }
+        }
+        
+        function showBackups() {
+            const backups = JSON.parse(localStorage.getItem('orgChartBackups') || '[]');
+            const backupList = document.getElementById('backupList');
+            
+            if (backups.length === 0) {
+                backupList.innerHTML = '<p style="text-align: center; color: #999;">No backups found. Create your first backup to protect your work!</p>';
+            } else {
+                let html = '<div style="max-height: 400px; overflow-y: auto;">';
+                
+                // Always show original as first option
+                html += `
+                    <div style="padding: 15px; margin-bottom: 10px; border: 2px solid #27ae60; border-radius: 5px; background: #d4edda;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong style="color: #155724;">🏛️ Original Data</strong>
+                                <br><small style="color: #666;">Factory default - always available</small>
+                            </div>
+                            <button onclick="resetData(); closeBackupModal();" 
+                                    style="padding: 5px 15px; background: #27ae60; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                                Restore Original
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Show user backups
+                backups.reverse().forEach((backup, index) => {
+                    const date = new Date(backup.date);
+                    html += `
+                        <div style="padding: 15px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px; background: white;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>${backup.name}</strong>
+                                    <br><small style="color: #666;">${date.toLocaleDateString()} ${date.toLocaleTimeString()}</small>
+                                </div>
+                                <div>
+                                    <button onclick="restoreBackup(${backups.length - 1 - index})" 
+                                            style="padding: 5px 10px; background: #3498db; color: white; border: none; border-radius: 3px; cursor: pointer; margin-right: 5px;">
+                                        Restore
+                                    </button>
+                                    <button onclick="deleteBackup(${backups.length - 1 - index})" 
+                                            style="padding: 5px 10px; background: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                backupList.innerHTML = html;
+            }
+            
+            document.getElementById('backupModal').style.display = 'block';
+        }
+        
+        function closeBackupModal() {
+            document.getElementById('backupModal').style.display = 'none';
+        }
+        
+        function restoreBackup(index) {
+            if (confirm('Are you sure you want to restore this backup? Current changes will be lost.')) {
+                const backups = JSON.parse(localStorage.getItem('orgChartBackups') || '[]');
+                if (backups[index]) {
+                    currentData = JSON.parse(backups[index].data);
+                    updateChart();
+                    saveToLocal();
+                    closeBackupModal();
+                    alert('Backup restored successfully!');
+                }
+            }
+        }
+        
+        function deleteBackup(index) {
+            if (confirm('Are you sure you want to delete this backup?')) {
+                const backups = JSON.parse(localStorage.getItem('orgChartBackups') || '[]');
+                backups.splice(index, 1);
+                localStorage.setItem('orgChartBackups', JSON.stringify(backups));
+                showBackups(); // Refresh the list
+            }
         }
     </script>
 </body>
