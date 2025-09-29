@@ -349,7 +349,10 @@
                 <option value="all">All Regions</option>
             </select>
             
-            <input type="text" class="search-box" id="searchBox" placeholder="Search for person..." style="width: 250px;">
+            <div style="display: flex; align-items: center; gap: 5px;">
+                <span style="font-size: 14px; color: #666;">🔍 Search:</span>
+                <input type="text" class="search-box" id="searchBox" placeholder="Enter name..." style="width: 200px;">
+            </div>
             
             <!-- View Controls in Top Bar -->
             <button class="btn" onclick="fitToScreen()" title="Fit to Screen">⤢ Fit</button>
@@ -367,20 +370,7 @@
     
     <div id="chart-container"></div>
     
-    <div class="legend">
-        <div class="legend-item">
-            <div class="legend-color" style="background: #ed1b2e;"></div>
-            <span>Executive</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-color" style="background: #fff5f5; border-color: #ed1b2e;"></div>
-            <span>Chief/Director</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-color" style="background: #f8f9fa;"></div>
-            <span>Manager/Staff</span>
-        </div>
-    </div>
+    <!-- Legend removed - not needed -->
     
     <div class="loading">
         <div class="spinner"></div>
@@ -1359,41 +1349,47 @@
             }, 600);
         }
         
-        // Search functionality with duplicate handling
-        document.getElementById('searchBox').addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            
-            // Remove dropdown if search is cleared
-            if (searchTerm.length < 3) {
-                const dropdown = document.getElementById('searchResultsDropdown');
-                if (dropdown) dropdown.remove();
-                if (chart) chart.clearHighlighting();
-                return;
-            }
-            
-            if (searchTerm.length > 2) {
+        // Search functionality - works on Enter key
+        document.getElementById('searchBox').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const searchTerm = e.target.value.toLowerCase().trim();
+                
+                if (searchTerm.length === 0) {
+                    return;
+                }
+                
                 const found = currentData.filter(d => 
                     d.name && d.name.toLowerCase().includes(searchTerm)
                 );
                 
-                if (found.length > 0 && chart) {
-                    // If multiple matches found, show dropdown
+                if (found.length > 0) {
+                    console.log(`Found ${found.length} matches for "${searchTerm}":`);
+                    
                     if (found.length > 1) {
-                        console.log(`Found ${found.length} matches for "${searchTerm}":`);
+                        // Multiple matches - show dropdown
                         found.forEach(p => console.log(`  - ${p.name} (${p.title}) ${p.location || ''}`));
                         showSearchResults(found, searchTerm);
-                    } else if (found[0]) {
+                    } else {
                         // Single match - navigate directly
                         const dropdown = document.getElementById('searchResultsDropdown');
                         if (dropdown) dropdown.remove();
                         navigateToNode(found[0]);
+                        
+                        // Clear search box after navigation
+                        e.target.value = '';
                     }
+                } else {
+                    alert(`No matches found for "${searchTerm}"`);
                 }
-            } else if (chart) {
-                chart.clearHighlighting();
-                // Reset zoom when search is cleared
-                chart.setZoom(0.7);
-                chart.fit();
+            }
+        });
+        
+        // Clear dropdown when search box is cleared
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            if (e.target.value.trim() === '') {
+                const dropdown = document.getElementById('searchResultsDropdown');
+                if (dropdown) dropdown.remove();
             }
         });
         
