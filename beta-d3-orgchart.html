@@ -453,8 +453,20 @@
                         bgColor = `linear-gradient(135deg, ${baseColor} 0%, ${baseColor}dd 100%)`;
                     }
                     
+                    // Add jump button for regional staff
+                    const showJumpButton = d.data.region && d.data.region !== 'division' && d.data.region !== 'all' && currentRegion !== d.data.region;
+                    
                     return `
-                        <div style="padding:10px; width:${d.width}px; height:${d.height}px; background:${bgColor}; border-radius:8px; border:${borderWidth} solid ${borderColor};">
+                        <div style="padding:10px; width:${d.width}px; height:${d.height}px; background:${bgColor}; border-radius:8px; border:${borderWidth} solid ${borderColor}; position:relative;">
+                            ${showJumpButton ? `
+                                <div style="position:absolute; top:5px; right:5px;">
+                                    <button onclick="jumpToRegion('${d.data.region}', '${d.data.id}')" 
+                                            style="background:#4a90e2; color:white; border:none; border-radius:3px; padding:2px 6px; cursor:pointer; font-size:10px; opacity:0.8; hover:opacity:1;"
+                                            title="Jump to ${d.data.region} region">
+                                        →
+                                    </button>
+                                </div>
+                            ` : ''}
                             <div style="color:${textColor}; font-size:14px; font-weight:600;">
                                 ${d.data.name || 'Vacant'}
                             </div>
@@ -990,6 +1002,78 @@
             alert('Cache cleared! The page will reload with fresh data.');
             location.reload();
         }
+        
+        // Jump to a specific region and focus on a person
+        function jumpToRegion(regionId, personId) {
+            console.log('Jumping to region:', regionId, 'person:', personId);
+            
+            // Update the dropdown
+            const regionSelect = document.getElementById('regionSelect');
+            if (regionSelect) {
+                // Map region IDs to dropdown values
+                const regionMap = {
+                    'florida-nc': 'florida-nc',
+                    'florida-south': 'florida-south',
+                    'georgia': 'georgia',
+                    'tennessee': 'tennessee',
+                    'alabama-mississippi': 'alabama-mississippi',
+                    'north-carolina': 'north-carolina',
+                    'south-carolina': 'south-carolina',
+                    'puerto-rico': 'puerto-rico'
+                };
+                
+                const mappedRegion = regionMap[regionId] || regionId;
+                regionSelect.value = mappedRegion;
+                
+                // Trigger change event
+                const event = new Event('change');
+                regionSelect.dispatchEvent(event);
+                
+                // After region loads, find and center on the person
+                setTimeout(() => {
+                    // Find the person in the new data and center on them
+                    const targetNode = currentData.find(n => 
+                        n.name === personId || 
+                        n.id === personId ||
+                        (n.name && personId && n.name.toLowerCase().includes(personId.toLowerCase()))
+                    );
+                    
+                    if (targetNode && chart) {
+                        // Expand path to this node
+                        let nodeToExpand = targetNode;
+                        const nodesToExpand = [];
+                        
+                        // Find all parent nodes
+                        while (nodeToExpand.parentId) {
+                            const parent = currentData.find(n => n.id === nodeToExpand.parentId);
+                            if (parent) {
+                                nodesToExpand.unshift(parent.id);
+                                nodeToExpand = parent;
+                            } else {
+                                break;
+                            }
+                        }
+                        
+                        // Expand all parents
+                        nodesToExpand.forEach(nodeId => {
+                            chart.setExpanded(nodeId);
+                        });
+                        
+                        // Center on target
+                        chart.setCentered(targetNode.id).render();
+                        
+                        // Highlight the node briefly
+                        setTimeout(() => {
+                            chart.fit();
+                            console.log('Centered on', targetNode.name, 'in', regionId);
+                        }, 500);
+                    }
+                }, 1000);
+            }
+        }
+        
+        // Make jumpToRegion available globally
+        window.jumpToRegion = jumpToRegion;
         
         function resetView() {
             if (chart) {
