@@ -426,6 +426,12 @@
         let chart;
         let currentData = [];
         let currentRegion = 'all';
+        let completeOrgData;
+        
+        // Initialize completeOrgData from global scope if available
+        if (typeof window.completeOrgData !== 'undefined') {
+            completeOrgData = window.completeOrgData;
+        }
         
         // Initialize chart
         function initChart() {
@@ -865,8 +871,9 @@
                 document.head.appendChild(divScript);
             }
             
-            if (typeof completeOrgData !== 'undefined') {
-                console.log('Found completeOrgData:', completeOrgData);
+            if (typeof window.completeOrgData !== 'undefined') {
+                console.log('Found completeOrgData:', window.completeOrgData);
+                completeOrgData = window.completeOrgData; // Copy from global
                 currentRegion = document.getElementById('regionSelect')?.value || 'all';
                 const flatData = convertToFlatData(completeOrgData, null, currentRegion, '');
                 currentData = flatData;
@@ -885,7 +892,10 @@
                 const script = document.createElement('script');
                 script.src = 'complete-org-data.js';
                 script.onload = () => {
-                    console.log('Script loaded, completeOrgData available:', typeof completeOrgData !== 'undefined');
+                    console.log('Script loaded, completeOrgData available:', typeof window.completeOrgData !== 'undefined');
+                    if (typeof window.completeOrgData !== 'undefined') {
+                        completeOrgData = window.completeOrgData; // Copy from global
+                    }
                     setTimeout(loadData, 100);
                 };
                 script.onerror = () => {
