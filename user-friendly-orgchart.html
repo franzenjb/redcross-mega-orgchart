@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Red Cross Org Chart - User Friendly Edition</title>
+    <meta charset="utf-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+        }
+        
+        .user-mode-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 15px;
+            text-transform: uppercase;
+        }
+        
+        .mode-viewer {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .mode-corrector {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        .mode-architect {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .control-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .control-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 5px;
+        }
+        
+        .region-select {
+            padding: 8px 15px;
+            border: 2px solid #ed1b2e;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            min-width: 200px;
+        }
+        
+        .btn {
+            padding: 8px 20px;
+            background: #ed1b2e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn:hover {
+            background: #c41230;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #6d6e70;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a5b5d;
+        }
+        
+        .btn-success {
+            background: #27ae60;
+        }
+        
+        .btn-success:hover {
+            background: #219a52;
+        }
+        
+        .btn-warning {
+            background: #f39c12;
+        }
+        
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+        
+        .btn-architect {
+            background: #9b59b6;
+        }
+        
+        .btn-architect:hover {
+            background: #8e44ad;
+        }
+        
+        .search-box {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            width: 250px;
+            font-size: 14px;
+        }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 0 0 6px 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .search-result-item {
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .search-result-item:hover {
+            background: #f0f0f0;
+        }
+        
+        #chart-container {
+            width: 100%;
+            height: calc(100vh - 180px);
+            min-height: 600px;
+            background: white;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Node Styles */
+        .node-rect {
+            rx: 5;
+            ry: 5;
+            fill: white;
+            stroke: #ddd;
+            stroke-width: 2;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .node-rect:hover {
+            stroke-width: 3;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        .node-rect-executive {
+            fill: #ed1b2e;
+            stroke: #c41230;
+        }
+        
+        .node-rect-chief {
+            fill: #fff5f5;
+            stroke: #ed1b2e;
+        }
+        
+        .node-rect-director {
+            fill: #f8f9fa;
+            stroke: #6d6e70;
+        }
+        
+        .node-name {
+            font-weight: 600;
+            font-size: 14px;
+            pointer-events: none;
+        }
+        
+        .node-title {
+            font-size: 12px;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+        
+        .node-contact {
+            font-size: 11px;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .link {
+            fill: none;
+            stroke: #aaa;
+            stroke-width: 1.5;
+        }
+        
+        /* Quick Edit Tooltip */
+        .quick-edit-tooltip {
+            position: absolute;
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 1000;
+            min-width: 300px;
+        }
+        
+        .quick-edit-field {
+            margin-bottom: 10px;
+        }
+        
+        .quick-edit-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .quick-edit-input {
+            width: 100%;
+            padding: 5px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .quick-edit-buttons {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .quick-edit-btn {
+            flex: 1;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        /* Context Menu */
+        .context-menu {
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 1001;
+            padding: 5px 0;
+            min-width: 180px;
+        }
+        
+        .context-menu-item {
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .context-menu-item:hover {
+            background: #f0f0f0;
+        }
+        
+        .context-menu-divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 5px 0;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            animation: fadeIn 0.3s;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .modal-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        /* Import/Export Section */
+        .import-export-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .import-drop-zone {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .import-drop-zone:hover,
+        .import-drop-zone.drag-over {
+            border-color: #3498db;
+            background: #ecf0f1;
+        }
+        
+        .import-icon {
+            font-size: 48px;
+            color: #bdc3c7;
+            margin-bottom: 10px;
+        }
+        
+        /* Version History */
+        .version-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .version-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .version-info {
+            flex: 1;
+        }
+        
+        .version-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+        
+        .version-date {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .version-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        /* Help Guide */
+        .help-section {
+            background: #ecf0f1;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .help-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .help-content {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .help-tip {
+            background: #fff;
+            border-left: 3px solid #3498db;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translate(-50%, -40%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+        
+        /* Undo/Redo Indicator */
+        .undo-redo-controls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            padding: 5px 10px;
+            background: #ecf0f1;
+            border-radius: 6px;
+        }
+        
+        .undo-redo-btn {
+            padding: 5px 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .undo-redo-btn:hover:not(:disabled) {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .undo-redo-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Loading Spinner */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            display: none;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ed1b2e;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: none;
+            animation: slideInRight 0.3s;
+            z-index: 10002;
+            max-width: 300px;
+        }
+        
+        .toast.success {
+            background: #27ae60;
+        }
+        
+        .toast.error {
+            background: #e74c3c;
+        }
+        
+        .toast.info {
+            background: #3498db;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+            <div style="display: flex; align-items: center;">
+                <h1>Red Cross SE & Caribbean Division - Organizational Chart</h1>
+                <span id="userMode" class="user-mode-indicator mode-viewer">Viewer Mode</span>
+            </div>
+            <div class="undo-redo-controls">
+                <button id="undoBtn" class="undo-redo-btn" onclick="undo()" disabled>↶ Undo</button>
+                <button id="redoBtn" class="undo-redo-btn" onclick="redo()" disabled>↷ Redo</button>
+            </div>
+        </div>
+        
+        <!-- Main Controls -->
+        <div class="control-section">
+            <span class="control-label">View:</span>
+            <select class="region-select" id="regionSelect" onchange="filterByRegion(this.value)">
+                <option value="all">All Regions</option>
+                <option value="division">Division Leadership</option>
+                <option value="AL/MS">Alabama/Mississippi</option>
+                <option value="FL N/C">Florida North/Central</option>
+                <option value="FL South">Florida South</option>
+                <option value="GA">Georgia</option>
+                <option value="NC">North Carolina</option>
+                <option value="SC">South Carolina</option>
+                <option value="TN">Tennessee</option>
+                <option value="PR">Puerto Rico</option>
+            </select>
+            
+            <div style="position: relative;">
+                <input type="text" 
+                       id="searchBox"
+                       class="search-box" 
+                       placeholder="Search for anyone..." 
+                       onkeyup="searchPerson(this.value)">
+                <div id="searchResults" class="search-results"></div>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="fitToScreen()">
+                <span>🔍</span> Fit to Screen
+            </button>
+            
+            <button class="btn btn-secondary" onclick="centerView()">
+                <span>⎯</span> Center View
+            </button>
+        </div>
+        
+        <!-- User Mode Controls -->
+        <div class="control-section">
+            <span class="control-label">Tools:</span>
+            
+            <button class="btn btn-success" onclick="showImportExport()">
+                <span>📥</span> Import/Export
+            </button>
+            
+            <button class="btn btn-warning" onclick="showVersionHistory()">
+                <span>📚</span> Version History
+            </button>
+            
+            <button id="architectBtn" class="btn btn-architect" onclick="toggleArchitectMode()">
+                <span>🔐</span> Architect Mode
+            </button>
+            
+            <button class="btn btn-secondary" onclick="showHelp()">
+                <span>❓</span> Help
+            </button>
+        </div>
+    </div>
+    
+    <div id="chart-container"></div>
+    
+    <!-- Quick Edit Tooltip -->
+    <div id="quickEditTooltip" class="quick-edit-tooltip">
+        <div class="quick-edit-field">
+            <div class="quick-edit-label">Name</div>
+            <input type="text" id="quickEditName" class="quick-edit-input">
+        </div>
+        <div class="quick-edit-field">
+            <div class="quick-edit-label">Title</div>
+            <input type="text" id="quickEditTitle" class="quick-edit-input">
+        </div>
+        <div class="quick-edit-field">
+            <div class="quick-edit-label">Email (Optional)</div>
+            <input type="email" id="quickEditEmail" class="quick-edit-input" placeholder="john.doe@redcross.org">
+        </div>
+        <div class="quick-edit-field">
+            <div class="quick-edit-label">Phone (Optional)</div>
+            <input type="tel" id="quickEditPhone" class="quick-edit-input" placeholder="(555) 123-4567">
+        </div>
+        <div class="quick-edit-buttons">
+            <button class="quick-edit-btn" style="background: #27ae60; color: white;" onclick="saveQuickEdit()">Save</button>
+            <button class="quick-edit-btn" style="background: #e74c3c; color: white;" onclick="cancelQuickEdit()">Cancel</button>
+        </div>
+    </div>
+    
+    <!-- Context Menu for Architect Mode -->
+    <div id="contextMenu" class="context-menu">
+        <div class="context-menu-item" onclick="addPersonHere()">
+            <span>➕</span> Add Person Here
+        </div>
+        <div class="context-menu-item" onclick="addPersonBelow()">
+            <span>⬇️</span> Add Person Below
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" onclick="deleteThisPerson()">
+            <span>🗑️</span> Delete This Person
+        </div>
+        <div class="context-menu-item" onclick="moveThisPerson()">
+            <span>↔️</span> Move This Person
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" onclick="editDetails()">
+            <span>✏️</span> Edit Details
+        </div>
+    </div>
+    
+    <!-- Import/Export Modal -->
+    <div id="importExportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Import & Export Data</h2>
+                <p class="modal-subtitle">Save your work or import changes from a file</p>
+            </div>
+            <div class="modal-body">
+                <div class="import-export-section">
+                    <h3 style="margin-bottom: 15px;">📤 Export Options</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <button class="btn btn-success" onclick="exportAsJSON()">
+                            Download as Data File (.json)
+                        </button>
+                        <button class="btn btn-success" onclick="exportAsExcel()">
+                            Download as Excel (.csv)
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportAsPDF()">
+                            Download as PDF
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportAsImage()">
+                            Download as Image
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="import-export-section">
+                    <h3 style="margin-bottom: 15px;">📥 Import Data</h3>
+                    <div id="dropZone" class="import-drop-zone" onclick="triggerFileUpload()">
+                        <div class="import-icon">📁</div>
+                        <p><strong>Click to browse</strong> or drag and drop files here</p>
+                        <p style="font-size: 12px; color: #999; margin-top: 5px;">
+                            Supports: .json (data files), .csv/.xlsx (Excel files)
+                        </p>
+                    </div>
+                    <input type="file" id="fileInput" style="display: none;" accept=".json,.csv,.xlsx" onchange="handleFileUpload(this)">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('importExportModal')">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Version History Modal -->
+    <div id="versionHistoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Version History</h2>
+                <p class="modal-subtitle">View and restore previous versions of your org chart</p>
+            </div>
+            <div class="modal-body">
+                <div id="versionList">
+                    <!-- Versions will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" onclick="saveVersion()">Save Current Version</button>
+                <button class="btn btn-secondary" onclick="closeModal('versionHistoryModal')">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">How to Use This Tool</h2>
+                <p class="modal-subtitle">Simple guide for all user types</p>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <div class="help-title">
+                        <span>👀</span> For Viewers
+                    </div>
+                    <div class="help-content">
+                        <ul>
+                            <li>Click on any box to expand/collapse their team</li>
+                            <li>Use the search box to find anyone quickly</li>
+                            <li>Select different regions from the dropdown</li>
+                            <li>Use zoom controls to navigate large charts</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="help-section">
+                    <div class="help-title">
+                        <span>✏️</span> For Quick Corrections
+                    </div>
+                    <div class="help-content">
+                        <ul>
+                            <li><strong>Double-click</strong> any name box to fix typos</li>
+                            <li>Edit names, titles, email, and phone numbers</li>
+                            <li>Changes save automatically</li>
+                            <li>No password needed for simple corrections</li>
+                        </ul>
+                        <div class="help-tip">
+                            💡 <strong>Tip:</strong> You can only edit text, not move or delete people. This keeps the org structure safe!
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="help-section">
+                    <div class="help-title">
+                        <span>🏗️</span> For Architects (Password Required)
+                    </div>
+                    <div class="help-content">
+                        <ul>
+                            <li>Click "Architect Mode" and enter password</li>
+                            <li><strong>Right-click</strong> any box for advanced options</li>
+                            <li>Add new people above, below, or beside existing ones</li>
+                            <li>Delete positions or entire branches</li>
+                            <li>Drag and drop to reorganize structure</li>
+                        </ul>
+                        <div class="help-tip">
+                            ⚠️ <strong>Important:</strong> Always save a version before major changes!
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="help-section">
+                    <div class="help-title">
+                        <span>💾</span> Saving Your Work
+                    </div>
+                    <div class="help-content">
+                        <ul>
+                            <li><strong>Auto-save:</strong> Changes save to your browser automatically</li>
+                            <li><strong>Export:</strong> Download as Excel to edit in spreadsheet</li>
+                            <li><strong>Import:</strong> Upload Excel file with changes</li>
+                            <li><strong>Versions:</strong> Save named versions before big changes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('helpModal')">Got it!</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Architect Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Enter Architect Password</h2>
+                <p class="modal-subtitle">This mode allows structural changes to the organization</p>
+            </div>
+            <div class="modal-body">
+                <input type="password" 
+                       id="architectPassword" 
+                       class="quick-edit-input" 
+                       placeholder="Enter password..."
+                       onkeypress="if(event.key==='Enter') checkArchitectPassword()">
+                <p id="passwordError" style="color: #e74c3c; margin-top: 10px; display: none;">
+                    Incorrect password. Please try again.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-architect" onclick="checkArchitectPassword()">Unlock</button>
+                <button class="btn btn-secondary" onclick="closeModal('passwordModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    
+    <!-- Loading Indicator -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Loading organizational data...</p>
+    </div>
+    
+    <!-- Include D3.js and D3 OrgChart -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3"></script>
+    
+    <!-- Include organizational data -->
+    <script src="deep-org-data.js"></script>
+    
+    <script>
+        // Global variables
+        let chart;
+        let currentData;
+        let currentRegion = 'all';
+        let currentEditNode = null;
+        let contextMenuNode = null;
+        let isArchitectMode = false;
+        let undoStack = [];
+        let redoStack = [];
+        const MAX_UNDO_STACK = 50;
+        const ARCHITECT_PASSWORD = 'redcross'; // In production, this would be more secure
+        
+        // User mode states
+        const UserMode = {
+            VIEWER: 'viewer',
+            CORRECTOR: 'corrector',
+            ARCHITECT: 'architect'
+        };
+        let currentUserMode = UserMode.VIEWER;
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeChart();
+            loadFromLocal();
+            setupEventListeners();
+            updateUndoRedoButtons();
+            showToast('Welcome! Double-click any name to make corrections.', 'info');
+        });
+        
+        function initializeChart() {
+            // Show loading
+            document.getElementById('loading').classList.add('active');
+            
+            // Initialize the D3 OrgChart
+            chart = new d3.OrgChart()
+                .container('#chart-container')
+                .data([])
+                .nodeWidth((d) => 250)
+                .nodeHeight((d) => 120)
+                .childrenMargin((d) => 40)
+                .compactMarginBetween((d) => 15)
+                .compactMarginPair((d) => 80)
+                .nestedNodeChildrenMargin((d) => 40)
+                .svgHeight(window.innerHeight - 180)
+                .svgWidth(window.innerWidth)
+                .expandLevel(1)
+                .onNodeClick((d) => handleNodeClick(d))
+                .nodeContent((d) => {
+                    const isExecutive = d.data.title && d.data.title.toLowerCase().includes('vp');
+                    const isChief = d.data.title && (d.data.title.toLowerCase().includes('chief') || 
+                                                      d.data.title.toLowerCase().includes('exec'));
+                    const isDirector = d.data.title && d.data.title.toLowerCase().includes('director');
+                    
+                    let rectClass = 'node-rect';
+                    if (isExecutive) rectClass = 'node-rect-executive';
+                    else if (isChief) rectClass = 'node-rect-chief';
+                    else if (isDirector) rectClass = 'node-rect-director';
+                    
+                    const childCount = d.data._children ? d.data._children.length : 
+                                      (d.data.children ? d.data.children.length : 0);
+                    
+                    let html = `
+                        <div style="width:${d.width}px; height:${d.height}px;">
+                            <rect class="${rectClass}" 
+                                  width="${d.width}" 
+                                  height="${d.height}"
+                                  data-node-id="${d.id}">
+                            </rect>
+                            <foreignObject width="${d.width}" height="${d.height}">
+                                <div style="padding: 10px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                                    <div class="node-name">${d.data.name}</div>
+                                    <div class="node-title">${d.data.title || ''}</div>
+                                    ${d.data.email || d.data.phone ? `
+                                        <div class="node-contact">
+                                            ${d.data.email ? `📧 ${d.data.email}` : ''}
+                                            ${d.data.phone ? `📞 ${d.data.phone}` : ''}
+                                        </div>
+                                    ` : ''}
+                    `;
+                    
+                    if (childCount > 0 && d._collapsed) {
+                        html += `<div style="position: absolute; top: 5px; right: 5px; 
+                                       background: #ed1b2e; color: white; 
+                                       border-radius: 10px; padding: 2px 8px; 
+                                       font-size: 11px; font-weight: bold;">
+                                    ${childCount}
+                                </div>`;
+                    }
+                    
+                    html += `
+                                </div>
+                            </foreignObject>
+                        </div>
+                    `;
+                    
+                    return html;
+                });
+            
+            // Load initial data
+            if (typeof orgData !== 'undefined') {
+                currentData = JSON.parse(JSON.stringify(orgData));
+                updateChart();
+                setTimeout(() => {
+                    document.getElementById('loading').classList.remove('active');
+                    fitToScreen();
+                }, 500);
+            }
+        }
+        
+        function setupEventListeners() {
+            // Double-click for quick edit
+            document.addEventListener('dblclick', function(e) {
+                const rect = e.target.closest('.node-rect, .node-rect-executive, .node-rect-chief, .node-rect-director');
+                if (rect) {
+                    const nodeId = rect.getAttribute('data-node-id');
+                    if (nodeId) {
+                        showQuickEdit(nodeId, e);
+                    }
+                }
+            });
+            
+            // Right-click for context menu (architect mode only)
+            document.addEventListener('contextmenu', function(e) {
+                if (isArchitectMode) {
+                    const rect = e.target.closest('.node-rect, .node-rect-executive, .node-rect-chief, .node-rect-director');
+                    if (rect) {
+                        e.preventDefault();
+                        const nodeId = rect.getAttribute('data-node-id');
+                        if (nodeId) {
+                            showContextMenu(nodeId, e);
+                        }
+                    }
+                }
+            });
+            
+            // Click outside to close menus
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#quickEditTooltip')) {
+                    cancelQuickEdit();
+                }
+                if (!e.target.closest('#contextMenu')) {
+                    hideContextMenu();
+                }
+            });
+            
+            // Drag and drop for import
+            const dropZone = document.getElementById('dropZone');
+            if (dropZone) {
+                dropZone.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('drag-over');
+                });
+                
+                dropZone.addEventListener('dragleave', function(e) {
+                    this.classList.remove('drag-over');
+                });
+                
+                dropZone.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    handleFileDrop(e.dataTransfer.files);
+                });
+            }
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    if (e.key === 'z' && !e.shiftKey) {
+                        e.preventDefault();
+                        undo();
+                    } else if ((e.key === 'z' && e.shiftKey) || e.key === 'y') {
+                        e.preventDefault();
+                        redo();
+                    } else if (e.key === 's') {
+                        e.preventDefault();
+                        saveVersion();
+                    }
+                }
+            });
+        }
+        
+        function handleNodeClick(d) {
+            // Single click expands/collapses
+            console.log('Node clicked:', d);
+            
+            // Toggle expand/collapse
+            if (d._children || d.children) {
+                // Node has children, toggle them
+                setTimeout(() => fitToScreen(), 300);
+            }
+        }
+        
+        function showQuickEdit(nodeId, event) {
+            const node = findNodeById(currentData, nodeId);
+            if (!node) return;
+            
+            currentEditNode = node;
+            currentUserMode = UserMode.CORRECTOR;
+            updateModeIndicator();
+            
+            const tooltip = document.getElementById('quickEditTooltip');
+            document.getElementById('quickEditName').value = node.name || '';
+            document.getElementById('quickEditTitle').value = node.title || '';
+            document.getElementById('quickEditEmail').value = node.email || '';
+            document.getElementById('quickEditPhone').value = node.phone || '';
+            
+            // Position tooltip near the click
+            tooltip.style.left = event.pageX + 'px';
+            tooltip.style.top = event.pageY + 'px';
+            tooltip.style.display = 'block';
+            
+            // Adjust position if off-screen
+            const rect = tooltip.getBoundingClientRect();
+            if (rect.right > window.innerWidth) {
+                tooltip.style.left = (event.pageX - rect.width) + 'px';
+            }
+            if (rect.bottom > window.innerHeight) {
+                tooltip.style.top = (event.pageY - rect.height) + 'px';
+            }
+        }
+        
+        function saveQuickEdit() {
+            if (!currentEditNode) return;
+            
+            // Save to undo stack
+            saveUndoState();
+            
+            // Update node data
+            currentEditNode.name = document.getElementById('quickEditName').value;
+            currentEditNode.title = document.getElementById('quickEditTitle').value;
+            currentEditNode.email = document.getElementById('quickEditEmail').value || undefined;
+            currentEditNode.phone = document.getElementById('quickEditPhone').value || undefined;
+            
+            // Update chart and save
+            updateChart();
+            saveToLocal();
+            cancelQuickEdit();
+            showToast('Changes saved successfully!', 'success');
+        }
+        
+        function cancelQuickEdit() {
+            document.getElementById('quickEditTooltip').style.display = 'none';
+            currentEditNode = null;
+            if (currentUserMode === UserMode.CORRECTOR && !isArchitectMode) {
+                currentUserMode = UserMode.VIEWER;
+                updateModeIndicator();
+            }
+        }
+        
+        function showContextMenu(nodeId, event) {
+            contextMenuNode = findNodeById(currentData, nodeId);
+            if (!contextMenuNode) return;
+            
+            const menu = document.getElementById('contextMenu');
+            menu.style.left = event.pageX + 'px';
+            menu.style.top = event.pageY + 'px';
+            menu.style.display = 'block';
+        }
+        
+        function hideContextMenu() {
+            document.getElementById('contextMenu').style.display = 'none';
+            contextMenuNode = null;
+        }
+        
+        function toggleArchitectMode() {
+            if (isArchitectMode) {
+                // Turn off architect mode
+                isArchitectMode = false;
+                currentUserMode = UserMode.VIEWER;
+                updateModeIndicator();
+                document.getElementById('architectBtn').innerHTML = '<span>🔐</span> Architect Mode';
+                showToast('Architect Mode disabled', 'info');
+            } else {
+                // Show password prompt
+                document.getElementById('passwordModal').style.display = 'block';
+                document.getElementById('architectPassword').focus();
+            }
+        }
+        
+        function checkArchitectPassword() {
+            const password = document.getElementById('architectPassword').value;
+            if (password === ARCHITECT_PASSWORD) {
+                isArchitectMode = true;
+                currentUserMode = UserMode.ARCHITECT;
+                updateModeIndicator();
+                document.getElementById('architectBtn').innerHTML = '<span>🔓</span> Exit Architect Mode';
+                closeModal('passwordModal');
+                showToast('Architect Mode enabled - Right-click any box for options', 'success');
+            } else {
+                document.getElementById('passwordError').style.display = 'block';
+                document.getElementById('architectPassword').value = '';
+            }
+        }
+        
+        function addPersonHere() {
+            if (!contextMenuNode) return;
+            
+            const name = prompt('Enter the person\'s name:');
+            if (!name) return;
+            
+            const title = prompt('Enter their title:');
+            
+            saveUndoState();
+            
+            // Find parent and add new sibling
+            const parent = findParentNode(currentData, contextMenuNode);
+            if (parent && parent.children) {
+                const newPerson = {
+                    id: 'person_' + Date.now(),
+                    name: name,
+                    title: title || '',
+                    location: contextMenuNode.location || '',
+                    children: []
+                };
+                
+                const index = parent.children.indexOf(contextMenuNode);
+                parent.children.splice(index + 1, 0, newPerson);
+                
+                updateChart();
+                saveToLocal();
+                showToast('Person added successfully!', 'success');
+            }
+            
+            hideContextMenu();
+        }
+        
+        function addPersonBelow() {
+            if (!contextMenuNode) return;
+            
+            const name = prompt('Enter the person\'s name:');
+            if (!name) return;
+            
+            const title = prompt('Enter their title:');
+            
+            saveUndoState();
+            
+            // Add as child of current node
+            if (!contextMenuNode.children) {
+                contextMenuNode.children = [];
+            }
+            
+            const newPerson = {
+                id: 'person_' + Date.now(),
+                name: name,
+                title: title || '',
+                location: contextMenuNode.location || '',
+                children: []
+            };
+            
+            contextMenuNode.children.push(newPerson);
+            
+            updateChart();
+            saveToLocal();
+            showToast('Person added successfully!', 'success');
+            hideContextMenu();
+        }
+        
+        function deleteThisPerson() {
+            if (!contextMenuNode) return;
+            
+            if (!confirm(`Are you sure you want to delete ${contextMenuNode.name} and all their reports?`)) {
+                return;
+            }
+            
+            saveUndoState();
+            
+            // Find parent and remove this node
+            const parent = findParentNode(currentData, contextMenuNode);
+            if (parent && parent.children) {
+                const index = parent.children.indexOf(contextMenuNode);
+                if (index > -1) {
+                    parent.children.splice(index, 1);
+                }
+            }
+            
+            updateChart();
+            saveToLocal();
+            showToast('Person removed from organization', 'success');
+            hideContextMenu();
+        }
+        
+        function editDetails() {
+            if (contextMenuNode) {
+                // Use the quick edit for detailed editing
+                const fakeEvent = { pageX: 400, pageY: 200 };
+                showQuickEdit(contextMenuNode.id, fakeEvent);
+            }
+            hideContextMenu();
+        }
+        
+        function moveThisPerson() {
+            showToast('Drag and drop coming in next update!', 'info');
+            hideContextMenu();
+        }
+        
+        // Import/Export Functions
+        function showImportExport() {
+            document.getElementById('importExportModal').style.display = 'block';
+        }
+        
+        function triggerFileUpload() {
+            document.getElementById('fileInput').click();
+        }
+        
+        function handleFileUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                handleFileDrop([file]);
+            }
+        }
+        
+        function handleFileDrop(files) {
+            if (files.length === 0) return;
+            
+            const file = files[0];
+            const reader = new FileReader();
+            
+            if (file.name.endsWith('.json')) {
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        saveUndoState();
+                        currentData = data;
+                        updateChart();
+                        saveToLocal();
+                        showToast('Data imported successfully!', 'success');
+                    } catch (error) {
+                        showToast('Error reading file. Please check the format.', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            } else if (file.name.endsWith('.csv')) {
+                reader.onload = function(e) {
+                    const csvData = parseCSV(e.target.result);
+                    if (csvData) {
+                        saveUndoState();
+                        currentData = csvToOrgChart(csvData);
+                        updateChart();
+                        saveToLocal();
+                        showToast('Excel data imported successfully!', 'success');
+                    } else {
+                        showToast('Error parsing CSV file', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            } else {
+                showToast('Unsupported file type. Use .json or .csv files.', 'error');
+            }
+        }
+        
+        function exportAsJSON() {
+            const dataStr = JSON.stringify(currentData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `redcross-orgchart-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast('Data exported as JSON!', 'success');
+        }
+        
+        function exportAsExcel() {
+            const csvData = orgChartToCSV(currentData);
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `redcross-orgchart-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast('Data exported as Excel/CSV!', 'success');
+        }
+        
+        function exportAsPDF() {
+            window.print();
+            showToast('Use print dialog to save as PDF', 'info');
+        }
+        
+        function exportAsImage() {
+            // This would need a library like html2canvas
+            showToast('Image export coming soon!', 'info');
+        }
+        
+        // Version History Functions
+        function showVersionHistory() {
+            loadVersionList();
+            document.getElementById('versionHistoryModal').style.display = 'block';
+        }
+        
+        function loadVersionList() {
+            const versions = JSON.parse(localStorage.getItem('orgChartVersions') || '[]');
+            const versionList = document.getElementById('versionList');
+            
+            if (versions.length === 0) {
+                versionList.innerHTML = `
+                    <div style="text-align: center; padding: 30px; color: #999;">
+                        <p>No saved versions yet.</p>
+                        <p>Click "Save Current Version" to create your first backup.</p>
+                    </div>
+                `;
+            } else {
+                let html = '';
+                versions.reverse().forEach((version, index) => {
+                    const date = new Date(version.date);
+                    html += `
+                        <div class="version-item">
+                            <div class="version-info">
+                                <div class="version-name">${version.name}</div>
+                                <div class="version-date">${date.toLocaleString()}</div>
+                            </div>
+                            <div class="version-actions">
+                                <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;" 
+                                        onclick="restoreVersion(${versions.length - 1 - index})">
+                                    Restore
+                                </button>
+                                <button class="btn" style="padding: 5px 10px; font-size: 12px; background: #e74c3c;" 
+                                        onclick="deleteVersion(${versions.length - 1 - index})">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                versionList.innerHTML = html;
+            }
+        }
+        
+        function saveVersion() {
+            const name = prompt('Name this version:', `Version ${new Date().toLocaleDateString()}`);
+            if (!name) return;
+            
+            const versions = JSON.parse(localStorage.getItem('orgChartVersions') || '[]');
+            versions.push({
+                name: name,
+                date: new Date().toISOString(),
+                data: JSON.stringify(currentData)
+            });
+            
+            // Keep only last 20 versions
+            if (versions.length > 20) {
+                versions.shift();
+            }
+            
+            localStorage.setItem('orgChartVersions', JSON.stringify(versions));
+            showToast('Version saved successfully!', 'success');
+            
+            if (document.getElementById('versionHistoryModal').style.display === 'block') {
+                loadVersionList();
+            }
+        }
+        
+        function restoreVersion(index) {
+            if (!confirm('Are you sure you want to restore this version? Current changes will be lost.')) {
+                return;
+            }
+            
+            const versions = JSON.parse(localStorage.getItem('orgChartVersions') || '[]');
+            if (versions[index]) {
+                saveUndoState();
+                currentData = JSON.parse(versions[index].data);
+                updateChart();
+                saveToLocal();
+                closeModal('versionHistoryModal');
+                showToast('Version restored successfully!', 'success');
+            }
+        }
+        
+        function deleteVersion(index) {
+            if (!confirm('Are you sure you want to delete this version?')) {
+                return;
+            }
+            
+            const versions = JSON.parse(localStorage.getItem('orgChartVersions') || '[]');
+            versions.splice(index, 1);
+            localStorage.setItem('orgChartVersions', JSON.stringify(versions));
+            loadVersionList();
+            showToast('Version deleted', 'info');
+        }
+        
+        // Undo/Redo Functions
+        function saveUndoState() {
+            undoStack.push(JSON.stringify(currentData));
+            if (undoStack.length > MAX_UNDO_STACK) {
+                undoStack.shift();
+            }
+            redoStack = []; // Clear redo stack on new action
+            updateUndoRedoButtons();
+        }
+        
+        function undo() {
+            if (undoStack.length > 0) {
+                redoStack.push(JSON.stringify(currentData));
+                currentData = JSON.parse(undoStack.pop());
+                updateChart();
+                saveToLocal();
+                updateUndoRedoButtons();
+                showToast('Undo successful', 'info');
+            }
+        }
+        
+        function redo() {
+            if (redoStack.length > 0) {
+                undoStack.push(JSON.stringify(currentData));
+                currentData = JSON.parse(redoStack.pop());
+                updateChart();
+                saveToLocal();
+                updateUndoRedoButtons();
+                showToast('Redo successful', 'info');
+            }
+        }
+        
+        function updateUndoRedoButtons() {
+            document.getElementById('undoBtn').disabled = undoStack.length === 0;
+            document.getElementById('redoBtn').disabled = redoStack.length === 0;
+        }
+        
+        // Help Functions
+        function showHelp() {
+            document.getElementById('helpModal').style.display = 'block';
+        }
+        
+        // Utility Functions
+        function findNodeById(node, id) {
+            if (node.id === id) return node;
+            if (node.children) {
+                for (let child of node.children) {
+                    const found = findNodeById(child, id);
+                    if (found) return found;
+                }
+            }
+            return null;
+        }
+        
+        function findParentNode(root, target) {
+            if (root.children) {
+                for (let child of root.children) {
+                    if (child === target) return root;
+                    const found = findParentNode(child, target);
+                    if (found) return found;
+                }
+            }
+            return null;
+        }
+        
+        function updateModeIndicator() {
+            const indicator = document.getElementById('userMode');
+            indicator.className = 'user-mode-indicator';
+            
+            if (isArchitectMode) {
+                indicator.className += ' mode-architect';
+                indicator.textContent = 'Architect Mode';
+            } else if (currentUserMode === UserMode.CORRECTOR) {
+                indicator.className += ' mode-corrector';
+                indicator.textContent = 'Editing';
+            } else {
+                indicator.className += ' mode-viewer';
+                indicator.textContent = 'Viewer Mode';
+            }
+        }
+        
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.className = 'toast ' + type;
+            toast.textContent = message;
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // CSV Conversion Functions
+        function parseCSV(text) {
+            const lines = text.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim()) {
+                    const values = lines[i].split(',').map(v => v.trim());
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index] || '';
+                    });
+                    data.push(row);
+                }
+            }
+            
+            return data;
+        }
+        
+        function csvToOrgChart(csvData) {
+            // This is a simplified conversion - would need more sophisticated logic for complex hierarchies
+            const byReportsTo = {};
+            
+            csvData.forEach(row => {
+                const person = {
+                    id: row['ID'] || 'person_' + Date.now() + Math.random(),
+                    name: row['Name'] || row['Person Name'] || '',
+                    title: row['Title'] || row['Position'] || '',
+                    email: row['Email'] || '',
+                    phone: row['Phone'] || '',
+                    location: row['Location'] || row['Region'] || '',
+                    children: []
+                };
+                
+                const reportsTo = row['Reports To'] || row['Manager'] || 'root';
+                if (!byReportsTo[reportsTo]) {
+                    byReportsTo[reportsTo] = [];
+                }
+                byReportsTo[reportsTo].push(person);
+            });
+            
+            // Build hierarchy
+            function buildHierarchy(name) {
+                const children = byReportsTo[name] || [];
+                children.forEach(child => {
+                    child.children = buildHierarchy(child.name);
+                });
+                return children;
+            }
+            
+            // Find root (person who doesn't report to anyone)
+            const roots = byReportsTo['root'] || byReportsTo[''] || [];
+            if (roots.length === 1) {
+                roots[0].children = buildHierarchy(roots[0].name);
+                return roots[0];
+            }
+            
+            // If multiple roots, create a virtual root
+            return {
+                id: 'root',
+                name: 'Organization',
+                title: 'Red Cross SE & Caribbean Division',
+                children: roots
+            };
+        }
+        
+        function orgChartToCSV(data) {
+            const rows = [];
+            rows.push('Name,Title,Email,Phone,Location,Reports To');
+            
+            function processNode(node, parentName = '') {
+                const row = [
+                    node.name || '',
+                    node.title || '',
+                    node.email || '',
+                    node.phone || '',
+                    node.location || '',
+                    parentName
+                ].map(val => `"${val}"`).join(',');
+                
+                rows.push(row);
+                
+                if (node.children) {
+                    node.children.forEach(child => processNode(child, node.name));
+                }
+            }
+            
+            processNode(data);
+            return rows.join('\n');
+        }
+        
+        // Chart Control Functions
+        function updateChart() {
+            if (chart && currentData) {
+                chart.data([currentData]).render();
+            }
+        }
+        
+        function filterByRegion(region) {
+            currentRegion = region;
+            
+            if (region === 'all') {
+                chart.data([currentData]).render();
+            } else if (region === 'division') {
+                // Show only division leadership level
+                const divisionData = {
+                    ...currentData,
+                    children: currentData.children ? currentData.children.map(child => ({
+                        ...child,
+                        _children: child.children,
+                        children: []
+                    })) : []
+                };
+                chart.data([divisionData]).render();
+            } else {
+                // Filter by specific region
+                const filteredData = filterDataByRegion(currentData, region);
+                if (filteredData) {
+                    chart.data([filteredData]).render();
+                }
+            }
+            
+            setTimeout(fitToScreen, 300);
+        }
+        
+        function filterDataByRegion(node, region) {
+            if (node.location && node.location.includes(region)) {
+                return node;
+            }
+            
+            if (node.children) {
+                for (let child of node.children) {
+                    const found = filterDataByRegion(child, region);
+                    if (found) return found;
+                }
+            }
+            
+            return null;
+        }
+        
+        function searchPerson(query) {
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (!query || query.length < 2) {
+                resultsDiv.style.display = 'none';
+                return;
+            }
+            
+            const results = [];
+            searchInNode(currentData, query.toLowerCase(), results);
+            
+            if (results.length > 0) {
+                let html = '';
+                results.forEach(result => {
+                    html += `
+                        <div class="search-result-item" onclick="focusOnPerson('${result.id}')">
+                            <strong>${result.name}</strong><br>
+                            <small>${result.title || ''} ${result.location ? '• ' + result.location : ''}</small>
+                        </div>
+                    `;
+                });
+                resultsDiv.innerHTML = html;
+                resultsDiv.style.display = 'block';
+            } else {
+                resultsDiv.style.display = 'none';
+            }
+        }
+        
+        function searchInNode(node, query, results) {
+            if (node.name && node.name.toLowerCase().includes(query)) {
+                results.push(node);
+            }
+            
+            if (node.children) {
+                node.children.forEach(child => searchInNode(child, query, results));
+            }
+        }
+        
+        function focusOnPerson(nodeId) {
+            // Expand path to node
+            const path = findPathToNode(currentData, nodeId);
+            if (path) {
+                path.forEach(node => {
+                    if (node._children) {
+                        node.children = node._children;
+                        node._children = null;
+                    }
+                });
+                
+                updateChart();
+                
+                setTimeout(() => {
+                    chart.fit();
+                    // Highlight the node
+                    const nodeElement = document.querySelector(`[data-node-id="${nodeId}"]`);
+                    if (nodeElement) {
+                        nodeElement.style.stroke = '#ff0000';
+                        nodeElement.style.strokeWidth = '4';
+                        setTimeout(() => {
+                            nodeElement.style.stroke = '';
+                            nodeElement.style.strokeWidth = '';
+                        }, 2000);
+                    }
+                }, 300);
+            }
+            
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('searchBox').value = '';
+        }
+        
+        function findPathToNode(node, targetId, path = []) {
+            path.push(node);
+            
+            if (node.id === targetId) {
+                return path;
+            }
+            
+            if (node.children || node._children) {
+                const children = node.children || node._children;
+                for (let child of children) {
+                    const result = findPathToNode(child, targetId, [...path]);
+                    if (result) return result;
+                }
+            }
+            
+            return null;
+        }
+        
+        function fitToScreen() {
+            if (chart) {
+                chart.fit();
+            }
+        }
+        
+        function centerView() {
+            if (chart) {
+                chart.fit();
+            }
+        }
+        
+        // Local Storage Functions
+        function saveToLocal() {
+            localStorage.setItem('orgChartData', JSON.stringify(currentData));
+            localStorage.setItem('orgChartLastSaved', new Date().toISOString());
+        }
+        
+        function loadFromLocal() {
+            const savedData = localStorage.getItem('orgChartData');
+            if (savedData) {
+                try {
+                    currentData = JSON.parse(savedData);
+                    updateChart();
+                    const lastSaved = localStorage.getItem('orgChartLastSaved');
+                    if (lastSaved) {
+                        console.log('Loaded data from', new Date(lastSaved).toLocaleString());
+                    }
+                } catch (e) {
+                    console.error('Error loading saved data:', e);
+                }
+            }
+        }
+        
+        // Add dummy contact data to existing nodes
+        function addDummyContactData() {
+            function addContactToNode(node) {
+                if (!node.email && Math.random() > 0.3) {
+                    const firstName = node.name.split(' ')[0].toLowerCase();
+                    const lastName = node.name.split(' ').slice(-1)[0].toLowerCase();
+                    node.email = `${firstName}.${lastName}@redcross.org`;
+                }
+                
+                if (!node.phone && Math.random() > 0.4) {
+                    const area = ['404', '770', '678', '470', '305', '786', '813', '407'][Math.floor(Math.random() * 8)];
+                    const prefix = Math.floor(Math.random() * 900) + 100;
+                    const suffix = Math.floor(Math.random() * 9000) + 1000;
+                    node.phone = `(${area}) ${prefix}-${suffix}`;
+                }
+                
+                if (node.children) {
+                    node.children.forEach(addContactToNode);
+                }
+            }
+            
+            if (currentData) {
+                addContactToNode(currentData);
+                updateChart();
+                saveToLocal();
+            }
+        }
+        
+        // Initialize with dummy contact data on first load
+        setTimeout(() => {
+            if (!localStorage.getItem('contactDataAdded')) {
+                addDummyContactData();
+                localStorage.setItem('contactDataAdded', 'true');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
