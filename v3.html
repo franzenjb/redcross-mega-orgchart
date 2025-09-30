@@ -458,6 +458,10 @@
                     // Use CSV color if available, otherwise fallback to region colors
                     let bgColor, textColor, borderColor, borderWidth = '2px';
                     
+                    // Get node class and region color for all nodes
+                    const nodeClass = getNodeClass(d.data);
+                    const regionColor = getRegionColor(d.data);
+                    
                     if (d.data.color && d.data.color.trim() !== '') {
                         // Use CSV color
                         bgColor = d.data.color;
@@ -465,8 +469,6 @@
                         borderColor = '#ddd';
                     } else {
                         // Fallback to old system
-                        const nodeClass = getNodeClass(d.data);
-                        const regionColor = getRegionColor(d.data);
                         bgColor = regionColor.bg;
                         textColor = regionColor.text;
                         borderColor = regionColor.border;

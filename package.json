@@ -13,6 +13,7 @@
     "install-python-deps": "pip3 install graphviz pandas openpyxl"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.1",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "csv-parser": "^3.2.0",
