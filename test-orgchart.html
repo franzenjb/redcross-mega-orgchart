@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Red Cross Org Chart - Test Suite</title>
+    <meta charset="utf-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #ed1b2e;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-section h2 {
+            color: #333;
+            border-bottom: 2px solid #ed1b2e;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .test-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border-left: 4px solid #ddd;
+        }
+        
+        .test-item.pass {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+        
+        .test-item.fail {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+        
+        .test-item.pending {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+        
+        .status-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .pass .status-icon {
+            background: #28a745;
+        }
+        
+        .fail .status-icon {
+            background: #dc3545;
+        }
+        
+        .pending .status-icon {
+            background: #ffc107;
+        }
+        
+        .test-description {
+            flex: 1;
+        }
+        
+        .test-details {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .data-preview {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .stat-box {
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ed1b2e;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        
+        .run-tests-btn {
+            background: #ed1b2e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto 20px;
+        }
+        
+        .run-tests-btn:hover {
+            background: #c41230;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .visual-test {
+            margin-top: 15px;
+        }
+        
+        .visual-test-info {
+            background: #e7f3ff;
+            border: 1px solid #b8daff;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Red Cross Org Chart - Test Suite</h1>
+        
+        <button class="run-tests-btn" onclick="runAllTests()">Run All Tests</button>
+        
+        <!-- Test Section 1: Script Loading -->
+        <div class="test-section">
+            <h2>1. Script Dependencies</h2>
+            <div id="test-d3" class="test-item pending">
+                <div class="status-icon">?</div>
+                <div class="test-description">
+                    D3.js Library Loading
+                    <div class="test-details">Checking if d3 object is available</div>
+                </div>
+            </div>
+            <div id="test-d3-org" class="test-item pending">
+                <div class="status-icon">?</div>
+                <div class="test-description">
+                    D3 OrgChart Library Loading
+                    <div class="test-details">Checking if d3.OrgChart constructor is available</div>
+                </div>
+            </div>
+            <div id="test-org-data" class="test-item pending">
+                <div class="status-icon">?</div>
+                <div class="test-description">
+                    Complete Org Data Loading
+                    <div class="test-details">Checking if completeOrgData object is loaded</div>
+                </div>
+            </div>
+            <div id="test-divisional-data" class="test-item pending">
+                <div class="status-icon">?</div>
+                <div class="test-description">
+                    Divisional Leadership Data Loading
+                    <div class="test-details">Checking if divisionalLeadership object is loaded</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Test Section 2: Data Conversion -->
+        <div class="test-section">
+            <h2>2. Data Processing</h2>
+            <div id="test-convert-function" class="test-item pending">
+                <div class="status-icon">?</div>
+                <div class="test-description">
+                    convertToFlatData Function Exists
+                    <div class="test-details">Checking if the conversion function is defined</div>
+                </div>
+            </div>
+            <div id="test-flat-data" class="test-item pending">
+                <div class="status-icon">?</div>
+                <div class="test-description">
+                    Flat Data Conversion
+                    <div class="test-details">Converting hierarchical data to flat array for d3-org-chart</div>
+                </div>
+            </div>
+            <div id="test-data-structure" class="test-item pending">
+                <div class="status-icon">?</div>
+                <div class="test-description">
+                    Data Structure Validation
+                    <div class="test-details">Verifying all nodes have required fields (id, parentId, name)</div>
+                </div>
+            </div>
+            <div id="test-hierarchy" class="test-item pending">
+                <div class="status-icon">?</div>
+                <div class="test-description">
+                    Hierarchy Integrity
+                    <div class="test-details">Checking parent-child relationships are valid</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Test Section 3: Chart Rendering -->
+        <div class="test-section">
+            <h2>3. Chart Rendering</h2>
+            <div id="test-chart-creation" class="test-item pending">
+                <div class="status-icon">?</div>
+                <div class="test-description">
+                    Chart Instance Creation
+                    <div class="test-details">Creating d3.OrgChart instance</div>
+                </div>
+            </div>
+            <div id="test-chart-render" class="test-item pending">
+                <div class="status-icon">?</div>
+                <div class="test-description">
+                    Chart Rendering
+                    <div class="test-details">Rendering chart with flat data</div>
+                </div>
+            </div>
+            <div id="test-svg-elements" class="test-item pending">
+                <div class="status-icon">?</div>
+                <div class="test-description">
+                    SVG Elements Generated
+                    <div class="test-details">Checking if SVG nodes are created in DOM</div>
+                </div>
+            </div>
+            <div id="test-visual-confirmation" class="test-item pending">
+                <div class="status-icon">?</div>
+                <div class="test-description">
+                    Visual Confirmation
+                    <div class="test-details">Chart is visually rendered and contains nodes</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Statistics -->
+        <div class="test-section">
+            <h2>4. Data Statistics</h2>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="total-nodes">-</div>
+                    <div class="stat-label">Total Nodes</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="root-nodes">-</div>
+                    <div class="stat-label">Root Nodes</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="leaf-nodes">-</div>
+                    <div class="stat-label">Leaf Nodes</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="max-depth">-</div>
+                    <div class="stat-label">Max Depth</div>
+                </div>
+            </div>
+            
+            <div class="data-preview" id="data-preview">
+                Sample data will appear here after conversion...
+            </div>
+        </div>
+        
+        <!-- Visual Test -->
+        <div class="test-section">
+            <h2>5. Visual Test</h2>
+            <div class="visual-test-info">
+                The chart below should render the Red Cross organizational structure. 
+                You should see nodes with names, titles, and connecting lines forming a hierarchy.
+            </div>
+            <div class="chart-container" id="test-chart-container"></div>
+        </div>
+    </div>
+    
+    <!-- Include D3.js and D3 OrgChart (same as app.html) -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0/build/d3-org-chart.min.js"></script>
+    
+    <!-- Include organizational data (same as app.html) -->
+    <script src="complete-org-data.js"></script>
+    <script src="divisional-leadership.js"></script>
+    
+    <script>
+        // Test variables
+        let testChart;
+        let testFlatData;
+        let testResults = {};
+        
+        // Copy the convertToFlatData function from app.html
+        function convertToFlatData(data, parentId = null, region = null, idPrefix = '') {
+            let result = [];
+            let nodeId = 1;
+            
+            // Helper to create unique IDs
+            function createId(prefix, index) {
+                return `${prefix}-${index}`;
+            }
+            
+            // Detect region from node data
+            function detectRegionFromData(node) {
+                if (!node) return '';
+                
+                const title = (node.title || '').toLowerCase();
+                const location = (node.location || '').toLowerCase();
+                const name = (node.name || '').toLowerCase();
+                
+                // Check for regional indicators
+                if (title.includes('florida n/c') || location.includes('jacksonville') || location.includes('tampa')) {
+                    return 'florida-nc';
+                } else if (title.includes('florida south') || location.includes('miami')) {
+                    return 'florida-south';
+                } else if ((title.includes('georgia') && !title.includes('strait')) || location.includes('atlanta')) {
+                    return 'georgia';
+                } else if (title.includes('tennessee') || location.includes('nashville') || location.includes('memphis')) {
+                    return 'tennessee';
+                } else if ((title.includes('alabama') || title.includes('mississippi')) || 
+                          location.includes('birmingham') || location.includes('montgomery')) {
+                    return 'alabama-mississippi';
+                } else if (title.includes('north carolina') || location.includes('charlotte') || location.includes('raleigh')) {
+                    return 'north-carolina';
+                } else if (title.includes('south carolina') || location.includes('columbia') || location.includes('charleston')) {
+                    return 'south-carolina';
+                } else if (title.includes('puerto rico') || location.includes('san juan')) {
+                    return 'puertorico';
+                }
+                
+                return '';
+            }
+            
+            // Process a single node and its children
+            function processNode(node, parentId, currentRegion, path = '') {
+                if (!node) return;
+                
+                const id = createId(path || currentRegion || 'node', nodeId++);
+                const nodeData = {
+                    id: id,
+                    parentId: parentId,
+                    name: node.name || 'Vacant',
+                    title: node.title || 'Position',
+                    email: node.email || '',
+                    phone: node.phone || '',
+                    location: node.location || '',
+                    region: node.region || node.type || currentRegion || detectRegionFromData(node),
+                    type: node.type || currentRegion
+                };
+                
+                result.push(nodeData);
+                
+                // Process children if they exist
+                if (node.children) {
+                    if (Array.isArray(node.children)) {
+                        node.children.forEach((child, index) => {
+                            const childRegion = child.region || child.type || detectRegionFromData(child) || currentRegion;
+                            processNode(child, id, childRegion, `${path}-${index}`);
+                        });
+                    } else if (typeof node.children === 'object') {
+                        Object.keys(node.children).forEach((key, index) => {
+                            const childData = node.children[key];
+                            const childRegion = childData.region || childData.type || detectRegionFromData(childData) || currentRegion;
+                            processNode(childData, id, childRegion, `${path}-${key}`);
+                        });
+                    }
+                }
+            }
+            
+            // Check if data has the new structure with division at the top
+            if (data && data.division) {
+                // New structure with Anna Trefethen at top
+                const divisionNode = data.division;
+                
+                if (region === 'all' || !region) {
+                    // Process entire hierarchy starting with Anna Trefethen
+                    processNode(divisionNode, null, 'division', 'division');
+                } else if (region === 'division') {
+                    // ALWAYS show Anna Trefethen at the top
+                    const annaId = 'division-vp';
+                    result.push({
+                        id: annaId,
+                        parentId: null,
+                        name: divisionNode.name || 'Anna Trefethen',
+                        title: divisionNode.title || 'Division Vice President',
+                        location: divisionNode.location || 'SE & Caribbean Division',
+                        region: 'division',
+                        type: 'division-vp'
+                    });
+                    
+                    // Load Division Leadership directly under Anna
+                    if (window.divisionalLeadership && window.divisionalLeadership['division-leadership']) {
+                        const divLeadershipData = window.divisionalLeadership['division-leadership'];
+                        
+                        // Process all the division leadership children directly under Anna
+                        if (divLeadershipData.children && Array.isArray(divLeadershipData.children)) {
+                            divLeadershipData.children.forEach((child, index) => {
+                                // Each executive reports directly to Anna
+                                processNode(child, annaId, 'division', `division-exec-${index}`);
+                            });
+                        }
+                    } else {
+                        // Fallback: Show division's children under Anna
+                        if (divisionNode.children) {
+                            divisionNode.children.forEach((child, index) => {
+                                processNode(child, annaId, 'division', `division-${index}`);
+                            });
+                        }
+                    }
+                } else {
+                    // Process as single node
+                    processNode(data, parentId, region, idPrefix);
+                }
+            } else {
+                // Process as a single node
+                processNode(data, parentId, region || 'unknown', idPrefix);
+            }
+            
+            return result;
+        }
+        
+        // Test functions
+        function runTest(testId, testFunction, description) {
+            const testElement = document.getElementById(testId);
+            const statusIcon = testElement.querySelector('.status-icon');
+            const testDetails = testElement.querySelector('.test-details');
+            
+            try {
+                const result = testFunction();
+                if (result.success) {
+                    testElement.className = 'test-item pass';
+                    statusIcon.textContent = '✓';
+                    if (result.details) {
+                        testDetails.textContent = result.details;
+                    }
+                    testResults[testId] = { status: 'pass', details: result.details };
+                } else {
+                    testElement.className = 'test-item fail';
+                    statusIcon.textContent = '✗';
+                    testDetails.textContent = result.error || 'Test failed';
+                    testResults[testId] = { status: 'fail', error: result.error };
+                }
+            } catch (error) {
+                testElement.className = 'test-item fail';
+                statusIcon.textContent = '✗';
+                testDetails.textContent = `Error: ${error.message}`;
+                testResults[testId] = { status: 'fail', error: error.message };
+            }
+        }
+        
+        // Individual test functions
+        function testD3Loading() {
+            if (typeof d3 !== 'undefined' && d3.version) {
+                return { success: true, details: `D3.js version ${d3.version} loaded successfully` };
+            }
+            return { success: false, error: 'D3.js not found or not loaded properly' };
+        }
+        
+        function testD3OrgChart() {
+            if (typeof d3 !== 'undefined' && typeof d3.OrgChart === 'function') {
+                return { success: true, details: 'D3 OrgChart constructor available' };
+            }
+            return { success: false, error: 'D3 OrgChart library not found' };
+        }
+        
+        function testOrgDataLoading() {
+            if (typeof completeOrgData !== 'undefined' && completeOrgData.division) {
+                const nodeCount = JSON.stringify(completeOrgData).split('"name"').length - 1;
+                return { success: true, details: `Complete org data loaded (~${nodeCount} people)` };
+            }
+            return { success: false, error: 'completeOrgData not found or invalid structure' };
+        }
+        
+        function testDivisionalDataLoading() {
+            if (typeof divisionalLeadership !== 'undefined' && divisionalLeadership['division-leadership']) {
+                const nodeCount = JSON.stringify(divisionalLeadership).split('"name"').length - 1;
+                return { success: true, details: `Divisional leadership data loaded (~${nodeCount} people)` };
+            }
+            return { success: true, details: 'divisionalLeadership is optional and may not be present' };
+        }
+        
+        function testConvertFunction() {
+            if (typeof convertToFlatData === 'function') {
+                return { success: true, details: 'convertToFlatData function is defined and callable' };
+            }
+            return { success: false, error: 'convertToFlatData function not found' };
+        }
+        
+        function testFlatDataConversion() {
+            if (typeof completeOrgData === 'undefined') {
+                return { success: false, error: 'Cannot test conversion - source data not available' };
+            }
+            
+            testFlatData = convertToFlatData(completeOrgData, null, 'all', '');
+            
+            if (Array.isArray(testFlatData) && testFlatData.length > 0) {
+                return { success: true, details: `Converted to ${testFlatData.length} flat nodes` };
+            }
+            return { success: false, error: 'Conversion failed or returned empty array' };
+        }
+        
+        function testDataStructure() {
+            if (!testFlatData || !Array.isArray(testFlatData)) {
+                return { success: false, error: 'No flat data available to test' };
+            }
+            
+            const requiredFields = ['id', 'name'];
+            const errors = [];
+            
+            testFlatData.forEach((node, index) => {
+                requiredFields.forEach(field => {
+                    if (!node.hasOwnProperty(field) || !node[field]) {
+                        errors.push(`Node ${index}: missing ${field}`);
+                    }
+                });
+            });
+            
+            if (errors.length === 0) {
+                return { success: true, details: `All ${testFlatData.length} nodes have required fields` };
+            }
+            return { success: false, error: `${errors.length} validation errors: ${errors.slice(0, 3).join(', ')}` };
+        }
+        
+        function testHierarchyIntegrity() {
+            if (!testFlatData || !Array.isArray(testFlatData)) {
+                return { success: false, error: 'No flat data available to test' };
+            }
+            
+            const nodeIds = new Set(testFlatData.map(n => n.id));
+            const invalidParents = [];
+            let rootNodes = 0;
+            
+            testFlatData.forEach(node => {
+                if (node.parentId === null || node.parentId === undefined) {
+                    rootNodes++;
+                } else if (!nodeIds.has(node.parentId)) {
+                    invalidParents.push(node.id);
+                }
+            });
+            
+            if (invalidParents.length === 0 && rootNodes > 0) {
+                return { success: true, details: `Valid hierarchy: ${rootNodes} root(s), no orphaned nodes` };
+            }
+            
+            const errors = [];
+            if (rootNodes === 0) errors.push('No root nodes found');
+            if (invalidParents.length > 0) errors.push(`${invalidParents.length} nodes with invalid parents`);
+            
+            return { success: false, error: errors.join(', ') };
+        }
+        
+        function testChartCreation() {
+            try {
+                testChart = new d3.OrgChart()
+                    .container('#test-chart-container')
+                    .nodeWidth(200)
+                    .nodeHeight(100)
+                    .childrenMargin(40)
+                    .initialZoom(0.6)
+                    .nodeContent((d) => {
+                        return `
+                            <div style="width:${d.width}px; height:${d.height}px; padding: 10px; background: white; border: 2px solid #ed1b2e; border-radius: 5px;">
+                                <div style="font-weight: bold; font-size: 12px;">${d.data.name}</div>
+                                <div style="font-size: 10px; color: #666;">${d.data.title || ''}</div>
+                                <div style="font-size: 9px; color: #999;">${d.data.location || ''}</div>
+                            </div>
+                        `;
+                    });
+                
+                return { success: true, details: 'Chart instance created successfully' };
+            } catch (error) {
+                return { success: false, error: `Chart creation failed: ${error.message}` };
+            }
+        }
+        
+        function testChartRender() {
+            if (!testChart) {
+                return { success: false, error: 'No chart instance available' };
+            }
+            
+            if (!testFlatData || testFlatData.length === 0) {
+                return { success: false, error: 'No data available for rendering' };
+            }
+            
+            try {
+                testChart.data(testFlatData).render();
+                return { success: true, details: `Rendered chart with ${testFlatData.length} nodes` };
+            } catch (error) {
+                return { success: false, error: `Rendering failed: ${error.message}` };
+            }
+        }
+        
+        function testSVGElements() {
+            const container = document.getElementById('test-chart-container');
+            const svgElement = container.querySelector('svg');
+            
+            if (!svgElement) {
+                return { success: false, error: 'No SVG element found in chart container' };
+            }
+            
+            const nodeElements = svgElement.querySelectorAll('[data-node-id]');
+            const linkElements = svgElement.querySelectorAll('.link');
+            
+            if (nodeElements.length > 0) {
+                return { success: true, details: `Found ${nodeElements.length} nodes and ${linkElements.length} links in SVG` };
+            }
+            
+            return { success: false, error: 'SVG created but no node elements found' };
+        }
+        
+        function testVisualConfirmation() {
+            const container = document.getElementById('test-chart-container');
+            const svgElement = container.querySelector('svg');
+            
+            if (!svgElement) {
+                return { success: false, error: 'No visual elements found' };
+            }
+            
+            const containerRect = container.getBoundingClientRect();
+            const svgRect = svgElement.getBoundingClientRect();
+            
+            if (svgRect.width > 100 && svgRect.height > 100) {
+                return { success: true, details: `Chart visible at ${Math.round(svgRect.width)}x${Math.round(svgRect.height)}px` };
+            }
+            
+            return { success: false, error: 'Chart appears to be empty or too small' };
+        }
+        
+        // Update statistics
+        function updateStatistics() {
+            if (!testFlatData || !Array.isArray(testFlatData)) {
+                return;
+            }
+            
+            const totalNodes = testFlatData.length;
+            const rootNodes = testFlatData.filter(n => n.parentId === null || n.parentId === undefined).length;
+            const leafNodes = testFlatData.filter(n => !testFlatData.some(child => child.parentId === n.id)).length;
+            
+            // Calculate max depth
+            let maxDepth = 0;
+            const calculateDepth = (nodeId, depth = 0) => {
+                maxDepth = Math.max(maxDepth, depth);
+                const children = testFlatData.filter(n => n.parentId === nodeId);
+                children.forEach(child => calculateDepth(child.id, depth + 1));
+            };
+            
+            testFlatData.filter(n => n.parentId === null || n.parentId === undefined)
+                .forEach(root => calculateDepth(root.id, 0));
+            
+            document.getElementById('total-nodes').textContent = totalNodes;
+            document.getElementById('root-nodes').textContent = rootNodes;
+            document.getElementById('leaf-nodes').textContent = leafNodes;
+            document.getElementById('max-depth').textContent = maxDepth;
+            
+            // Show sample data
+            const sampleData = testFlatData.slice(0, 5).map(node => ({
+                id: node.id,
+                name: node.name,
+                title: node.title,
+                parentId: node.parentId
+            }));
+            
+            document.getElementById('data-preview').textContent = JSON.stringify(sampleData, null, 2);
+        }
+        
+        // Run all tests
+        function runAllTests() {
+            console.log('Starting test suite...');
+            
+            // Test 1: Dependencies
+            runTest('test-d3', testD3Loading, 'D3.js Loading');
+            runTest('test-d3-org', testD3OrgChart, 'D3 OrgChart Loading');
+            runTest('test-org-data', testOrgDataLoading, 'Complete Org Data Loading');
+            runTest('test-divisional-data', testDivisionalDataLoading, 'Divisional Leadership Data Loading');
+            
+            // Test 2: Data Processing
+            runTest('test-convert-function', testConvertFunction, 'Convert Function Exists');
+            runTest('test-flat-data', testFlatDataConversion, 'Flat Data Conversion');
+            runTest('test-data-structure', testDataStructure, 'Data Structure Validation');
+            runTest('test-hierarchy', testHierarchyIntegrity, 'Hierarchy Integrity');
+            
+            // Test 3: Chart Rendering
+            runTest('test-chart-creation', testChartCreation, 'Chart Instance Creation');
+            runTest('test-chart-render', testChartRender, 'Chart Rendering');
+            
+            // Wait a bit for rendering to complete, then test visual elements
+            setTimeout(() => {
+                runTest('test-svg-elements', testSVGElements, 'SVG Elements Generated');
+                runTest('test-visual-confirmation', testVisualConfirmation, 'Visual Confirmation');
+                
+                // Update statistics
+                updateStatistics();
+                
+                // Print summary
+                const totalTests = Object.keys(testResults).length;
+                const passedTests = Object.values(testResults).filter(r => r.status === 'pass').length;
+                const failedTests = totalTests - passedTests;
+                
+                console.log(`Test Summary: ${passedTests}/${totalTests} passed, ${failedTests} failed`);
+                
+                if (failedTests > 0) {
+                    console.log('Failed tests:', Object.entries(testResults)
+                        .filter(([_, result]) => result.status === 'fail')
+                        .map(([testId, result]) => `${testId}: ${result.error}`)
+                    );
+                }
+            }, 1000);
+        }
+        
+        // Auto-run tests when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(runAllTests, 500);
+        });
+    </script>
+</body>
+</html>

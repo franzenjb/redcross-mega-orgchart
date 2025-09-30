@@ -920,23 +920,133 @@
             }, 1000);
         });
         
-        // Build hierarchical data from completeOrgData
-        function buildHierarchicalData() {
-            // The completeOrgData already has the full hierarchy with Anna at the top
-            // Just use it directly
-            if (completeOrgData && completeOrgData.division) {
-                // Clone the data to avoid mutations
-                return JSON.parse(JSON.stringify(completeOrgData.division));
+        // Detect region from node data
+        function detectRegionFromData(node) {
+            if (!node) return '';
+            
+            const title = (node.title || '').toLowerCase();
+            const location = (node.location || '').toLowerCase();
+            const name = (node.name || '').toLowerCase();
+            
+            // Check for regional indicators
+            if (title.includes('florida n/c') || location.includes('jacksonville') || location.includes('tampa')) {
+                return 'florida-nc';
+            } else if (title.includes('florida south') || location.includes('miami')) {
+                return 'florida-south';
+            } else if ((title.includes('georgia') && !title.includes('strait')) || location.includes('atlanta')) {
+                return 'georgia';
+            } else if (title.includes('tennessee') || location.includes('nashville') || location.includes('memphis')) {
+                return 'tennessee';
+            } else if ((title.includes('alabama') || title.includes('mississippi')) || 
+                      location.includes('birmingham') || location.includes('montgomery')) {
+                return 'alabama-mississippi';
+            } else if (title.includes('north carolina') || location.includes('charlotte') || location.includes('raleigh')) {
+                return 'north-carolina';
+            } else if (title.includes('south carolina') || location.includes('columbia') || location.includes('charleston')) {
+                return 'south-carolina';
+            } else if (title.includes('puerto rico') || location.includes('san juan')) {
+                return 'puertorico';
             }
             
-            // Fallback structure if data is missing
-            return {
-                id: 'division-vp',
-                name: 'Anna Trefethen',
-                title: 'Division Vice President',
-                location: 'SE & Caribbean Division',
-                children: []
-            };
+            return '';
+        }
+        
+        // Convert nested data to flat format for d3-org-chart
+        function convertToFlatData(data, parentId = null, region = null, idPrefix = '') {
+            let result = [];
+            let nodeId = 1;
+            
+            // Helper to create unique IDs
+            function createId(prefix, index) {
+                return `${prefix}-${index}`;
+            }
+            
+            // Process a single node and its children
+            function processNode(node, parentId, currentRegion, path = '') {
+                if (!node) return;
+                
+                const id = createId(path || currentRegion || 'node', nodeId++);
+                const nodeData = {
+                    id: id,
+                    parentId: parentId,
+                    name: node.name || 'Vacant',
+                    title: node.title || 'Position',
+                    email: node.email || '',
+                    phone: node.phone || '',
+                    location: node.location || '',
+                    region: node.region || node.type || currentRegion || detectRegionFromData(node),
+                    type: node.type || currentRegion
+                };
+                
+                result.push(nodeData);
+                
+                // Process children if they exist
+                if (node.children) {
+                    if (Array.isArray(node.children)) {
+                        node.children.forEach((child, index) => {
+                            const childRegion = child.region || child.type || detectRegionFromData(child) || currentRegion;
+                            processNode(child, id, childRegion, `${path}-${index}`);
+                        });
+                    } else if (typeof node.children === 'object') {
+                        Object.keys(node.children).forEach((key, index) => {
+                            const childData = node.children[key];
+                            const childRegion = childData.region || childData.type || detectRegionFromData(childData) || currentRegion;
+                            processNode(childData, id, childRegion, `${path}-${key}`);
+                        });
+                    }
+                }
+            }
+            
+            // Check if data has the new structure with division at the top
+            if (data && data.division) {
+                // New structure with Anna Trefethen at top
+                const divisionNode = data.division;
+                
+                if (region === 'all') {
+                    // Process entire hierarchy starting with Anna Trefethen
+                    processNode(divisionNode, null, 'division', 'division');
+                } else if (region === 'division') {
+                    // ALWAYS show Anna Trefethen at the top
+                    const annaId = 'division-vp';
+                    result.push({
+                        id: annaId,
+                        parentId: null,
+                        name: divisionNode.name || 'Anna Trefethen',
+                        title: divisionNode.title || 'Division Vice President',
+                        location: divisionNode.location || 'SE & Caribbean Division',
+                        region: 'division',
+                        type: 'division-vp'
+                    });
+                    
+                    // Load Division Leadership directly under Anna
+                    if (window.divisionalLeadership && window.divisionalLeadership['division-leadership']) {
+                        const divLeadershipData = window.divisionalLeadership['division-leadership'];
+                        
+                        // Process all the division leadership children directly under Anna
+                        if (divLeadershipData.children && Array.isArray(divLeadershipData.children)) {
+                            divLeadershipData.children.forEach((child, index) => {
+                                // Each executive reports directly to Anna
+                                processNode(child, annaId, 'division', `division-exec-${index}`);
+                            });
+                        }
+                    } else {
+                        // Fallback: Show division's children under Anna
+                        if (divisionNode.children) {
+                            divisionNode.children.forEach((child, index) => {
+                                processNode(child, annaId, 'division', `division-${index}`);
+                            });
+                        }
+                    }
+                } else {
+                    // Process as single node
+                    processNode(data, parentId, region, idPrefix);
+                }
+            } else {
+                // Process as a single node
+                processNode(data, parentId, region || 'unknown', idPrefix);
+            }
+            
+            return result;
         }
         
         function initializeChart() {
@@ -1007,14 +1117,18 @@
                     return html;
                 });
             
-            // Load initial data - need to build hierarchical structure
+            // Load initial data - convert to flat format for d3-org-chart
             if (typeof completeOrgData !== 'undefined') {
-                // Build hierarchical structure from completeOrgData
-                const orgChart = buildHierarchicalData();
-                currentData = orgChart;
+                // Convert hierarchical data to flat format that d3-org-chart expects
+                currentRegion = 'all';
+                const flatData = convertToFlatData(completeOrgData, null, currentRegion, '');
+                currentData = flatData;
+                
+                console.log('Loaded data:', currentData.length, 'nodes');
+                console.log('Sample data:', currentData.slice(0, 3));
                 
                 // Check for saved data in localStorage
-                const savedData = localStorage.getItem('orgChartData');
+                const savedData = localStorage.getItem('orgChartFlatData');
                 if (savedData) {
                     try {
                         currentData = JSON.parse(savedData);
@@ -1699,8 +1813,16 @@
         
         // Chart Control Functions
         function updateChart() {
-            if (chart && currentData) {
-                chart.data([currentData]).render();
+            if (chart && currentData && currentData.length > 0) {
+                console.log('Updating chart with', currentData.length, 'nodes');
+                chart.data(currentData).render();
+                chart.fit();
+            } else {
+                console.error('Cannot update chart:', {
+                    hasChart: !!chart,
+                    hasData: !!currentData,
+                    dataLength: currentData ? currentData.length : 0
+                });
             }
         }
         
@@ -1713,26 +1835,12 @@
             
             currentRegion = region;
             
-            if (region === 'all') {
-                chart.data([currentData]).render();
-            } else if (region === 'division') {
-                // Show only division leadership level
-                const divisionData = {
-                    ...currentData,
-                    children: currentData.children ? currentData.children.map(child => ({
-                        ...child,
-                        _children: child.children,
-                        children: []
-                    })) : []
-                };
-                chart.data([divisionData]).render();
-            } else {
-                // Filter by specific region
-                const filteredData = filterDataByRegion(currentData, region);
-                if (filteredData) {
-                    chart.data([filteredData]).render();
-                }
-            }
+            // Regenerate flat data for the selected region
+            const flatData = convertToFlatData(completeOrgData, null, region, '');
+            currentData = flatData;
+            
+            console.log(`Filtering for region: ${region}, nodes: ${currentData.length}`);
+            updateChart();
             
             setTimeout(fitToScreen, 300);
         }
@@ -1888,7 +1996,7 @@
         
         // Local Storage Functions
         function saveToLocal() {
-            localStorage.setItem('orgChartData', JSON.stringify(currentData));
+            localStorage.setItem('orgChartFlatData', JSON.stringify(currentData));
             localStorage.setItem('orgChartLastSaved', new Date().toISOString());
         }
         
