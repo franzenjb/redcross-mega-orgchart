@@ -1132,7 +1132,7 @@ const completeOrgData = {
         ]
     },
             {
-        name: "L. Rodriguez",
+        name: "L. Feliciano",
         title: "Regional Executive",
         location: "San Juan",
         type: "puerto-rico",

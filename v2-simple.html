@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Cross SE & Caribbean Division</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0/build/d3-org-chart.min.js"></script>
+    <script src="data-files/complete-org-data.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            text-align: center;
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .controls button, .controls select {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .controls button {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .controls select {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 10px 15px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-box input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            width: 250px;
+        }
+        
+        /* Editor Buttons - Hidden by default */
+        #editorControls {
+            display: none;
+            gap: 10px;
+            padding: 10px 20px;
+            background: #fff3cd;
+            border-top: 2px solid #ffc107;
+        }
+        
+        #editorControls button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-backup { background: #2196F3; color: white; }
+        .btn-restore { background: #9C27B0; color: white; }
+        .btn-export { background: #00BCD4; color: white; }
+        
+        /* Chart Container */
+        #chart {
+            background: white;
+            min-height: calc(100vh - 140px);
+            margin: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: auto;
+        }
+        
+        /* Edit Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .modal-header h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .modal-footer button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        /* Right-click menu */
+        .context-menu {
+            display: none;
+            position: fixed;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            padding: 8px 0;
+            z-index: 1001;
+            min-width: 180px;
+        }
+        
+        .context-menu-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .context-menu-item:hover {
+            background: #f5f5f5;
+        }
+        
+        .context-menu-divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 4px 0;
+        }
+        
+        /* Hint text */
+        .hint {
+            text-align: center;
+            padding: 10px;
+            background: #e3f2fd;
+            color: #1976d2;
+            font-size: 14px;
+        }
+        
+        /* Node colors by region */
+        .node-puerto-rico { background: #FF6B6B !important; }
+        .node-georgia { background: #4ECDC4 !important; }
+        .node-florida-nc { background: #45B7D1 !important; }
+        .node-florida-south { background: #96CEB4 !important; }
+        .node-tennessee { background: #DDA0DD !important; }
+        .node-alabama-mississippi { background: #FFB6C1 !important; }
+        .node-north-carolina { background: #87CEEB !important; }
+        .node-south-carolina { background: #F4A460 !important; }
+        .node-division { background: #FFD700 !important; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>Red Cross SE & Caribbean Division</h1>
+        
+        <div class="controls">
+            <!-- Region Selector -->
+            <select id="regionSelect" onchange="filterRegion(this.value)">
+                <option value="all">All Regions</option>
+                <option value="division">Division Leadership</option>
+                <option value="puerto-rico">Puerto Rico</option>
+                <option value="georgia">Georgia</option>
+                <option value="florida-nc">North/Central Florida</option>
+                <option value="florida-south">South Florida</option>
+                <option value="tennessee">Tennessee</option>
+                <option value="alabama-mississippi">Alabama/Mississippi</option>
+                <option value="north-carolina">North Carolina</option>
+                <option value="south-carolina">South Carolina</option>
+            </select>
+            
+            <!-- Search -->
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search for anyone..." onkeypress="if(event.key==='Enter') searchPerson()">
+                <button onclick="searchPerson()">Search</button>
+            </div>
+            
+            <!-- Basic Controls -->
+            <button onclick="expandAll()">Expand All</button>
+            <button onclick="collapseAll()">Collapse All</button>
+            
+            <!-- Editor Mode Button -->
+            <button onclick="toggleEditorMode()" style="background: #ff6b6b;">🔐 Editor Mode</button>
+        </div>
+        
+        <!-- Editor Controls - Hidden by default -->
+        <div id="editorControls">
+            <button class="btn-backup" onclick="backupData()">💾 Backup</button>
+            <button class="btn-restore" onclick="restoreData()">📂 Restore</button>
+            <button class="btn-export" onclick="exportExcel()">📊 Export Excel</button>
+            <button class="btn-export" onclick="importExcel()">📤 Import Excel</button>
+        </div>
+    </div>
+    
+    <!-- Hint -->
+    <div class="hint">💡 Double-click any name to fix typos</div>
+    
+    <!-- Chart Container -->
+    <div id="chart"></div>
+    
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Person</h2>
+            </div>
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" id="editName">
+            </div>
+            <div class="form-group">
+                <label>Title:</label>
+                <input type="text" id="editTitle">
+            </div>
+            <div class="form-group">
+                <label>Location:</label>
+                <input type="text" id="editLocation">
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()" style="background: #e0e0e0;">Cancel</button>
+                <button onclick="saveEdit()" style="background: #4CAF50; color: white;">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right-click Context Menu (Editor Mode Only) -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" onclick="addPerson()">➕ Add Person Below</div>
+        <div class="context-menu-item" onclick="addPeer()">➕ Add Peer</div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" onclick="deletePerson()">🗑️ Delete Person</div>
+    </div>
+    
+    <script>
+        let chart;
+        let currentData = [];
+        let selectedNode = null;
+        let isEditorMode = false;
+        
+        // Convert hierarchical data to flat array for D3 OrgChart
+        function convertToFlatData(hierarchical, parentId = null) {
+            const flat = [];
+            
+            function process(node, parentId) {
+                const id = node.name + '_' + Math.random().toString(36).substr(2, 9);
+                flat.push({
+                    id: id,
+                    parentId: parentId,
+                    name: node.name,
+                    title: node.title || '',
+                    location: node.location || '',
+                    type: node.type || ''
+                });
+                
+                if (node.children) {
+                    node.children.forEach(child => process(child, id));
+                }
+            }
+            
+            if (hierarchical.division) {
+                process(hierarchical.division, null);
+            } else if (Array.isArray(hierarchical)) {
+                hierarchical.forEach(region => {
+                    process(region, null);
+                });
+            } else {
+                process(hierarchical, null);
+            }
+            
+            return flat;
+        }
+        
+        // Initialize chart
+        function initChart() {
+            // Convert data
+            currentData = convertToFlatData(completeOrgData);
+            
+            // Save to localStorage
+            localStorage.setItem('orgChartData', JSON.stringify(currentData));
+            
+            // Create chart
+            chart = new d3.OrgChart()
+                .container('#chart')
+                .data(currentData)
+                .nodeWidth(() => 250)
+                .nodeHeight(() => 120)
+                .childrenMargin(() => 40)
+                .compactMarginBetween(() => 15)
+                .compactMarginPair(() => 80)
+                .nodeContent(function(d) {
+                    const colors = {
+                        'puerto-rico': '#FF6B6B',
+                        'georgia': '#4ECDC4',
+                        'florida-nc': '#45B7D1',
+                        'florida-south': '#96CEB4',
+                        'tennessee': '#DDA0DD',
+                        'alabama-mississippi': '#FFB6C1',
+                        'north-carolina': '#87CEEB',
+                        'south-carolina': '#F4A460',
+                        'division': '#FFD700'
+                    };
+                    
+                    const bgColor = colors[d.data.type] || '#f0f0f0';
+                    
+                    return `
+                        <div ondblclick="editNode('${d.data.id}')" 
+                             style="padding:10px;background:${bgColor};border-radius:8px;border:2px solid #ddd;cursor:pointer;">
+                            <div style="font-weight:bold;font-size:14px;margin-bottom:5px;">${d.data.name}</div>
+                            <div style="color:#444;font-size:12px;margin-bottom:3px;">${d.data.title}</div>
+                            <div style="color:#666;font-size:11px;">${d.data.location}</div>
+                        </div>
+                    `;
+                })
+                .render();
+        }
+        
+        // Edit node function
+        function editNode(nodeId) {
+            selectedNode = currentData.find(n => n.id === nodeId);
+            if (!selectedNode) return;
+            
+            document.getElementById('editName').value = selectedNode.name;
+            document.getElementById('editTitle').value = selectedNode.title;
+            document.getElementById('editLocation').value = selectedNode.location;
+            document.getElementById('editModal').classList.add('show');
+        }
+        
+        // Save edit
+        function saveEdit() {
+            if (!selectedNode) return;
+            
+            selectedNode.name = document.getElementById('editName').value;
+            selectedNode.title = document.getElementById('editTitle').value;
+            selectedNode.location = document.getElementById('editLocation').value;
+            
+            localStorage.setItem('orgChartData', JSON.stringify(currentData));
+            chart.data(currentData).render();
+            closeModal();
+        }
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('show');
+            selectedNode = null;
+        }
+        
+        // Search function
+        function searchPerson() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (!searchTerm) return;
+            
+            const found = currentData.find(node => 
+                node.name.toLowerCase().includes(searchTerm)
+            );
+            
+            if (found) {
+                chart.setCentered(found.id).render();
+            } else {
+                alert('Person not found');
+            }
+        }
+        
+        // Expand/Collapse
+        function expandAll() {
+            chart.expandAll().render();
+        }
+        
+        function collapseAll() {
+            chart.collapseAll().render();
+        }
+        
+        // Filter by region
+        function filterRegion(region) {
+            if (region === 'all') {
+                chart.data(currentData).render();
+            } else {
+                const filtered = currentData.filter(node => 
+                    node.type === region || 
+                    node.type === 'division' ||
+                    (node.parentId && currentData.find(p => p.id === node.parentId && p.type === region))
+                );
+                chart.data(filtered).render();
+            }
+        }
+        
+        // Editor Mode
+        function toggleEditorMode() {
+            const password = prompt('Enter password for Editor Mode:');
+            if (password === 'redcross') {
+                isEditorMode = !isEditorMode;
+                
+                if (isEditorMode) {
+                    document.getElementById('editorControls').style.display = 'flex';
+                    
+                    // Add right-click handler
+                    document.addEventListener('contextmenu', handleRightClick);
+                    
+                    alert('Editor Mode ON!\n\n• Right-click any person to Add or Delete\n• Use top buttons for Backup and Restore');
+                } else {
+                    document.getElementById('editorControls').style.display = 'none';
+                    
+                    // Remove right-click handler
+                    document.removeEventListener('contextmenu', handleRightClick);
+                    
+                    alert('Editor Mode OFF');
+                }
+            } else if (password !== null) {
+                alert('Incorrect password');
+            }
+        }
+        
+        // Right-click handler
+        function handleRightClick(e) {
+            if (!isEditorMode) return;
+            
+            e.preventDefault();
+            
+            const nodeElement = e.target.closest('[data-node-id]');
+            if (nodeElement) {
+                selectedNode = currentData.find(n => n.id === nodeElement.dataset.nodeId);
+                
+                const menu = document.getElementById('contextMenu');
+                menu.style.left = e.pageX + 'px';
+                menu.style.top = e.pageY + 'px';
+                menu.style.display = 'block';
+            }
+        }
+        
+        // Hide context menu on click
+        document.addEventListener('click', () => {
+            document.getElementById('contextMenu').style.display = 'none';
+        });
+        
+        // Add person
+        function addPerson() {
+            if (!selectedNode) return;
+            
+            const name = prompt('Enter name:');
+            if (!name) return;
+            
+            const title = prompt('Enter title:');
+            const location = prompt('Enter location (optional):');
+            
+            const newPerson = {
+                id: 'node_' + Math.random().toString(36).substr(2, 9),
+                parentId: selectedNode.id,
+                name: name,
+                title: title || '',
+                location: location || '',
+                type: selectedNode.type
+            };
+            
+            currentData.push(newPerson);
+            localStorage.setItem('orgChartData', JSON.stringify(currentData));
+            chart.data(currentData).render();
+            
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+        
+        // Add peer
+        function addPeer() {
+            if (!selectedNode || !selectedNode.parentId) return;
+            
+            const name = prompt('Enter name:');
+            if (!name) return;
+            
+            const title = prompt('Enter title:');
+            const location = prompt('Enter location (optional):');
+            
+            const newPerson = {
+                id: 'node_' + Math.random().toString(36).substr(2, 9),
+                parentId: selectedNode.parentId,
+                name: name,
+                title: title || '',
+                location: location || '',
+                type: selectedNode.type
+            };
+            
+            currentData.push(newPerson);
+            localStorage.setItem('orgChartData', JSON.stringify(currentData));
+            chart.data(currentData).render();
+            
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+        
+        // Delete person
+        function deletePerson() {
+            if (!selectedNode) return;
+            
+            if (!confirm(`Delete ${selectedNode.name} and all reports?`)) return;
+            
+            // Remove node and all children
+            const toRemove = [selectedNode.id];
+            let found = true;
+            
+            while (found) {
+                found = false;
+                currentData.forEach(node => {
+                    if (toRemove.includes(node.parentId) && !toRemove.includes(node.id)) {
+                        toRemove.push(node.id);
+                        found = true;
+                    }
+                });
+            }
+            
+            currentData = currentData.filter(node => !toRemove.includes(node.id));
+            localStorage.setItem('orgChartData', JSON.stringify(currentData));
+            chart.data(currentData).render();
+            
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+        
+        // Backup data
+        function backupData() {
+            const backupName = prompt('Enter backup name:') || 'backup_' + new Date().toISOString();
+            const backups = JSON.parse(localStorage.getItem('orgChartBackups') || '{}');
+            
+            backups[backupName] = {
+                date: new Date().toISOString(),
+                data: currentData
+            };
+            
+            localStorage.setItem('orgChartBackups', JSON.stringify(backups));
+            alert(`Backup "${backupName}" saved!`);
+        }
+        
+        // Restore data
+        function restoreData() {
+            const backups = JSON.parse(localStorage.getItem('orgChartBackups') || '{}');
+            const backupNames = Object.keys(backups);
+            
+            if (backupNames.length === 0) {
+                alert('No backups found');
+                return;
+            }
+            
+            const backupList = backupNames.map(name => 
+                `${name} (${new Date(backups[name].date).toLocaleString()})`
+            ).join('\n');
+            
+            const backupName = prompt(`Choose backup to restore:\n\n${backupList}\n\nEnter backup name:`);
+            
+            if (backupName && backups[backupName]) {
+                currentData = backups[backupName].data;
+                localStorage.setItem('orgChartData', JSON.stringify(currentData));
+                chart.data(currentData).render();
+                alert('Backup restored!');
+            }
+        }
+        
+        // Export to Excel
+        function exportExcel() {
+            let csv = 'Name,Title,Location,Reports To\n';
+            
+            currentData.forEach(node => {
+                const parent = currentData.find(p => p.id === node.parentId);
+                csv += `"${node.name}","${node.title}","${node.location}","${parent ? parent.name : ''}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'org-chart.csv';
+            a.click();
+        }
+        
+        // Import Excel
+        function importExcel() {
+            alert('To import:\n1. Edit the exported CSV file\n2. Keep the same format\n3. Upload when ready');
+            
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    // Parse CSV and update data
+                    alert('Import functionality coming soon!');
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+        
+        // Load saved data or use default
+        const savedData = localStorage.getItem('orgChartData');
+        if (savedData) {
+            currentData = JSON.parse(savedData);
+        }
+        
+        // Initialize on load
+        initChart();
+    </script>
+</body>
+</html>

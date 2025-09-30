@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Cross SE & Caribbean Division - Unified Data</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0/build/d3-org-chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="data-files/org-data-unified.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Top Banner */
+        .top-banner {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            position: relative;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo-section img {
+            height: 40px;
+        }
+        
+        .title-section h1 {
+            font-size: 24px;
+            color: #333;
+        }
+        
+        .title-section p {
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        /* Simple Controls */
+        .simple-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .simple-controls button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .btn-manager {
+            background: #ff9800;
+            color: white;
+        }
+        
+        /* Edit Hint */
+        .edit-hint {
+            background: #fff3cd;
+            color: #856404;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-right: 10px;
+        }
+        
+        /* Chart Container */
+        #chart-container {
+            width: 100%;
+            height: calc(100vh - 80px);
+            background: white;
+            position: relative;
+        }
+        
+        .chart {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Floating Action Button */
+        .fab-menu {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: none;
+        }
+        
+        .fab-menu.manager-active {
+            display: block;
+        }
+        
+        .fab-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #ff4757;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .fab-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        
+        .fab-options {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .fab-options.active {
+            display: flex;
+        }
+        
+        .fab-option {
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .fab-option:hover {
+            background: #f8f9fa;
+            transform: translateX(-5px);
+        }
+        
+        /* Search Box */
+        .search-container {
+            position: fixed;
+            top: 90px;
+            left: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-box input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            width: 250px;
+            font-size: 14px;
+        }
+        
+        .search-box button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        /* Region buttons */
+        .region-filters {
+            position: fixed;
+            top: 160px;
+            left: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 100;
+            max-width: 300px;
+        }
+        
+        .region-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .region-btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s ease;
+        }
+        
+        .region-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .region-btn.active {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        
+        /* Right-click context menu */
+        .context-menu {
+            position: fixed;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 8px 0;
+            display: none;
+            z-index: 10000;
+            min-width: 180px;
+        }
+        
+        .context-menu-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        .context-menu-item:hover {
+            background: #f5f5f5;
+        }
+        
+        .context-menu-divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 4px 0;
+        }
+        
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .modal-footer button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Color coding for regions */
+        .node-puerto-rico { background: #FF6B6B !important; }
+        .node-georgia { background: #4ECDC4 !important; }
+        .node-ncflorida { background: #45B7D1 !important; }
+        .node-sflorida { background: #96CEB4 !important; }
+        .node-tennessee { background: #DDA0DD !important; }
+        .node-alabama { background: #FFB6C1 !important; }
+        .node-northcarolina { background: #87CEEB !important; }
+        .node-southcarolina { background: #F4A460 !important; }
+        .node-division { background: #FFD700 !important; }
+        .node-executive { background: #FFA500 !important; }
+        
+        /* Dual reporting indicator */
+        .dual-report-indicator {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ff9800;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: help;
+            title: "Dual Reporting";
+        }
+    </style>
+</head>
+<body>
+    <div class="top-banner">
+        <div class="logo-section">
+            <div class="title-section">
+                <h1>SE & Caribbean Division Org Chart</h1>
+                <p>Unified Data - Single Source of Truth</p>
+            </div>
+        </div>
+        <div class="simple-controls">
+            <span class="edit-hint">💡 Double-click any name to fix typos</span>
+            <button class="btn-primary" onclick="expandAll()">Expand All</button>
+            <button class="btn-primary" onclick="collapseAll()">Collapse All</button>
+            <button class="btn-secondary" onclick="exportToExcel()">Download Excel</button>
+            <button class="btn-manager" onclick="toggleManagerMode()">Manager Mode</button>
+        </div>
+    </div>
+    
+    <div id="chart-container">
+        <div class="chart" id="chart"></div>
+    </div>
+    
+    <!-- Search Box -->
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search for any person..." onkeypress="if(event.key==='Enter') searchPerson()">
+            <button onclick="searchPerson()">Search</button>
+        </div>
+    </div>
+    
+    <!-- Region Filters -->
+    <div class="region-filters">
+        <strong>View Region:</strong>
+        <div class="region-grid">
+            <button class="region-btn active" onclick="showRegion('all')">All Regions</button>
+            <button class="region-btn" onclick="showRegion('division')">Division Leadership</button>
+            <button class="region-btn" onclick="showRegion('puerto-rico')">Puerto Rico</button>
+            <button class="region-btn" onclick="showRegion('georgia')">Georgia</button>
+            <button class="region-btn" onclick="showRegion('ncflorida')">NC Florida</button>
+            <button class="region-btn" onclick="showRegion('sflorida')">S Florida</button>
+            <button class="region-btn" onclick="showRegion('tennessee')">Tennessee</button>
+            <button class="region-btn" onclick="showRegion('alabama')">Alabama/MS</button>
+            <button class="region-btn" onclick="showRegion('northcarolina')">North Carolina</button>
+            <button class="region-btn" onclick="showRegion('southcarolina')">South Carolina</button>
+        </div>
+    </div>
+    
+    <!-- Manager Mode FAB -->
+    <div class="fab-menu" id="fabMenu">
+        <div class="fab-options" id="fabOptions">
+            <div class="fab-option" onclick="importFromExcel()">Upload Excel</div>
+            <div class="fab-option" onclick="saveVersion()">Save Version</div>
+            <div class="fab-option" onclick="loadVersion()">Load Version</div>
+        </div>
+        <button class="fab-button" onclick="toggleFabMenu()">⚙️</button>
+    </div>
+    
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" onclick="addPerson()">➕ Add Person Below</div>
+        <div class="context-menu-item" onclick="addPeerPerson()">➕ Add Peer</div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" onclick="deletePerson()">🗑️ Delete Person</div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Edit Person</h2>
+                <p>Update information for this person</p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Name:</label>
+                    <input type="text" id="editName" placeholder="Enter name">
+                </div>
+                <div class="form-group">
+                    <label>Title:</label>
+                    <input type="text" id="editTitle" placeholder="Enter title">
+                </div>
+                <div class="form-group">
+                    <label>Location:</label>
+                    <input type="text" id="editLocation" placeholder="Enter location">
+                </div>
+                <div class="form-group">
+                    <label>Regional Title (if dual reporting):</label>
+                    <input type="text" id="editRegionalTitle" placeholder="Title when shown in division context">
+                </div>
+                <div class="form-group">
+                    <label>Dual Reporting:</label>
+                    <input type="checkbox" id="editDualReport"> This person has dual reporting relationships
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()" style="background: #e0e0e0; color: #333;">Cancel</button>
+                <button onclick="saveEdit()" style="background: #4CAF50; color: white;">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chart;
+        let currentData = [];
+        let selectedNode = null;
+        let isManagerMode = false;
+        let currentRegion = 'all';
+        
+        // Initialize the chart with unified data
+        function initChart() {
+            // Convert unified data to flat array
+            currentData = unifiedToFlatData();
+            
+            chart = new d3.OrgChart()
+                .container('.chart')
+                .data(currentData)
+                .nodeWidth(() => 250)
+                .nodeHeight(() => 120)
+                .childrenMargin(() => 40)
+                .compactMarginBetween(() => 15)
+                .compactMarginPair(() => 80)
+                .nodeContent(function(d, i, arr, state) {
+                    const color = d.data.type ? `node-${d.data.type}` : '';
+                    const dualReportIcon = d.data.dualReport ? '<div class="dual-report-indicator" title="Dual Reporting">2</div>' : '';
+                    
+                    return `
+                        <div style="padding:10px;background:white;border-radius:8px;border:2px solid #ddd;position:relative;" 
+                             class="${color}"
+                             ondblclick="editNode('${d.data.id}')">
+                            ${dualReportIcon}
+                            <div style="font-weight:bold;font-size:14px;margin-bottom:5px;">${d.data.name}</div>
+                            <div style="color:#666;font-size:12px;margin-bottom:3px;">${d.data.title}</div>
+                            <div style="color:#999;font-size:11px;">${d.data.location || ''}</div>
+                        </div>
+                    `;
+                })
+                .render();
+        }
+        
+        // Edit node - updates the MASTER record
+        function editNode(nodeId) {
+            const node = currentData.find(n => n.id === nodeId);
+            if (!node) return;
+            
+            // If this node has a personId, we're editing the master record
+            if (node.personId) {
+                const person = unifiedOrgData.people[node.personId];
+                
+                selectedNode = node;
+                document.getElementById('modalTitle').textContent = 'Edit Person';
+                document.getElementById('editName').value = person.name;
+                document.getElementById('editTitle').value = person.title;
+                document.getElementById('editLocation').value = person.location || '';
+                document.getElementById('editRegionalTitle').value = person.regionalTitle || '';
+                document.getElementById('editDualReport').checked = person.dualReport || false;
+                
+                document.getElementById('editModal').classList.add('active');
+            }
+        }
+        
+        // Save edit - updates master record and refreshes ALL instances
+        function saveEdit() {
+            if (!selectedNode || !selectedNode.personId) return;
+            
+            const person = unifiedOrgData.people[selectedNode.personId];
+            
+            // Update master record
+            person.name = document.getElementById('editName').value;
+            person.title = document.getElementById('editTitle').value;
+            person.location = document.getElementById('editLocation').value;
+            person.regionalTitle = document.getElementById('editRegionalTitle').value;
+            person.dualReport = document.getElementById('editDualReport').checked;
+            
+            // Refresh the chart to show changes everywhere
+            initChart();
+            closeModal();
+            
+            // Save to localStorage
+            localStorage.setItem('unifiedOrgData', JSON.stringify(unifiedOrgData));
+        }
+        
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('active');
+            selectedNode = null;
+        }
+        
+        // Search function
+        function searchPerson() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (!searchTerm) return;
+            
+            // Search in master people registry
+            const found = Object.values(unifiedOrgData.people).find(person => 
+                person.name.toLowerCase().includes(searchTerm)
+            );
+            
+            if (found) {
+                // Find the first instance of this person in the chart
+                const node = currentData.find(n => n.personId === found.id);
+                if (node && chart) {
+                    chart.setCentered(node.id).render();
+                    
+                    // Highlight the node
+                    setTimeout(() => {
+                        const nodeElement = document.querySelector(`[data-node-id="${node.id}"]`);
+                        if (nodeElement) {
+                            nodeElement.style.animation = 'pulse 1s 3';
+                        }
+                    }, 500);
+                }
+            } else {
+                alert('Person not found');
+            }
+        }
+        
+        // Region filter
+        function showRegion(region) {
+            currentRegion = region;
+            
+            // Update button states
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (region === 'all') {
+                initChart();
+            } else {
+                // Filter to show only selected region
+                const filteredData = currentData.filter(node => {
+                    return node.type === region || 
+                           node.type === 'division' ||
+                           (node.parentId && currentData.find(p => p.id === node.parentId && p.type === region));
+                });
+                
+                chart.data(filteredData).render();
+            }
+        }
+        
+        // Expand/Collapse functions
+        function expandAll() {
+            chart.expandAll().render();
+        }
+        
+        function collapseAll() {
+            chart.collapseAll().render();
+        }
+        
+        // Export to Excel
+        function exportToExcel() {
+            // Create CSV from master people registry
+            let csv = 'ID,Name,Title,Location,Regional Title,Type,Dual Report\n';
+            
+            Object.values(unifiedOrgData.people).forEach(person => {
+                csv += `"${person.id}","${person.name}","${person.title}","${person.location || ''}","${person.regionalTitle || ''}","${person.type || ''}","${person.dualReport || false}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'org-chart-unified.csv';
+            a.click();
+        }
+        
+        // Manager mode
+        function toggleManagerMode() {
+            const password = prompt('Enter password for Manager Mode:');
+            if (password === 'redcross') {
+                isManagerMode = !isManagerMode;
+                document.getElementById('fabMenu').classList.toggle('manager-active', isManagerMode);
+                
+                if (isManagerMode) {
+                    // Add right-click handler
+                    document.addEventListener('contextmenu', handleContextMenu);
+                } else {
+                    // Remove right-click handler
+                    document.removeEventListener('contextmenu', handleContextMenu);
+                }
+            } else if (password) {
+                alert('Incorrect password');
+            }
+        }
+        
+        function handleContextMenu(e) {
+            e.preventDefault();
+            
+            // Check if clicked on a node
+            const nodeElement = e.target.closest('[data-node-id]');
+            if (nodeElement) {
+                selectedNode = currentData.find(n => n.id === nodeElement.dataset.nodeId);
+                
+                const menu = document.getElementById('contextMenu');
+                menu.style.left = e.pageX + 'px';
+                menu.style.top = e.pageY + 'px';
+                menu.style.display = 'block';
+            }
+        }
+        
+        // Hide context menu on click
+        document.addEventListener('click', () => {
+            document.getElementById('contextMenu').style.display = 'none';
+        });
+        
+        function toggleFabMenu() {
+            document.getElementById('fabOptions').classList.toggle('active');
+        }
+        
+        // Load saved data if exists
+        const savedData = localStorage.getItem('unifiedOrgData');
+        if (savedData) {
+            unifiedOrgData = JSON.parse(savedData);
+        }
+        
+        // Initialize on load
+        initChart();
+    </script>
+</body>
+</html>

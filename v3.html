@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Red Cross Org Chart - Editable</title>
+    <title>Red Cross Org Chart - Beta (D3)</title>
     <meta charset="utf-8">
     <style>
         * {
@@ -293,46 +293,17 @@
     </style>
 </head>
 <body>
-    <!-- Simple Sidebar - Hidden by Default -->
-    <div id="sidebar" style="position: fixed; left: -300px; top: 0; width: 300px; height: 100vh; background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.2); z-index: 1000; transition: left 0.3s; display: flex; flex-direction: column;">
-        <div style="padding: 20px; border-bottom: 1px solid #ddd; flex-shrink: 0;">
-            <h3 style="margin: 0;">Advanced Options</h3>
-            <button onclick="toggleSidebar()" style="position: absolute; right: 10px; top: 20px; background: none; border: none; font-size: 24px; cursor: pointer;">✖</button>
-        </div>
-        
-        <div id="sidebarContent" style="padding: 20px; overflow-y: auto; flex: 1;">
-            <!-- Manager Mode Only Content - Hidden by default -->
-            <div id="managerTools" style="display: none;">
-                <div style="margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 10px;">Manager Tools</h4>
-                    <button class="btn" style="background: #00b894; width: 100%; margin-bottom: 5px;" onclick="exportToExcel()">📊 Download as Excel</button>
-                    <button class="btn" style="background: #6c5ce7; width: 100%; margin-bottom: 5px;" onclick="uploadExcel()">📤 Upload Excel Changes</button>
-                    <button class="btn" style="background: #f39c12; width: 100%; margin-bottom: 5px;" onclick="createBackup()">📸 Save Snapshot</button>
-                    <button class="btn" style="background: #3498db; width: 100%; margin-bottom: 5px;" onclick="showBackups()">⏰ View History</button>
-                    <button class="btn" style="background: #fdcb6e; width: 100%;" onclick="resetData()">↩️ Start Over</button>
-                </div>
-            </div>
-            
-            <!-- Basic user message -->
-            <div id="basicUserMessage" style="text-align: center; padding: 40px 20px;">
-                <p style="color: #666; margin-bottom: 20px;">No advanced options needed!</p>
-                <div style="background: #e8f5e9; padding: 15px; border-radius: 8px;">
-                    <p style="margin: 5px 0;"><strong>To fix typos:</strong></p>
-                    <p style="margin: 5px 0;">Just double-click any name</p>
-                </div>
-                <button id="architectBtnSidebar" class="btn" style="background: #9b59b6; width: 100%; margin-top: 30px;" onclick="toggleArchitectMode()">🔐 Manager Mode</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Clean Simple Header -->
+    <!-- Main Header (Simplified) -->
     <div class="header">
-        <h1 style="text-align: center;">Red Cross SE & Caribbean Division</h1>
+        <h1 style="text-align: center;">🏥 Red Cross SE & Caribbean Division</h1>
+        
+        <!-- Hint for users -->
+        <div style="text-align: center; color: #666; font-size: 14px; margin-top: -10px; margin-bottom: 10px;">
+            💡 Double-click any name to fix typos
+        </div>
         
         <div class="controls" style="justify-content: center; padding-top: 10px;">
-            <!-- Region Selector -->
             <select class="region-select" id="regionSelect">
-                <option value="all">All Regions</option>
                 <option value="division">Division Leadership</option>
                 <option value="alabama-mississippi">Alabama/Mississippi</option>
                 <option value="florida-nc">Florida N/C</option>
@@ -342,22 +313,36 @@
                 <option value="puerto-rico">Puerto Rico</option>
                 <option value="south-carolina">South Carolina</option>
                 <option value="tennessee">Tennessee</option>
+                <option value="all">All Regions</option>
             </select>
             
-            <!-- Simple Search -->
-            <input type="text" class="search-box" id="searchBox" placeholder="Search for someone..." style="width: 250px;">
+            <div style="display: flex; align-items: center; gap: 5px;">
+                <span style="font-size: 14px; color: #666;">🔍 Search:</span>
+                <input type="text" class="search-box" id="searchBox" placeholder="Enter name..." style="width: 200px;">
+                <button class="btn" onclick="performSearch()" style="padding: 5px 10px; font-size: 14px;">Search</button>
+            </div>
             
-            <!-- Minimal buttons -->
-            <button class="btn" onclick="fitToScreen()">Fit to Screen</button>
-            <button class="btn btn-secondary" onclick="window.print()">Print</button>
+            <!-- View Controls in Top Bar -->
+            <button class="btn" onclick="fitToScreen()" title="Fit to Screen">⤢ Fit</button>
+            <button class="btn" onclick="centerChart()" title="Center">⌖ Center</button>
+            <button class="btn" onclick="resetView()" title="Reset View" style="background: #e74c3c;">🔄 Reset</button>
             
-            <!-- Only show advanced button if NOT a basic viewer -->
-            <button class="btn btn-secondary" onclick="toggleSidebar()" style="margin-left: 20px;">Advanced ☰</button>
-        </div>
-        
-        <!-- Simple hint at bottom -->
-        <div style="text-align: center; margin-top: 10px; font-size: 13px; color: #666;">
-            💡 <strong>Tip:</strong> Click boxes to expand teams • Double-click to fix typos
+            <!-- Editor Mode Button -->
+            <button class="btn" onclick="toggleEditorMode()" style="background: #ff6b6b; margin-left: 20px;">🔐 Editor Mode</button>
+            
+            <!-- Editor Buttons - Hidden by default -->
+            <span id="editorButtons" style="display: none; margin-left: 10px;">
+                <button class="btn" onclick="showAddPersonPrompt()" style="background: #4CAF50;">➕ Add Person</button>
+                <button class="btn" onclick="showDeletePersonPrompt()" style="background: #f44336;">🗑️ Delete Person</button>
+                <button class="btn" onclick="backupData()" style="background: #2196F3;">💾 Backup</button>
+                <button class="btn" onclick="restoreData()" style="background: #9C27B0;">📂 Restore</button>
+                <button class="btn" onclick="exportToSimpleExcel()" style="background: #00BCD4;">📊 Export Excel</button>
+                <button class="btn" onclick="importFromCSV()" style="background: #4CAF50;">📤 Import Excel</button>
+            </span>
+            
+            <span style="padding: 8px 12px; background: #ffeaa7; border-radius: 4px; font-size: 12px; margin-left: 10px;">
+                💡 <strong>Corrections:</strong> Double-click to fix names/titles • <strong>Navigate:</strong> Click to expand/collapse • Scroll to zoom
+            </span>
         </div>
         
         <input type="file" id="importFile" style="display: none;" accept=".json" onchange="handleFileImport(event)">
@@ -441,8 +426,6 @@
         let chart;
         let currentData = [];
         let currentRegion = 'all';
-        let isArchitectMode = false;
-        const ARCHITECT_PASSWORD = 'redcross';
         
         // Initialize chart
         function initChart() {
@@ -502,7 +485,7 @@
                     const showJumpButton = d.data.region && d.data.region !== 'division' && d.data.region !== 'all' && currentRegion !== d.data.region;
                     
                     return `
-                        <div style="padding:10px; width:${d.width}px; height:${d.height}px; background:${bgColor}; border-radius:8px; border:${borderWidth} solid ${borderColor}; position:relative;">
+                        <div ondblclick="editPerson('${d.data.id}')" style="padding:10px; width:${d.width}px; height:${d.height}px; background:${bgColor}; border-radius:8px; border:${borderWidth} solid ${borderColor}; position:relative; cursor:pointer;">
                             ${showJumpButton ? `
                                 <div style="position:absolute; top:5px; right:5px;">
                                     <button onclick="jumpToRegion('${d.data.region}', '${d.data.id}')" 
@@ -1761,9 +1744,46 @@
             }, 500);
         }
         
+        // Emergency backup system - secret restore capability
+        function createEmergencyBackup() {
+            // Save the original Red Cross data as emergency backup
+            if (typeof completeOrgData !== 'undefined') {
+                const emergencyData = JSON.stringify(completeOrgData);
+                localStorage.setItem('EMERGENCY_REDCROSS_BACKUP', emergencyData);
+                localStorage.setItem('EMERGENCY_BACKUP_DATE', new Date().toISOString());
+                console.log('🚨 Emergency backup created (only you know about this)');
+            }
+        }
+        
+        // Secret emergency restore function - only we know about this
+        function emergencyRestore() {
+            const emergencyData = localStorage.getItem('EMERGENCY_REDCROSS_BACKUP');
+            if (emergencyData) {
+                try {
+                    completeOrgData = JSON.parse(emergencyData);
+                    const backupDate = localStorage.getItem('EMERGENCY_BACKUP_DATE');
+                    loadData();
+                    saveToLocal();
+                    chart.data(currentData).render();
+                    alert(`🚨 EMERGENCY RESTORE COMPLETE!\n\nRestored original Red Cross data from: ${new Date(backupDate).toLocaleString()}\n\nAll custom changes have been erased.`);
+                } catch (error) {
+                    alert('Emergency restore failed: ' + error.message);
+                }
+            } else {
+                alert('No emergency backup found');
+            }
+        }
+        
+        // Secret console commands - only accessible via browser console
+        window.EMERGENCY_RESTORE = emergencyRestore;
+        window.CREATE_EMERGENCY_BACKUP = createEmergencyBackup;
+        
         // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
             console.log('DOM loaded, initializing chart...');
+            
+            // Create emergency backup of original data (secret)
+            createEmergencyBackup();
             
             // Load saved data if exists
             loadFromLocal();
@@ -2259,37 +2279,291 @@
             }
         }
         
-        // User-Friendly Excel Functions
-        function exportToExcel() {
-            // Convert org data to CSV format
-            let csv = 'Name,Title,Location,Reports To\n';
+        // ============ EDITING FEATURES ============
+        
+        // Edit person function (double-click handler)
+        function editPerson(nodeId) {
+            event.stopPropagation();
+            const node = currentData.find(n => n.id === nodeId);
+            if (!node) return;
             
-            function processNode(node, parentName = '') {
-                csv += `"${node.name || ''}","${node.title || ''}","${node.location || ''}","${parentName}"\n`;
-                const children = currentData.filter(n => n.parentId === node.id);
-                children.forEach(child => processNode(child, node.name));
+            // Simple prompt-based editing
+            const newName = prompt('Edit Name:', node.name || '');
+            if (newName !== null && newName !== node.name) {
+                node.name = newName;
+                saveToLocal();
+                chart.data(currentData).render();
+            }
+        }
+        
+        // Editor Mode
+        let isEditorMode = false;
+        
+        function toggleEditorMode() {
+            const password = prompt('Enter password for Editor Mode:');
+            if (password === 'redcross') {
+                isEditorMode = !isEditorMode;
+                
+                if (isEditorMode) {
+                    document.getElementById('editorButtons').style.display = 'inline-block';
+                    
+                    alert('Editor Mode ON!\n\nYou can now:\n• Add Person - Type who they report to\n• Delete Person - Type their name\n• Backup - Save current version\n• Restore - Go back to saved version\n• Export Excel - Download for editing');
+                } else {
+                    document.getElementById('editorButtons').style.display = 'none';
+                    document.removeEventListener('contextmenu', handleContextMenu);
+                    alert('Editor Mode OFF');
+                }
+            } else if (password !== null) {
+                alert('Incorrect password');
+            }
+        }
+        
+        // Context menu for right-click
+        let selectedNodeForEdit = null;
+        
+        function handleContextMenu(e) {
+            if (!isEditorMode) return;
+            
+            e.preventDefault();
+            
+            // Find if we clicked on a node
+            const nodeElement = e.target.closest('[data-node-id]');
+            if (nodeElement) {
+                selectedNodeForEdit = currentData.find(n => n.id === nodeElement.dataset.nodeId);
+                
+                // Show simple context menu
+                const menu = document.getElementById('contextMenu');
+                if (!menu) {
+                    createContextMenu();
+                }
+                const contextMenu = document.getElementById('contextMenu');
+                contextMenu.style.left = e.pageX + 'px';
+                contextMenu.style.top = e.pageY + 'px';
+                contextMenu.style.display = 'block';
+            }
+        }
+        
+        function createContextMenu() {
+            const menu = document.createElement('div');
+            menu.id = 'contextMenu';
+            menu.style.cssText = 'position:fixed;background:white;border:1px solid #ccc;border-radius:4px;padding:8px 0;box-shadow:0 2px 10px rgba(0,0,0,0.2);z-index:10000;display:none;';
+            menu.innerHTML = `
+                <div onclick="addPersonBelow()" style="padding:8px 16px;cursor:pointer;">➕ Add Person Below</div>
+                <div onclick="deletePerson()" style="padding:8px 16px;cursor:pointer;color:red;">🗑️ Delete Person</div>
+            `;
+            document.body.appendChild(menu);
+            
+            // Hide on click elsewhere
+            document.addEventListener('click', () => {
+                menu.style.display = 'none';
+            });
+        }
+        
+        function addPersonBelow() {
+            if (!selectedNodeForEdit) return;
+            
+            const name = prompt('Enter name:');
+            if (!name) return;
+            
+            const title = prompt('Enter title:');
+            const location = prompt('Enter location (optional):');
+            
+            const newPerson = {
+                id: 'node_' + Date.now(),
+                parentId: selectedNodeForEdit.id,
+                name: name,
+                title: title || '',
+                location: location || '',
+                type: selectedNodeForEdit.type,
+                region: selectedNodeForEdit.region
+            };
+            
+            currentData.push(newPerson);
+            saveToLocal();
+            chart.data(currentData).render();
+            
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+        
+        function deletePerson() {
+            if (!selectedNodeForEdit) return;
+            
+            if (!confirm(`Delete ${selectedNodeForEdit.name} and all their reports?`)) return;
+            
+            // Find all descendants
+            const toDelete = [selectedNodeForEdit.id];
+            let found = true;
+            while (found) {
+                found = false;
+                currentData.forEach(node => {
+                    if (toDelete.includes(node.parentId) && !toDelete.includes(node.id)) {
+                        toDelete.push(node.id);
+                        found = true;
+                    }
+                });
             }
             
-            const rootNodes = currentData.filter(n => !n.parentId);
-            rootNodes.forEach(root => processNode(root));
+            currentData = currentData.filter(n => !toDelete.includes(n.id));
+            saveToLocal();
+            chart.data(currentData).render();
             
-            // Download CSV file
-            const blob = new Blob([csv], { type: 'text/csv' });
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+        
+        // Get ALL data (not filtered)
+        function getAllData() {
+            // Always load fresh complete data for export
+            const allData = [];
+            
+            // Convert division data
+            if (completeOrgData.division) {
+                const divisionData = convertToFlatData(completeOrgData.division, null, 'division', 'div_');
+                allData.push(...divisionData);
+            }
+            
+            // Convert each region's data - get EVERYTHING
+            const regions = Object.keys(completeOrgData).filter(key => key !== 'division');
+            regions.forEach(regionKey => {
+                const regionData = completeOrgData[regionKey];
+                if (Array.isArray(regionData)) {
+                    regionData.forEach((item, idx) => {
+                        const flat = convertToFlatData(item, null, regionKey, `${regionKey}_${idx}_`);
+                        allData.push(...flat);
+                    });
+                } else if (regionData && typeof regionData === 'object') {
+                    const flat = convertToFlatData(regionData, null, regionKey, `${regionKey}_`);
+                    allData.push(...flat);
+                }
+            });
+            
+            console.log('Export: Found', allData.length, 'total people');
+            return allData;
+        }
+        
+        // Simple Add Person function
+        function showAddPersonPrompt() {
+            const parentName = prompt('Who should this person report to? (Type their name)');
+            if (!parentName) return;
+            
+            // Find the parent node
+            const parent = currentData.find(n => 
+                n.name && n.name.toLowerCase().includes(parentName.toLowerCase())
+            );
+            
+            if (!parent) {
+                alert(`Cannot find "${parentName}". Please try again.`);
+                return;
+            }
+            
+            const name = prompt(`Adding person under ${parent.name}.\n\nEnter new person's name:`);
+            if (!name) return;
+            
+            const title = prompt('Enter their title:');
+            const location = prompt('Enter their location (optional):');
+            
+            const newPerson = {
+                id: 'node_' + Date.now(),
+                parentId: parent.id,
+                name: name,
+                title: title || '',
+                location: location || '',
+                type: parent.type,
+                region: parent.region
+            };
+            
+            currentData.push(newPerson);
+            saveToLocal();
+            chart.data(currentData).render();
+            alert(`Added ${name} under ${parent.name}`);
+        }
+        
+        // Simple Delete Person function
+        function showDeletePersonPrompt() {
+            const name = prompt('Who do you want to delete? (Type their name)');
+            if (!name) return;
+            
+            const person = currentData.find(n => 
+                n.name && n.name.toLowerCase().includes(name.toLowerCase())
+            );
+            
+            if (!person) {
+                alert(`Cannot find "${name}". Please try again.`);
+                return;
+            }
+            
+            if (!confirm(`Delete ${person.name} (${person.title}) and everyone who reports to them?`)) return;
+            
+            // Find all descendants
+            const toDelete = [person.id];
+            let found = true;
+            while (found) {
+                found = false;
+                currentData.forEach(node => {
+                    if (toDelete.includes(node.parentId) && !toDelete.includes(node.id)) {
+                        toDelete.push(node.id);
+                        found = true;
+                    }
+                });
+            }
+            
+            const deleteCount = toDelete.length;
+            currentData = currentData.filter(n => !toDelete.includes(n.id));
+            saveToLocal();
+            chart.data(currentData).render();
+            alert(`Deleted ${deleteCount} position(s)`);
+        }
+        
+        // Simple Excel Export - Always export FULL organization
+        function exportToSimpleExcel() {
+            // Always use the full data, not filtered view
+            const fullData = getAllData();
+            
+            console.log('Starting export with', fullData.length, 'people');
+            
+            let csv = 'Name,Title,Location,Reports To\n';
+            let exportCount = 0;
+            
+            fullData.forEach(node => {
+                // Skip empty nodes
+                if (!node.name || node.name.trim() === '') {
+                    console.log('Skipping empty node:', node);
+                    return;
+                }
+                
+                const parent = fullData.find(p => p.id === node.parentId);
+                const parentName = parent ? parent.name : '';
+                
+                // Build CSV row
+                const row = `"${node.name || ''}","${node.title || ''}","${node.location || ''}","${parentName}"`;
+                csv += row + '\n';
+                exportCount++;
+                
+                // Debug first few rows
+                if (exportCount <= 5) {
+                    console.log('Row', exportCount, ':', row);
+                }
+            });
+            
+            console.log('Actually exported', exportCount, 'rows to CSV');
+            console.log('CSV length:', csv.length, 'characters');
+            console.log('First 500 chars of CSV:', csv.substring(0, 500));
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `org-chart-${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(a);
+            a.download = 'red-cross-org-chart-full.csv';
             a.click();
-            document.body.removeChild(a);
             
-            alert('✅ Downloaded! Open this file in Excel to edit, then upload it back here when done.');
+            alert(`Export complete!\n\nFound: ${fullData.length} people\nExported: ${exportCount} people with names\n\nOpen this file in Excel to edit, then save as CSV to import back.`);
         }
         
-        function uploadExcel() {
+        // Import from CSV
+        function importFromCSV() {
             const input = document.createElement('input');
             input.type = 'file';
-            input.accept = '.csv,.xlsx';
+            input.accept = '.csv';
+            
             input.onchange = function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -2297,148 +2571,128 @@
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     try {
-                        // Parse CSV
                         const csv = event.target.result;
                         const lines = csv.split('\n');
-                        const headers = lines[0].split(',');
                         
-                        alert('✅ File uploaded! Processing your changes...');
-                        // For now just show success
-                        // Full implementation would parse and update the org chart
-                    } catch (err) {
-                        alert('❌ Could not read the file. Make sure it\'s a CSV file from Excel.');
+                        // Skip header
+                        if (lines[0].toLowerCase().includes('name')) {
+                            lines.shift();
+                        }
+                        
+                        // Parse CSV and build new data
+                        const newData = [];
+                        const nameToId = {};
+                        
+                        // First pass - create all nodes
+                        lines.forEach((line, index) => {
+                            if (!line.trim()) return;
+                            
+                            // Parse CSV line (handle commas in quotes)
+                            const parts = [];
+                            let current = '';
+                            let inQuotes = false;
+                            
+                            for (let char of line) {
+                                if (char === '"') {
+                                    inQuotes = !inQuotes;
+                                } else if (char === ',' && !inQuotes) {
+                                    parts.push(current.trim());
+                                    current = '';
+                                } else {
+                                    current += char;
+                                }
+                            }
+                            parts.push(current.trim());
+                            
+                            // Remove quotes from parts
+                            const cleanParts = parts.map(p => p.replace(/^"|"$/g, ''));
+                            
+                            const [name, title, location, reportsTo] = cleanParts;
+                            
+                            if (name) {
+                                const id = 'node_' + Date.now() + '_' + index;
+                                nameToId[name] = id;
+                                
+                                newData.push({
+                                    id: id,
+                                    name: name,
+                                    title: title || '',
+                                    location: location || '',
+                                    reportsTo: reportsTo || '',
+                                    parentId: null,
+                                    type: currentData[0]?.type || '',
+                                    region: currentData[0]?.region || 'all'
+                                });
+                            }
+                        });
+                        
+                        // Second pass - set up parent relationships
+                        newData.forEach(node => {
+                            if (node.reportsTo && nameToId[node.reportsTo]) {
+                                node.parentId = nameToId[node.reportsTo];
+                            }
+                            delete node.reportsTo; // Clean up temporary field
+                        });
+                        
+                        // Find root nodes (no parentId) and make sure there's at least one
+                        const rootNodes = newData.filter(n => !n.parentId);
+                        if (rootNodes.length === 0 && newData.length > 0) {
+                            // Make the first person the root
+                            newData[0].parentId = null;
+                        }
+                        
+                        if (confirm(`Import ${newData.length} people from CSV? This will REPLACE the current chart.`)) {
+                            currentData = newData;
+                            saveToLocal();
+                            chart.data(currentData).render();
+                            alert('CSV imported successfully!');
+                        }
+                    } catch (error) {
+                        alert('Error importing CSV: ' + error.message + '\n\nMake sure your CSV has columns: Name, Title, Location, Reports To');
                     }
                 };
+                
                 reader.readAsText(file);
             };
+            
             input.click();
         }
         
-        // Architect Mode Functions
-        function toggleArchitectMode() {
-            if (isArchitectMode) {
-                // Turn off architect mode
-                isArchitectMode = false;
-                document.getElementById('architectBtn').innerHTML = '🔐 Manager Mode';
-                document.getElementById('architectBtn').style.background = '#9b59b6';
-                alert('Manager Mode turned off');
-            } else {
-                // Ask for password
-                const password = prompt('Enter Manager password to add or remove people:');
-                if (password === ARCHITECT_PASSWORD) {
-                    isArchitectMode = true;
-                    document.getElementById('architectBtn').innerHTML = '🔓 Exit Manager Mode';
-                    document.getElementById('architectBtn').style.background = '#e74c3c';
-                    alert('Manager Mode ON!\n\nYou can now:\n• Right-click any box to add people\n• Right-click to remove people\n• Make structural changes');
-                } else if (password !== null) {
-                    alert('Incorrect password');
-                }
-            }
-        }
-        
-        // Add right-click context menu for architect mode
-        document.addEventListener('contextmenu', function(e) {
-            if (!isArchitectMode) return;
+        // Backup functions
+        function backupData() {
+            const backupName = prompt('Enter backup name:') || 'backup_' + new Date().toISOString();
+            const backups = JSON.parse(localStorage.getItem('orgBackups') || '{}');
             
-            // Check if right-clicked on a node
-            const nodeElement = e.target.closest('.node');
-            if (nodeElement) {
-                e.preventDefault();
-                showNodeContextMenu(e, nodeElement);
-            }
-        });
-        
-        function showNodeContextMenu(event, nodeElement) {
-            // Remove existing menu if any
-            const existingMenu = document.getElementById('nodeContextMenu');
-            if (existingMenu) existingMenu.remove();
-            
-            // Get node data
-            const nodeId = nodeElement.getAttribute('data-node-id');
-            if (!nodeId) return;
-            
-            const node = currentData.find(d => d.id === nodeId);
-            if (!node) return;
-            
-            // Create context menu
-            const menu = document.createElement('div');
-            menu.id = 'nodeContextMenu';
-            menu.style.cssText = `
-                position: fixed;
-                left: ${event.pageX}px;
-                top: ${event.pageY}px;
-                background: white;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                padding: 5px 0;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-                z-index: 10000;
-            `;
-            
-            menu.innerHTML = `
-                <div onclick="addChildNode('${nodeId}')" style="padding: 8px 15px; cursor: pointer; hover: background: #f0f0f0;">
-                    ➕ Add Person Below
-                </div>
-                <div onclick="deleteNode('${nodeId}')" style="padding: 8px 15px; cursor: pointer; hover: background: #f0f0f0;">
-                    ❌ Delete ${node.name}
-                </div>
-            `;
-            
-            document.body.appendChild(menu);
-            
-            // Remove menu on click outside
-            setTimeout(() => {
-                document.addEventListener('click', function removeMenu() {
-                    menu.remove();
-                    document.removeEventListener('click', removeMenu);
-                });
-            }, 100);
-        }
-        
-        function addChildNode(parentId) {
-            const name = prompt('Enter person name:');
-            if (!name) return;
-            
-            const title = prompt('Enter person title:');
-            
-            const newNode = {
-                id: 'node_' + Date.now(),
-                parentId: parentId,
-                name: name,
-                title: title || 'Position',
-                location: ''
+            backups[backupName] = {
+                date: new Date().toISOString(),
+                data: currentData
             };
             
-            currentData.push(newNode);
-            updateChart();
-            saveToLocal();
-            alert('Person added successfully!');
+            localStorage.setItem('orgBackups', JSON.stringify(backups));
+            alert(`Backup "${backupName}" saved!`);
         }
         
-        function deleteNode(nodeId) {
-            const node = currentData.find(d => d.id === nodeId);
-            if (!node) return;
+        function restoreData() {
+            const backups = JSON.parse(localStorage.getItem('orgBackups') || '{}');
+            const backupNames = Object.keys(backups);
             
-            if (!confirm(`Delete ${node.name} and all their reports?`)) return;
-            
-            // Find all descendants
-            const toDelete = [nodeId];
-            let changed = true;
-            while (changed) {
-                changed = false;
-                currentData.forEach(n => {
-                    if (n.parentId && toDelete.includes(n.parentId) && !toDelete.includes(n.id)) {
-                        toDelete.push(n.id);
-                        changed = true;
-                    }
-                });
+            if (backupNames.length === 0) {
+                alert('No backups found');
+                return;
             }
             
-            // Remove nodes
-            currentData = currentData.filter(n => !toDelete.includes(n.id));
-            updateChart();
-            saveToLocal();
-            alert(`Deleted ${toDelete.length} node(s)`);
+            const backupList = backupNames.map(name => 
+                `${name} (${new Date(backups[name].date).toLocaleString()})`
+            ).join('\n');
+            
+            const backupName = prompt(`Choose backup:\n\n${backupList}\n\nEnter backup name:`);
+            
+            if (backupName && backups[backupName]) {
+                currentData = backups[backupName].data;
+                saveToLocal();
+                chart.data(currentData).render();
+                alert('Backup restored!');
+            }
         }
     </script>
 </body>

@@ -1,0 +1,161 @@
+Name,Title,Location,Reports To
+🏆 Major League Sports,Sports Authority,United States,
+⚾ MLB,Major League Baseball,New York,🏆 Major League Sports
+🏈 NFL,National Football League,New York,🏆 Major League Sports
+🏀 NBA,National Basketball Association,New York,🏆 Major League Sports
+🏒 NHL,National Hockey League,New York,🏆 Major League Sports
+🏆 American League,Conference,New York,⚾ MLB
+🏆 National League,Conference,New York,⚾ MLB
+🏆 AFC,Conference,New York,🏈 NFL
+🏆 NFC,Conference,New York,🏈 NFL
+🏆 Eastern Conference,Conference,New York,🏀 NBA
+🏆 Western Conference,Conference,New York,🏀 NBA
+🏆 Eastern Conference,Conference,New York,🏒 NHL
+🏆 Western Conference,Conference,New York,🏒 NHL
+⭐ AL East,Division,New York,🏆 American League
+⭐ AL Central,Division,Chicago,🏆 American League
+⭐ AL West,Division,Los Angeles,🏆 American League
+⭐ NL East,Division,New York,🏆 National League
+⭐ NL Central,Division,Chicago,🏆 National League
+⭐ NL West,Division,Los Angeles,🏆 National League
+⭐ AFC East,Division,New York,🏆 AFC
+⭐ AFC North,Division,Pittsburgh,🏆 AFC
+⭐ AFC South,Division,Indianapolis,🏆 AFC
+⭐ AFC West,Division,Denver,🏆 AFC
+⭐ NFC East,Division,Dallas,🏆 NFC
+⭐ NFC North,Division,Chicago,🏆 NFC
+⭐ NFC South,Division,Atlanta,🏆 NFC
+⭐ NFC West,Division,San Francisco,🏆 NFC
+⭐ Atlantic Division,Division,Boston,🏆 Eastern Conference
+⭐ Central Division,Division,Chicago,🏆 Eastern Conference
+⭐ Southeast Division,Division,Miami,🏆 Eastern Conference
+⭐ Northwest Division,Division,Portland,🏆 Western Conference
+⭐ Pacific Division,Division,Los Angeles,🏆 Western Conference
+⭐ Southwest Division,Division,San Antonio,🏆 Western Conference
+⭐ Atlantic Division,Division,New York,🏆 Eastern Conference
+⭐ Metropolitan Division,Division,New York,🏆 Eastern Conference
+⭐ Central Division,Division,Chicago,🏆 Western Conference
+⭐ Pacific Division,Division,Los Angeles,🏆 Western Conference
+⚾ New York Yankees,Team,New York,⭐ AL East
+⚾ Boston Red Sox,Team,Boston,⭐ AL East
+⚾ Tampa Bay Rays,Team,Tampa Bay,⭐ AL East
+⚾ Toronto Blue Jays,Team,Toronto,⭐ AL East
+⚾ Baltimore Orioles,Team,Baltimore,⭐ AL East
+⚾ Chicago White Sox,Team,Chicago,⭐ AL Central
+⚾ Cleveland Guardians,Team,Cleveland,⭐ AL Central
+⚾ Detroit Tigers,Team,Detroit,⭐ AL Central
+⚾ Kansas City Royals,Team,Kansas City,⭐ AL Central
+⚾ Minnesota Twins,Team,Minneapolis,⭐ AL Central
+⚾ Houston Astros,Team,Houston,⭐ AL West
+⚾ Los Angeles Angels,Team,Anaheim,⭐ AL West
+⚾ Oakland Athletics,Team,Oakland,⭐ AL West
+⚾ Seattle Mariners,Team,Seattle,⭐ AL West
+⚾ Texas Rangers,Team,Arlington,⭐ AL West
+⚾ Atlanta Braves,Team,Atlanta,⭐ NL East
+⚾ Miami Marlins,Team,Miami,⭐ NL East
+⚾ New York Mets,Team,New York,⭐ NL East
+⚾ Philadelphia Phillies,Team,Philadelphia,⭐ NL East
+⚾ Washington Nationals,Team,Washington DC,⭐ NL East
+⚾ Chicago Cubs,Team,Chicago,⭐ NL Central
+⚾ Cincinnati Reds,Team,Cincinnati,⭐ NL Central
+⚾ Milwaukee Brewers,Team,Milwaukee,⭐ NL Central
+⚾ Pittsburgh Pirates,Team,Pittsburgh,⭐ NL Central
+⚾ St. Louis Cardinals,Team,St. Louis,⭐ NL Central
+⚾ Arizona Diamondbacks,Team,Phoenix,⭐ NL West
+⚾ Colorado Rockies,Team,Denver,⭐ NL West
+⚾ Los Angeles Dodgers,Team,Los Angeles,⭐ NL West
+⚾ San Diego Padres,Team,San Diego,⭐ NL West
+⚾ San Francisco Giants,Team,San Francisco,⭐ NL West
+🏈 Buffalo Bills,Team,Buffalo,⭐ AFC East
+🏈 Miami Dolphins,Team,Miami,⭐ AFC East
+🏈 New England Patriots,Team,Foxborough,⭐ AFC East
+🏈 New York Jets,Team,East Rutherford,⭐ AFC East
+🏈 Baltimore Ravens,Team,Baltimore,⭐ AFC North
+🏈 Cincinnati Bengals,Team,Cincinnati,⭐ AFC North
+🏈 Cleveland Browns,Team,Cleveland,⭐ AFC North
+🏈 Pittsburgh Steelers,Team,Pittsburgh,⭐ AFC North
+🏈 Houston Texans,Team,Houston,⭐ AFC South
+🏈 Indianapolis Colts,Team,Indianapolis,⭐ AFC South
+🏈 Jacksonville Jaguars,Team,Jacksonville,⭐ AFC South
+🏈 Tennessee Titans,Team,Nashville,⭐ AFC South
+🏈 Denver Broncos,Team,Denver,⭐ AFC West
+🏈 Kansas City Chiefs,Team,Kansas City,⭐ AFC West
+🏈 Las Vegas Raiders,Team,Las Vegas,⭐ AFC West
+🏈 Los Angeles Chargers,Team,Los Angeles,⭐ AFC West
+🏈 Dallas Cowboys,Team,Arlington,⭐ NFC East
+🏈 New York Giants,Team,East Rutherford,⭐ NFC East
+🏈 Philadelphia Eagles,Team,Philadelphia,⭐ NFC East
+🏈 Washington Commanders,Team,Washington DC,⭐ NFC East
+🏈 Chicago Bears,Team,Chicago,⭐ NFC North
+🏈 Detroit Lions,Team,Detroit,⭐ NFC North
+🏈 Green Bay Packers,Team,Green Bay,⭐ NFC North
+🏈 Minnesota Vikings,Team,Minneapolis,⭐ NFC North
+🏈 Atlanta Falcons,Team,Atlanta,⭐ NFC South
+🏈 Carolina Panthers,Team,Charlotte,⭐ NFC South
+🏈 New Orleans Saints,Team,New Orleans,⭐ NFC South
+🏈 Tampa Bay Buccaneers,Team,Tampa Bay,⭐ NFC South
+🏈 Arizona Cardinals,Team,Glendale,⭐ NFC West
+🏈 Los Angeles Rams,Team,Los Angeles,⭐ NFC West
+🏈 San Francisco 49ers,Team,San Francisco,⭐ NFC West
+🏈 Seattle Seahawks,Team,Seattle,⭐ NFC West
+🏀 Boston Celtics,Team,Boston,⭐ Atlantic Division
+🏀 Brooklyn Nets,Team,Brooklyn,⭐ Atlantic Division
+🏀 New York Knicks,Team,New York,⭐ Atlantic Division
+🏀 Philadelphia 76ers,Team,Philadelphia,⭐ Atlantic Division
+🏀 Toronto Raptors,Team,Toronto,⭐ Atlantic Division
+🏀 Chicago Bulls,Team,Chicago,⭐ Central Division
+🏀 Cleveland Cavaliers,Team,Cleveland,⭐ Central Division
+🏀 Detroit Pistons,Team,Detroit,⭐ Central Division
+🏀 Indiana Pacers,Team,Indianapolis,⭐ Central Division
+🏀 Milwaukee Bucks,Team,Milwaukee,⭐ Central Division
+🏀 Atlanta Hawks,Team,Atlanta,⭐ Southeast Division
+🏀 Charlotte Hornets,Team,Charlotte,⭐ Southeast Division
+🏀 Miami Heat,Team,Miami,⭐ Southeast Division
+🏀 Orlando Magic,Team,Orlando,⭐ Southeast Division
+🏀 Washington Wizards,Team,Washington DC,⭐ Southeast Division
+🏀 Denver Nuggets,Team,Denver,⭐ Northwest Division
+🏀 Minnesota Timberwolves,Team,Minneapolis,⭐ Northwest Division
+🏀 Oklahoma City Thunder,Team,Oklahoma City,⭐ Northwest Division
+🏀 Portland Trail Blazers,Team,Portland,⭐ Northwest Division
+🏀 Utah Jazz,Team,Salt Lake City,⭐ Northwest Division
+🏀 Golden State Warriors,Team,San Francisco,⭐ Pacific Division
+🏀 Los Angeles Clippers,Team,Los Angeles,⭐ Pacific Division
+🏀 Los Angeles Lakers,Team,Los Angeles,⭐ Pacific Division
+🏀 Phoenix Suns,Team,Phoenix,⭐ Pacific Division
+🏀 Sacramento Kings,Team,Sacramento,⭐ Pacific Division
+🏀 Dallas Mavericks,Team,Dallas,⭐ Southwest Division
+🏀 Houston Rockets,Team,Houston,⭐ Southwest Division
+🏀 Memphis Grizzlies,Team,Memphis,⭐ Southwest Division
+🏀 New Orleans Pelicans,Team,New Orleans,⭐ Southwest Division
+🏀 San Antonio Spurs,Team,San Antonio,⭐ Southwest Division
+🏒 Boston Bruins,Team,Boston,⭐ Atlantic Division
+🏒 Buffalo Sabres,Team,Buffalo,⭐ Atlantic Division
+🏒 Detroit Red Wings,Team,Detroit,⭐ Atlantic Division
+🏒 Florida Panthers,Team,Sunrise,⭐ Atlantic Division
+🏒 Montreal Canadiens,Team,Montreal,⭐ Atlantic Division
+🏒 Ottawa Senators,Team,Ottawa,⭐ Atlantic Division
+🏒 Tampa Bay Lightning,Team,Tampa Bay,⭐ Atlantic Division
+🏒 Toronto Maple Leafs,Team,Toronto,⭐ Atlantic Division
+🏒 Carolina Hurricanes,Team,Raleigh,⭐ Metropolitan Division
+🏒 Columbus Blue Jackets,Team,Columbus,⭐ Metropolitan Division
+🏒 New Jersey Devils,Team,Newark,⭐ Metropolitan Division
+🏒 New York Islanders,Team,Elmont,⭐ Metropolitan Division
+🏒 New York Rangers,Team,New York,⭐ Metropolitan Division
+🏒 Philadelphia Flyers,Team,Philadelphia,⭐ Metropolitan Division
+🏒 Pittsburgh Penguins,Team,Pittsburgh,⭐ Metropolitan Division
+🏒 Washington Capitals,Team,Washington DC,⭐ Metropolitan Division
+🏒 Chicago Blackhawks,Team,Chicago,⭐ Central Division
+🏒 Colorado Avalanche,Team,Denver,⭐ Central Division
+🏒 Dallas Stars,Team,Dallas,⭐ Central Division
+🏒 Minnesota Wild,Team,Saint Paul,⭐ Central Division
+🏒 Nashville Predators,Team,Nashville,⭐ Central Division
+🏒 St. Louis Blues,Team,St. Louis,⭐ Central Division
+🏒 Winnipeg Jets,Team,Winnipeg,⭐ Central Division
+🏒 Anaheim Ducks,Team,Anaheim,⭐ Pacific Division
+🏒 Calgary Flames,Team,Calgary,⭐ Pacific Division
+🏒 Edmonton Oilers,Team,Edmonton,⭐ Pacific Division
+🏒 Los Angeles Kings,Team,Los Angeles,⭐ Pacific Division
+🏒 San Jose Sharks,Team,San Jose,⭐ Pacific Division
+🏒 Seattle Kraken,Team,Seattle,⭐ Pacific Division
+🏒 Vancouver Canucks,Team,Vancouver,⭐ Pacific Division
+🏒 Vegas Golden Knights,Team,Las Vegas,⭐ Pacific Division

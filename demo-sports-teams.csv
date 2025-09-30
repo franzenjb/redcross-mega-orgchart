@@ -1,0 +1,129 @@
+Name,Title,Location,Reports To
+🏆 Major League Sports,Sports Authority,United States,
+⚾ MLB,Major League Baseball,New York,🏆 Major League Sports
+🏈 NFL,National Football League,New York,🏆 Major League Sports
+🏀 NBA,National Basketball Association,New York,🏆 Major League Sports
+🏒 NHL,National Hockey League,New York,🏆 Major League Sports
+⚾ New York Yankees,Baseball Team,New York,⚾ MLB
+⚾ Boston Red Sox,Baseball Team,Boston,⚾ MLB
+⚾ Los Angeles Dodgers,Baseball Team,Los Angeles,⚾ MLB
+⚾ Chicago Cubs,Baseball Team,Chicago,⚾ MLB
+⚾ San Francisco Giants,Baseball Team,San Francisco,⚾ MLB
+⚾ Philadelphia Phillies,Baseball Team,Philadelphia,⚾ MLB
+⚾ Atlanta Braves,Baseball Team,Atlanta,⚾ MLB
+⚾ St. Louis Cardinals,Baseball Team,St. Louis,⚾ MLB
+⚾ Houston Astros,Baseball Team,Houston,⚾ MLB
+⚾ Tampa Bay Rays,Baseball Team,Tampa Bay,⚾ MLB
+⚾ Toronto Blue Jays,Baseball Team,Toronto,⚾ MLB
+⚾ Baltimore Orioles,Baseball Team,Baltimore,⚾ MLB
+⚾ Washington Nationals,Baseball Team,Washington DC,⚾ MLB
+⚾ Miami Marlins,Baseball Team,Miami,⚾ MLB
+⚾ New York Mets,Baseball Team,New York,⚾ MLB
+⚾ Pittsburgh Pirates,Baseball Team,Pittsburgh,⚾ MLB
+⚾ Milwaukee Brewers,Baseball Team,Milwaukee,⚾ MLB
+⚾ Cincinnati Reds,Baseball Team,Cincinnati,⚾ MLB
+⚾ Cleveland Guardians,Baseball Team,Cleveland,⚾ MLB
+⚾ Detroit Tigers,Baseball Team,Detroit,⚾ MLB
+⚾ Minnesota Twins,Baseball Team,Minneapolis,⚾ MLB
+⚾ Chicago White Sox,Baseball Team,Chicago,⚾ MLB
+⚾ Kansas City Royals,Baseball Team,Kansas City,⚾ MLB
+⚾ Texas Rangers,Baseball Team,Arlington,⚾ MLB
+⚾ Seattle Mariners,Baseball Team,Seattle,⚾ MLB
+⚾ Los Angeles Angels,Baseball Team,Anaheim,⚾ MLB
+⚾ Oakland Athletics,Baseball Team,Oakland,⚾ MLB
+⚾ Arizona Diamondbacks,Baseball Team,Phoenix,⚾ MLB
+⚾ Colorado Rockies,Baseball Team,Denver,⚾ MLB
+⚾ San Diego Padres,Baseball Team,San Diego,⚾ MLB
+🏈 New England Patriots,Football Team,Foxborough,🏈 NFL
+Buffalo Bills,Football Team,Buffalo,🏈 NFL
+Miami Dolphins,Football Team,Miami,🏈 NFL
+New York Jets,Football Team,East Rutherford,🏈 NFL
+Pittsburgh Steelers,Football Team,Pittsburgh,🏈 NFL
+Baltimore Ravens,Football Team,Baltimore,🏈 NFL
+Cleveland Browns,Football Team,Cleveland,🏈 NFL
+Cincinnati Bengals,Football Team,Cincinnati,🏈 NFL
+Tennessee Titans,Football Team,Nashville,🏈 NFL
+Indianapolis Colts,Football Team,Indianapolis,🏈 NFL
+Houston Texans,Football Team,Houston,🏈 NFL
+Jacksonville Jaguars,Football Team,Jacksonville,🏈 NFL
+Kansas City Chiefs,Football Team,Kansas City,🏈 NFL
+Las Vegas Raiders,Football Team,Las Vegas,🏈 NFL
+Denver Broncos,Football Team,Denver,🏈 NFL
+Los Angeles Chargers,Football Team,Los Angeles,🏈 NFL
+Dallas Cowboys,Football Team,Arlington,🏈 NFL
+Philadelphia Eagles,Football Team,Philadelphia,🏈 NFL
+New York Giants,Football Team,East Rutherford,🏈 NFL
+Washington Commanders,Football Team,Washington DC,🏈 NFL
+Green Bay Packers,Football Team,Green Bay,🏈 NFL
+Chicago Bears,Football Team,Chicago,🏈 NFL
+Minnesota Vikings,Football Team,Minneapolis,🏈 NFL
+Detroit Lions,Football Team,Detroit,🏈 NFL
+Tampa Bay Buccaneers,Football Team,Tampa Bay,🏈 NFL
+New Orleans Saints,Football Team,New Orleans,🏈 NFL
+Atlanta Falcons,Football Team,Atlanta,🏈 NFL
+Carolina Panthers,Football Team,Charlotte,🏈 NFL
+Los Angeles Rams,Football Team,Los Angeles,🏈 NFL
+San Francisco 49ers,Football Team,San Francisco,🏈 NFL
+Seattle Seahawks,Football Team,Seattle,🏈 NFL
+Arizona Cardinals,Football Team,Glendale,🏈 NFL
+Boston Celtics,Basketball Team,Boston,🏀 NBA
+Brooklyn Nets,Basketball Team,Brooklyn,🏀 NBA
+New York Knicks,Basketball Team,New York,🏀 NBA
+Philadelphia 76ers,Basketball Team,Philadelphia,🏀 NBA
+Toronto Raptors,Basketball Team,Toronto,🏀 NBA
+Chicago Bulls,Basketball Team,Chicago,🏀 NBA
+Cleveland Cavaliers,Basketball Team,Cleveland,🏀 NBA
+Detroit Pistons,Basketball Team,Detroit,🏀 NBA
+Indiana Pacers,Basketball Team,Indianapolis,🏀 NBA
+Milwaukee Bucks,Basketball Team,Milwaukee,🏀 NBA
+Atlanta Hawks,Basketball Team,Atlanta,🏀 NBA
+Charlotte Hornets,Basketball Team,Charlotte,🏀 NBA
+Miami Heat,Basketball Team,Miami,🏀 NBA
+Orlando Magic,Basketball Team,Orlando,🏀 NBA
+Washington Wizards,Basketball Team,Washington DC,🏀 NBA
+Denver Nuggets,Basketball Team,Denver,🏀 NBA
+Minnesota Timberwolves,Basketball Team,Minneapolis,🏀 NBA
+Oklahoma City Thunder,Basketball Team,Oklahoma City,🏀 NBA
+Portland Trail Blazers,Basketball Team,Portland,🏀 NBA
+Utah Jazz,Basketball Team,Salt Lake City,🏀 NBA
+Golden State Warriors,Basketball Team,San Francisco,🏀 NBA
+Los Angeles Clippers,Basketball Team,Los Angeles,🏀 NBA
+Los Angeles Lakers,Basketball Team,Los Angeles,🏀 NBA
+Phoenix Suns,Basketball Team,Phoenix,🏀 NBA
+Sacramento Kings,Basketball Team,Sacramento,🏀 NBA
+Dallas Mavericks,Basketball Team,Dallas,🏀 NBA
+Houston Rockets,Basketball Team,Houston,🏀 NBA
+Memphis Grizzlies,Basketball Team,Memphis,🏀 NBA
+New Orleans Pelicans,Basketball Team,New Orleans,🏀 NBA
+San Antonio Spurs,Basketball Team,San Antonio,🏀 NBA
+Boston Bruins,Hockey Team,Boston,🏒 NHL
+Buffalo Sabres,Hockey Team,Buffalo,🏒 NHL
+Detroit Red Wings,Hockey Team,Detroit,🏒 NHL
+Florida Panthers,Hockey Team,Sunrise,🏒 NHL
+Montreal Canadiens,Hockey Team,Montreal,🏒 NHL
+Ottawa Senators,Hockey Team,Ottawa,🏒 NHL
+Tampa Bay Lightning,Hockey Team,Tampa Bay,🏒 NHL
+Toronto Maple Leafs,Hockey Team,Toronto,🏒 NHL
+Carolina Hurricanes,Hockey Team,Raleigh,🏒 NHL
+Columbus Blue Jackets,Hockey Team,Columbus,🏒 NHL
+New Jersey Devils,Hockey Team,Newark,🏒 NHL
+New York Islanders,Hockey Team,Elmont,🏒 NHL
+New York Rangers,Hockey Team,New York,🏒 NHL
+Philadelphia Flyers,Hockey Team,Philadelphia,🏒 NHL
+Pittsburgh Penguins,Hockey Team,Pittsburgh,🏒 NHL
+Washington Capitals,Hockey Team,Washington DC,🏒 NHL
+Chicago Blackhawks,Hockey Team,Chicago,🏒 NHL
+Colorado Avalanche,Hockey Team,Denver,🏒 NHL
+Dallas Stars,Hockey Team,Dallas,🏒 NHL
+Minnesota Wild,Hockey Team,Saint Paul,🏒 NHL
+Nashville Predators,Hockey Team,Nashville,🏒 NHL
+St. Louis Blues,Hockey Team,St. Louis,🏒 NHL
+Winnipeg Jets,Hockey Team,Winnipeg,🏒 NHL
+Anaheim Ducks,Hockey Team,Anaheim,🏒 NHL
+Calgary Flames,Hockey Team,Calgary,🏒 NHL
+Edmonton Oilers,Hockey Team,Edmonton,🏒 NHL
+Los Angeles Kings,Hockey Team,Los Angeles,🏒 NHL
+San Jose Sharks,Hockey Team,San Jose,🏒 NHL
+Seattle Kraken,Hockey Team,Seattle,🏒 NHL
+Vancouver Canucks,Hockey Team,Vancouver,🏒 NHL
+Vegas Golden Knights,Hockey Team,Las Vegas,🏒 NHL

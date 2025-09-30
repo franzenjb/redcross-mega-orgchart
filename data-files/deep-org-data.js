@@ -1,7 +1,7 @@
 // Complete deep organizational data for SE & Caribbean Division
 const deepOrgData = {
     puertorico: {
-        name: "L. Rodriguez",
+        name: "L. Feliciano",
         title: "Regional Executive",
         location: "San Juan",
         type: "puertorico",
