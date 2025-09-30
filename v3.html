@@ -2287,13 +2287,40 @@
             const node = currentData.find(n => n.id === nodeId);
             if (!node) return;
             
-            // Simple prompt-based editing
+            // Enhanced editing with multiple fields
             const newName = prompt('Edit Name:', node.name || '');
             if (newName !== null && newName !== node.name) {
                 node.name = newName;
-                saveToLocal();
-                chart.data(currentData).render();
             }
+            
+            const newTitle = prompt('Edit Title:', node.title || '');
+            if (newTitle !== null) {
+                node.title = newTitle;
+            }
+            
+            const newLocation = prompt('Edit Location:', node.location || '');
+            if (newLocation !== null) {
+                node.location = newLocation;
+            }
+            
+            const newEmail = prompt('Edit Email (optional):', node.email || '');
+            if (newEmail !== null) {
+                node.email = newEmail;
+            }
+            
+            const newPhone = prompt('Edit Phone (optional):', node.phone || '');
+            if (newPhone !== null) {
+                node.phone = newPhone;
+            }
+            
+            const newColor = prompt('Edit Background Color (hex code, optional):', node.color || '');
+            if (newColor !== null) {
+                node.color = newColor;
+            }
+            
+            // Save and refresh
+            saveToLocal();
+            chart.data(currentData).render();
         }
         
         // Editor Mode
@@ -2460,6 +2487,9 @@
             
             const title = prompt('Enter their title:');
             const location = prompt('Enter their location (optional):');
+            const email = prompt('Enter their email (optional):');
+            const phone = prompt('Enter their phone (optional):');
+            const color = prompt('Enter background color (hex code, optional):');
             
             const newPerson = {
                 id: 'node_' + Date.now(),
@@ -2467,6 +2497,9 @@
                 name: name,
                 title: title || '',
                 location: location || '',
+                email: email || '',
+                phone: phone || '',
+                color: color || '',
                 type: parent.type,
                 region: parent.region
             };
@@ -2520,7 +2553,7 @@
             
             console.log('Starting export with', fullData.length, 'people');
             
-            let csv = 'Name,Title,Location,Reports To\n';
+            let csv = 'Name,Title,Location,Reports To,Color,Email,Phone\n';
             let exportCount = 0;
             
             fullData.forEach(node => {
@@ -2533,8 +2566,8 @@
                 const parent = fullData.find(p => p.id === node.parentId);
                 const parentName = parent ? parent.name : '';
                 
-                // Build CSV row
-                const row = `"${node.name || ''}","${node.title || ''}","${node.location || ''}","${parentName}"`;
+                // Build CSV row with new fields
+                const row = `"${node.name || ''}","${node.title || ''}","${node.location || ''}","${parentName}","${node.color || ''}","${node.email || ''}","${node.phone || ''}"`;
                 csv += row + '\n';
                 exportCount++;
                 
@@ -2607,7 +2640,7 @@
                             // Remove quotes from parts
                             const cleanParts = parts.map(p => p.replace(/^"|"$/g, ''));
                             
-                            const [name, title, location, reportsTo] = cleanParts;
+                            const [name, title, location, reportsTo, color, email, phone] = cleanParts;
                             
                             if (name) {
                                 const id = 'node_' + Date.now() + '_' + index;
@@ -2619,6 +2652,9 @@
                                     title: title || '',
                                     location: location || '',
                                     reportsTo: reportsTo || '',
+                                    color: color || '',
+                                    email: email || '',
+                                    phone: phone || '',
                                     parentId: null,
                                     type: currentData[0]?.type || '',
                                     region: currentData[0]?.region || 'all'

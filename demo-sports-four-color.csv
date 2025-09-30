@@ -1,0 +1,161 @@
+Name,Title,Location,Reports To,Color
+🏆 Major League Sports,Sports Authority,United States,,#F8F9FA
+⚾ MLB,Major League Baseball,New York,🏆 Major League Sports,#FFF5F5
+🏈 NFL,National Football League,New York,🏆 Major League Sports,#F0F8FF
+🏀 NBA,National Basketball Association,New York,🏆 Major League Sports,#FFFAF0
+🏒 NHL,National Hockey League,New York,🏆 Major League Sports,#F0FFF0
+🏆 American League,Conference,New York,⚾ MLB,#C0392B
+🏆 National League,Conference,New York,⚾ MLB,#8E44AD
+🏆 AFC,Conference,New York,🏈 NFL,#2980B9
+🏆 NFC,Conference,New York,🏈 NFL,#1ABC9C
+🏆 NBA Eastern Conference,Conference,New York,🏀 NBA,#D35400
+🏆 NBA Western Conference,Conference,New York,🏀 NBA,#F39C12
+🏆 NHL Eastern Conference,Conference,New York,🏒 NHL,#16A085
+🏆 NHL Western Conference,Conference,New York,🏒 NHL,#2ECC71
+⭐ AL East,Division,New York,🏆 American League,#E74C3C
+⭐ AL Central,Division,Chicago,🏆 American League,#3498DB
+⭐ AL West,Division,Los Angeles,🏆 American League,#E67E22
+⭐ NL East,Division,New York,🏆 National League,#27AE60
+⭐ NL Central,Division,Chicago,🏆 National League,#E74C3C
+⭐ NL West,Division,Los Angeles,🏆 National League,#3498DB
+⭐ AFC East,Division,New York,🏆 AFC,#E74C3C
+⭐ AFC North,Division,Pittsburgh,🏆 AFC,#E67E22
+⭐ AFC South,Division,Indianapolis,🏆 AFC,#27AE60
+⭐ AFC West,Division,Denver,🏆 AFC,#8E44AD
+⭐ NFC East,Division,Dallas,🏆 NFC,#3498DB
+⭐ NFC North,Division,Chicago,🏆 NFC,#E74C3C
+⭐ NFC South,Division,Atlanta,🏆 NFC,#E67E22
+⭐ NFC West,Division,San Francisco,🏆 NFC,#27AE60
+⭐ NBA Atlantic,Division,Boston,🏆 NBA Eastern Conference,#E74C3C
+⭐ NBA Central,Division,Chicago,🏆 NBA Eastern Conference,#3498DB
+⭐ NBA Southeast,Division,Miami,🏆 NBA Eastern Conference,#27AE60
+⭐ NBA Northwest,Division,Portland,🏆 NBA Western Conference,#E67E22
+⭐ NBA Pacific,Division,Los Angeles,🏆 NBA Western Conference,#8E44AD
+⭐ NBA Southwest,Division,San Antonio,🏆 NBA Western Conference,#E74C3C
+⭐ NHL Atlantic,Division,New York,🏆 NHL Eastern Conference,#3498DB
+⭐ NHL Metropolitan,Division,New York,🏆 NHL Eastern Conference,#E67E22
+⭐ NHL Central,Division,Chicago,🏆 NHL Western Conference,#E74C3C
+⭐ NHL Pacific,Division,Los Angeles,🏆 NHL Western Conference,#27AE60
+⚾ New York Yankees,Team,New York,⭐ AL East,#E74C3C
+⚾ Boston Red Sox,Team,Boston,⭐ AL East,#E74C3C
+⚾ Tampa Bay Rays,Team,Tampa Bay,⭐ AL East,#E74C3C
+⚾ Toronto Blue Jays,Team,Toronto,⭐ AL East,#E74C3C
+⚾ Baltimore Orioles,Team,Baltimore,⭐ AL East,#E74C3C
+⚾ Chicago White Sox,Team,Chicago,⭐ AL Central,#3498DB
+⚾ Cleveland Guardians,Team,Cleveland,⭐ AL Central,#3498DB
+⚾ Detroit Tigers,Team,Detroit,⭐ AL Central,#3498DB
+⚾ Kansas City Royals,Team,Kansas City,⭐ AL Central,#3498DB
+⚾ Minnesota Twins,Team,Minneapolis,⭐ AL Central,#3498DB
+⚾ Houston Astros,Team,Houston,⭐ AL West,#E67E22
+⚾ Los Angeles Angels,Team,Anaheim,⭐ AL West,#E67E22
+⚾ Oakland Athletics,Team,Oakland,⭐ AL West,#E67E22
+⚾ Seattle Mariners,Team,Seattle,⭐ AL West,#E67E22
+⚾ Texas Rangers,Team,Arlington,⭐ AL West,#E67E22
+⚾ Atlanta Braves,Team,Atlanta,⭐ NL East,#27AE60
+⚾ Miami Marlins,Team,Miami,⭐ NL East,#27AE60
+⚾ New York Mets,Team,New York,⭐ NL East,#27AE60
+⚾ Philadelphia Phillies,Team,Philadelphia,⭐ NL East,#27AE60
+⚾ Washington Nationals,Team,Washington DC,⭐ NL East,#27AE60
+⚾ Chicago Cubs,Team,Chicago,⭐ NL Central,#E74C3C
+⚾ Cincinnati Reds,Team,Cincinnati,⭐ NL Central,#E74C3C
+⚾ Milwaukee Brewers,Team,Milwaukee,⭐ NL Central,#E74C3C
+⚾ Pittsburgh Pirates,Team,Pittsburgh,⭐ NL Central,#E74C3C
+⚾ St. Louis Cardinals,Team,St. Louis,⭐ NL Central,#E74C3C
+⚾ Arizona Diamondbacks,Team,Phoenix,⭐ NL West,#3498DB
+⚾ Colorado Rockies,Team,Denver,⭐ NL West,#3498DB
+⚾ Los Angeles Dodgers,Team,Los Angeles,⭐ NL West,#3498DB
+⚾ San Diego Padres,Team,San Diego,⭐ NL West,#3498DB
+⚾ San Francisco Giants,Team,San Francisco,⭐ NL West,#3498DB
+🏈 Buffalo Bills,Team,Buffalo,⭐ AFC East,#E74C3C
+🏈 Miami Dolphins,Team,Miami,⭐ AFC East,#E74C3C
+🏈 New England Patriots,Team,Foxborough,⭐ AFC East,#E74C3C
+🏈 New York Jets,Team,East Rutherford,⭐ AFC East,#E74C3C
+🏈 Baltimore Ravens,Team,Baltimore,⭐ AFC North,#E67E22
+🏈 Cincinnati Bengals,Team,Cincinnati,⭐ AFC North,#E67E22
+🏈 Cleveland Browns,Team,Cleveland,⭐ AFC North,#E67E22
+🏈 Pittsburgh Steelers,Team,Pittsburgh,⭐ AFC North,#E67E22
+🏈 Houston Texans,Team,Houston,⭐ AFC South,#27AE60
+🏈 Indianapolis Colts,Team,Indianapolis,⭐ AFC South,#27AE60
+🏈 Jacksonville Jaguars,Team,Jacksonville,⭐ AFC South,#27AE60
+🏈 Tennessee Titans,Team,Nashville,⭐ AFC South,#27AE60
+🏈 Denver Broncos,Team,Denver,⭐ AFC West,#8E44AD
+🏈 Kansas City Chiefs,Team,Kansas City,⭐ AFC West,#8E44AD
+🏈 Las Vegas Raiders,Team,Las Vegas,⭐ AFC West,#8E44AD
+🏈 Los Angeles Chargers,Team,Los Angeles,⭐ AFC West,#8E44AD
+🏈 Dallas Cowboys,Team,Arlington,⭐ NFC East,#3498DB
+🏈 New York Giants,Team,East Rutherford,⭐ NFC East,#3498DB
+🏈 Philadelphia Eagles,Team,Philadelphia,⭐ NFC East,#3498DB
+🏈 Washington Commanders,Team,Washington DC,⭐ NFC East,#3498DB
+🏈 Chicago Bears,Team,Chicago,⭐ NFC North,#E74C3C
+🏈 Detroit Lions,Team,Detroit,⭐ NFC North,#E74C3C
+🏈 Green Bay Packers,Team,Green Bay,⭐ NFC North,#E74C3C
+🏈 Minnesota Vikings,Team,Minneapolis,⭐ NFC North,#E74C3C
+🏈 Atlanta Falcons,Team,Atlanta,⭐ NFC South,#E67E22
+🏈 Carolina Panthers,Team,Charlotte,⭐ NFC South,#E67E22
+🏈 New Orleans Saints,Team,New Orleans,⭐ NFC South,#E67E22
+🏈 Tampa Bay Buccaneers,Team,Tampa Bay,⭐ NFC South,#E67E22
+🏈 Arizona Cardinals,Team,Glendale,⭐ NFC West,#27AE60
+🏈 Los Angeles Rams,Team,Los Angeles,⭐ NFC West,#27AE60
+🏈 San Francisco 49ers,Team,San Francisco,⭐ NFC West,#27AE60
+🏈 Seattle Seahawks,Team,Seattle,⭐ NFC West,#27AE60
+🏀 Boston Celtics,Team,Boston,⭐ NBA Atlantic,#E74C3C
+🏀 Brooklyn Nets,Team,Brooklyn,⭐ NBA Atlantic,#E74C3C
+🏀 New York Knicks,Team,New York,⭐ NBA Atlantic,#E74C3C
+🏀 Philadelphia 76ers,Team,Philadelphia,⭐ NBA Atlantic,#E74C3C
+🏀 Toronto Raptors,Team,Toronto,⭐ NBA Atlantic,#E74C3C
+🏀 Chicago Bulls,Team,Chicago,⭐ NBA Central,#3498DB
+🏀 Cleveland Cavaliers,Team,Cleveland,⭐ NBA Central,#3498DB
+🏀 Detroit Pistons,Team,Detroit,⭐ NBA Central,#3498DB
+🏀 Indiana Pacers,Team,Indianapolis,⭐ NBA Central,#3498DB
+🏀 Milwaukee Bucks,Team,Milwaukee,⭐ NBA Central,#3498DB
+🏀 Atlanta Hawks,Team,Atlanta,⭐ NBA Southeast,#27AE60
+🏀 Charlotte Hornets,Team,Charlotte,⭐ NBA Southeast,#27AE60
+🏀 Miami Heat,Team,Miami,⭐ NBA Southeast,#27AE60
+🏀 Orlando Magic,Team,Orlando,⭐ NBA Southeast,#27AE60
+🏀 Washington Wizards,Team,Washington DC,⭐ NBA Southeast,#27AE60
+🏀 Denver Nuggets,Team,Denver,⭐ NBA Northwest,#E67E22
+🏀 Minnesota Timberwolves,Team,Minneapolis,⭐ NBA Northwest,#E67E22
+🏀 Oklahoma City Thunder,Team,Oklahoma City,⭐ NBA Northwest,#E67E22
+🏀 Portland Trail Blazers,Team,Portland,⭐ NBA Northwest,#E67E22
+🏀 Utah Jazz,Team,Salt Lake City,⭐ NBA Northwest,#E67E22
+🏀 Golden State Warriors,Team,San Francisco,⭐ NBA Pacific,#8E44AD
+🏀 Los Angeles Clippers,Team,Los Angeles,⭐ NBA Pacific,#8E44AD
+🏀 Los Angeles Lakers,Team,Los Angeles,⭐ NBA Pacific,#8E44AD
+🏀 Phoenix Suns,Team,Phoenix,⭐ NBA Pacific,#8E44AD
+🏀 Sacramento Kings,Team,Sacramento,⭐ NBA Pacific,#8E44AD
+🏀 Dallas Mavericks,Team,Dallas,⭐ NBA Southwest,#E74C3C
+🏀 Houston Rockets,Team,Houston,⭐ NBA Southwest,#E74C3C
+🏀 Memphis Grizzlies,Team,Memphis,⭐ NBA Southwest,#E74C3C
+🏀 New Orleans Pelicans,Team,New Orleans,⭐ NBA Southwest,#E74C3C
+🏀 San Antonio Spurs,Team,San Antonio,⭐ NBA Southwest,#E74C3C
+🏒 Boston Bruins,Team,Boston,⭐ NHL Atlantic,#3498DB
+🏒 Buffalo Sabres,Team,Buffalo,⭐ NHL Atlantic,#3498DB
+🏒 Detroit Red Wings,Team,Detroit,⭐ NHL Atlantic,#3498DB
+🏒 Florida Panthers,Team,Sunrise,⭐ NHL Atlantic,#3498DB
+🏒 Montreal Canadiens,Team,Montreal,⭐ NHL Atlantic,#3498DB
+🏒 Ottawa Senators,Team,Ottawa,⭐ NHL Atlantic,#3498DB
+🏒 Tampa Bay Lightning,Team,Tampa Bay,⭐ NHL Atlantic,#3498DB
+🏒 Toronto Maple Leafs,Team,Toronto,⭐ NHL Atlantic,#3498DB
+🏒 Carolina Hurricanes,Team,Raleigh,⭐ NHL Metropolitan,#E67E22
+🏒 Columbus Blue Jackets,Team,Columbus,⭐ NHL Metropolitan,#E67E22
+🏒 New Jersey Devils,Team,Newark,⭐ NHL Metropolitan,#E67E22
+🏒 New York Islanders,Team,Elmont,⭐ NHL Metropolitan,#E67E22
+🏒 New York Rangers,Team,New York,⭐ NHL Metropolitan,#E67E22
+🏒 Philadelphia Flyers,Team,Philadelphia,⭐ NHL Metropolitan,#E67E22
+🏒 Pittsburgh Penguins,Team,Pittsburgh,⭐ NHL Metropolitan,#E67E22
+🏒 Washington Capitals,Team,Washington DC,⭐ NHL Metropolitan,#E67E22
+🏒 Chicago Blackhawks,Team,Chicago,⭐ NHL Central,#E74C3C
+🏒 Colorado Avalanche,Team,Denver,⭐ NHL Central,#E74C3C
+🏒 Dallas Stars,Team,Dallas,⭐ NHL Central,#E74C3C
+🏒 Minnesota Wild,Team,Saint Paul,⭐ NHL Central,#E74C3C
+🏒 Nashville Predators,Team,Nashville,⭐ NHL Central,#E74C3C
+🏒 St. Louis Blues,Team,St. Louis,⭐ NHL Central,#E74C3C
+🏒 Winnipeg Jets,Team,Winnipeg,⭐ NHL Central,#E74C3C
+🏒 Anaheim Ducks,Team,Anaheim,⭐ NHL Pacific,#27AE60
+🏒 Calgary Flames,Team,Calgary,⭐ NHL Pacific,#27AE60
+🏒 Edmonton Oilers,Team,Edmonton,⭐ NHL Pacific,#27AE60
+🏒 Los Angeles Kings,Team,Los Angeles,⭐ NHL Pacific,#27AE60
+🏒 San Jose Sharks,Team,San Jose,⭐ NHL Pacific,#27AE60
+🏒 Seattle Kraken,Team,Seattle,⭐ NHL Pacific,#27AE60
+🏒 Vancouver Canucks,Team,Vancouver,⭐ NHL Pacific,#27AE60
+🏒 Vegas Golden Knights,Team,Las Vegas,⭐ NHL Pacific,#27AE60

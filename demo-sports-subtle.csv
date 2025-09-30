@@ -1,0 +1,161 @@
+Name,Title,Location,Reports To,Color
+🏆 Major League Sports,Sports Authority,United States,,#F8F9FA
+⚾ MLB,Major League Baseball,New York,🏆 Major League Sports,#FFF5F5
+🏈 NFL,National Football League,New York,🏆 Major League Sports,#F0F8FF
+🏀 NBA,National Basketball Association,New York,🏆 Major League Sports,#FFFAF0
+🏒 NHL,National Hockey League,New York,🏆 Major League Sports,#F0FFF0
+🏆 American League,Conference,New York,⚾ MLB,#FFEAEA
+🏆 National League,Conference,New York,⚾ MLB,#F5F0FF
+🏆 AFC,Conference,New York,🏈 NFL,#E6F3FF
+🏆 NFC,Conference,New York,🏈 NFL,#E6FFFA
+🏆 NBA Eastern Conference,Conference,New York,🏀 NBA,#FFF8E6
+🏆 NBA Western Conference,Conference,New York,🏀 NBA,#FFF0E6
+🏆 NHL Eastern Conference,Conference,New York,🏒 NHL,#E6FFED
+🏆 NHL Western Conference,Conference,New York,🏒 NHL,#EDFFF0
+⭐ AL East,Division,New York,🏆 American League,#FFF2F2
+⭐ AL Central,Division,Chicago,🏆 American League,#F2F8FF
+⭐ AL West,Division,Los Angeles,🏆 American League,#FFFBF2
+⭐ NL East,Division,New York,🏆 National League,#F2FFF5
+⭐ NL Central,Division,Chicago,🏆 National League,#FFF2F2
+⭐ NL West,Division,Los Angeles,🏆 National League,#F2F8FF
+⭐ AFC East,Division,New York,🏆 AFC,#FFF2F2
+⭐ AFC North,Division,Pittsburgh,🏆 AFC,#FFFBF2
+⭐ AFC South,Division,Indianapolis,🏆 AFC,#F2FFF5
+⭐ AFC West,Division,Denver,🏆 AFC,#F8F2FF
+⭐ NFC East,Division,Dallas,🏆 NFC,#F2F8FF
+⭐ NFC North,Division,Chicago,🏆 NFC,#FFF2F2
+⭐ NFC South,Division,Atlanta,🏆 NFC,#FFFBF2
+⭐ NFC West,Division,San Francisco,🏆 NFC,#F2FFF5
+⭐ NBA Atlantic,Division,Boston,🏆 NBA Eastern Conference,#FFF2F2
+⭐ NBA Central,Division,Chicago,🏆 NBA Eastern Conference,#F2F8FF
+⭐ NBA Southeast,Division,Miami,🏆 NBA Eastern Conference,#F2FFF5
+⭐ NBA Northwest,Division,Portland,🏆 NBA Western Conference,#FFFBF2
+⭐ NBA Pacific,Division,Los Angeles,🏆 NBA Western Conference,#F8F2FF
+⭐ NBA Southwest,Division,San Antonio,🏆 NBA Western Conference,#FFF2F2
+⭐ NHL Atlantic,Division,New York,🏆 NHL Eastern Conference,#F2F8FF
+⭐ NHL Metropolitan,Division,New York,🏆 NHL Eastern Conference,#FFFBF2
+⭐ NHL Central,Division,Chicago,🏆 NHL Western Conference,#FFF2F2
+⭐ NHL Pacific,Division,Los Angeles,🏆 NHL Western Conference,#F2FFF5
+⚾ New York Yankees,Team,New York,⭐ AL East,#FFF2F2
+⚾ Boston Red Sox,Team,Boston,⭐ AL East,#FFF2F2
+⚾ Tampa Bay Rays,Team,Tampa Bay,⭐ AL East,#FFF2F2
+⚾ Toronto Blue Jays,Team,Toronto,⭐ AL East,#FFF2F2
+⚾ Baltimore Orioles,Team,Baltimore,⭐ AL East,#FFF2F2
+⚾ Chicago White Sox,Team,Chicago,⭐ AL Central,#F2F8FF
+⚾ Cleveland Guardians,Team,Cleveland,⭐ AL Central,#F2F8FF
+⚾ Detroit Tigers,Team,Detroit,⭐ AL Central,#F2F8FF
+⚾ Kansas City Royals,Team,Kansas City,⭐ AL Central,#F2F8FF
+⚾ Minnesota Twins,Team,Minneapolis,⭐ AL Central,#F2F8FF
+⚾ Houston Astros,Team,Houston,⭐ AL West,#FFFBF2
+⚾ Los Angeles Angels,Team,Anaheim,⭐ AL West,#FFFBF2
+⚾ Oakland Athletics,Team,Oakland,⭐ AL West,#FFFBF2
+⚾ Seattle Mariners,Team,Seattle,⭐ AL West,#FFFBF2
+⚾ Texas Rangers,Team,Arlington,⭐ AL West,#FFFBF2
+⚾ Atlanta Braves,Team,Atlanta,⭐ NL East,#F2FFF5
+⚾ Miami Marlins,Team,Miami,⭐ NL East,#F2FFF5
+⚾ New York Mets,Team,New York,⭐ NL East,#F2FFF5
+⚾ Philadelphia Phillies,Team,Philadelphia,⭐ NL East,#F2FFF5
+⚾ Washington Nationals,Team,Washington DC,⭐ NL East,#F2FFF5
+⚾ Chicago Cubs,Team,Chicago,⭐ NL Central,#FFF2F2
+⚾ Cincinnati Reds,Team,Cincinnati,⭐ NL Central,#FFF2F2
+⚾ Milwaukee Brewers,Team,Milwaukee,⭐ NL Central,#FFF2F2
+⚾ Pittsburgh Pirates,Team,Pittsburgh,⭐ NL Central,#FFF2F2
+⚾ St. Louis Cardinals,Team,St. Louis,⭐ NL Central,#FFF2F2
+⚾ Arizona Diamondbacks,Team,Phoenix,⭐ NL West,#F2F8FF
+⚾ Colorado Rockies,Team,Denver,⭐ NL West,#F2F8FF
+⚾ Los Angeles Dodgers,Team,Los Angeles,⭐ NL West,#F2F8FF
+⚾ San Diego Padres,Team,San Diego,⭐ NL West,#F2F8FF
+⚾ San Francisco Giants,Team,San Francisco,⭐ NL West,#F2F8FF
+🏈 Buffalo Bills,Team,Buffalo,⭐ AFC East,#FFF2F2
+🏈 Miami Dolphins,Team,Miami,⭐ AFC East,#FFF2F2
+🏈 New England Patriots,Team,Foxborough,⭐ AFC East,#FFF2F2
+🏈 New York Jets,Team,East Rutherford,⭐ AFC East,#FFF2F2
+🏈 Baltimore Ravens,Team,Baltimore,⭐ AFC North,#FFFBF2
+🏈 Cincinnati Bengals,Team,Cincinnati,⭐ AFC North,#FFFBF2
+🏈 Cleveland Browns,Team,Cleveland,⭐ AFC North,#FFFBF2
+🏈 Pittsburgh Steelers,Team,Pittsburgh,⭐ AFC North,#FFFBF2
+🏈 Houston Texans,Team,Houston,⭐ AFC South,#F2FFF5
+🏈 Indianapolis Colts,Team,Indianapolis,⭐ AFC South,#F2FFF5
+🏈 Jacksonville Jaguars,Team,Jacksonville,⭐ AFC South,#F2FFF5
+🏈 Tennessee Titans,Team,Nashville,⭐ AFC South,#F2FFF5
+🏈 Denver Broncos,Team,Denver,⭐ AFC West,#F8F2FF
+🏈 Kansas City Chiefs,Team,Kansas City,⭐ AFC West,#F8F2FF
+🏈 Las Vegas Raiders,Team,Las Vegas,⭐ AFC West,#F8F2FF
+🏈 Los Angeles Chargers,Team,Los Angeles,⭐ AFC West,#F8F2FF
+🏈 Dallas Cowboys,Team,Arlington,⭐ NFC East,#F2F8FF
+🏈 New York Giants,Team,East Rutherford,⭐ NFC East,#F2F8FF
+🏈 Philadelphia Eagles,Team,Philadelphia,⭐ NFC East,#F2F8FF
+🏈 Washington Commanders,Team,Washington DC,⭐ NFC East,#F2F8FF
+🏈 Chicago Bears,Team,Chicago,⭐ NFC North,#FFF2F2
+🏈 Detroit Lions,Team,Detroit,⭐ NFC North,#FFF2F2
+🏈 Green Bay Packers,Team,Green Bay,⭐ NFC North,#FFF2F2
+🏈 Minnesota Vikings,Team,Minneapolis,⭐ NFC North,#FFF2F2
+🏈 Atlanta Falcons,Team,Atlanta,⭐ NFC South,#FFFBF2
+🏈 Carolina Panthers,Team,Charlotte,⭐ NFC South,#FFFBF2
+🏈 New Orleans Saints,Team,New Orleans,⭐ NFC South,#FFFBF2
+🏈 Tampa Bay Buccaneers,Team,Tampa Bay,⭐ NFC South,#FFFBF2
+🏈 Arizona Cardinals,Team,Glendale,⭐ NFC West,#F2FFF5
+🏈 Los Angeles Rams,Team,Los Angeles,⭐ NFC West,#F2FFF5
+🏈 San Francisco 49ers,Team,San Francisco,⭐ NFC West,#F2FFF5
+🏈 Seattle Seahawks,Team,Seattle,⭐ NFC West,#F2FFF5
+🏀 Boston Celtics,Team,Boston,⭐ NBA Atlantic,#FFF2F2
+🏀 Brooklyn Nets,Team,Brooklyn,⭐ NBA Atlantic,#FFF2F2
+🏀 New York Knicks,Team,New York,⭐ NBA Atlantic,#FFF2F2
+🏀 Philadelphia 76ers,Team,Philadelphia,⭐ NBA Atlantic,#FFF2F2
+🏀 Toronto Raptors,Team,Toronto,⭐ NBA Atlantic,#FFF2F2
+🏀 Chicago Bulls,Team,Chicago,⭐ NBA Central,#F2F8FF
+🏀 Cleveland Cavaliers,Team,Cleveland,⭐ NBA Central,#F2F8FF
+🏀 Detroit Pistons,Team,Detroit,⭐ NBA Central,#F2F8FF
+🏀 Indiana Pacers,Team,Indianapolis,⭐ NBA Central,#F2F8FF
+🏀 Milwaukee Bucks,Team,Milwaukee,⭐ NBA Central,#F2F8FF
+🏀 Atlanta Hawks,Team,Atlanta,⭐ NBA Southeast,#F2FFF5
+🏀 Charlotte Hornets,Team,Charlotte,⭐ NBA Southeast,#F2FFF5
+🏀 Miami Heat,Team,Miami,⭐ NBA Southeast,#F2FFF5
+🏀 Orlando Magic,Team,Orlando,⭐ NBA Southeast,#F2FFF5
+🏀 Washington Wizards,Team,Washington DC,⭐ NBA Southeast,#F2FFF5
+🏀 Denver Nuggets,Team,Denver,⭐ NBA Northwest,#FFFBF2
+🏀 Minnesota Timberwolves,Team,Minneapolis,⭐ NBA Northwest,#FFFBF2
+🏀 Oklahoma City Thunder,Team,Oklahoma City,⭐ NBA Northwest,#FFFBF2
+🏀 Portland Trail Blazers,Team,Portland,⭐ NBA Northwest,#FFFBF2
+🏀 Utah Jazz,Team,Salt Lake City,⭐ NBA Northwest,#FFFBF2
+🏀 Golden State Warriors,Team,San Francisco,⭐ NBA Pacific,#F8F2FF
+🏀 Los Angeles Clippers,Team,Los Angeles,⭐ NBA Pacific,#F8F2FF
+🏀 Los Angeles Lakers,Team,Los Angeles,⭐ NBA Pacific,#F8F2FF
+🏀 Phoenix Suns,Team,Phoenix,⭐ NBA Pacific,#F8F2FF
+🏀 Sacramento Kings,Team,Sacramento,⭐ NBA Pacific,#F8F2FF
+🏀 Dallas Mavericks,Team,Dallas,⭐ NBA Southwest,#FFF2F2
+🏀 Houston Rockets,Team,Houston,⭐ NBA Southwest,#FFF2F2
+🏀 Memphis Grizzlies,Team,Memphis,⭐ NBA Southwest,#FFF2F2
+🏀 New Orleans Pelicans,Team,New Orleans,⭐ NBA Southwest,#FFF2F2
+🏀 San Antonio Spurs,Team,San Antonio,⭐ NBA Southwest,#FFF2F2
+🏒 Boston Bruins,Team,Boston,⭐ NHL Atlantic,#F2F8FF
+🏒 Buffalo Sabres,Team,Buffalo,⭐ NHL Atlantic,#F2F8FF
+🏒 Detroit Red Wings,Team,Detroit,⭐ NHL Atlantic,#F2F8FF
+🏒 Florida Panthers,Team,Sunrise,⭐ NHL Atlantic,#F2F8FF
+🏒 Montreal Canadiens,Team,Montreal,⭐ NHL Atlantic,#F2F8FF
+🏒 Ottawa Senators,Team,Ottawa,⭐ NHL Atlantic,#F2F8FF
+🏒 Tampa Bay Lightning,Team,Tampa Bay,⭐ NHL Atlantic,#F2F8FF
+🏒 Toronto Maple Leafs,Team,Toronto,⭐ NHL Atlantic,#F2F8FF
+🏒 Carolina Hurricanes,Team,Raleigh,⭐ NHL Metropolitan,#FFFBF2
+🏒 Columbus Blue Jackets,Team,Columbus,⭐ NHL Metropolitan,#FFFBF2
+🏒 New Jersey Devils,Team,Newark,⭐ NHL Metropolitan,#FFFBF2
+🏒 New York Islanders,Team,Elmont,⭐ NHL Metropolitan,#FFFBF2
+🏒 New York Rangers,Team,New York,⭐ NHL Metropolitan,#FFFBF2
+🏒 Philadelphia Flyers,Team,Philadelphia,⭐ NHL Metropolitan,#FFFBF2
+🏒 Pittsburgh Penguins,Team,Pittsburgh,⭐ NHL Metropolitan,#FFFBF2
+🏒 Washington Capitals,Team,Washington DC,⭐ NHL Metropolitan,#FFFBF2
+🏒 Chicago Blackhawks,Team,Chicago,⭐ NHL Central,#FFF2F2
+🏒 Colorado Avalanche,Team,Denver,⭐ NHL Central,#FFF2F2
+🏒 Dallas Stars,Team,Dallas,⭐ NHL Central,#FFF2F2
+🏒 Minnesota Wild,Team,Saint Paul,⭐ NHL Central,#FFF2F2
+🏒 Nashville Predators,Team,Nashville,⭐ NHL Central,#FFF2F2
+🏒 St. Louis Blues,Team,St. Louis,⭐ NHL Central,#FFF2F2
+🏒 Winnipeg Jets,Team,Winnipeg,⭐ NHL Central,#FFF2F2
+🏒 Anaheim Ducks,Team,Anaheim,⭐ NHL Pacific,#F2FFF5
+🏒 Calgary Flames,Team,Calgary,⭐ NHL Pacific,#F2FFF5
+🏒 Edmonton Oilers,Team,Edmonton,⭐ NHL Pacific,#F2FFF5
+🏒 Los Angeles Kings,Team,Los Angeles,⭐ NHL Pacific,#F2FFF5
+🏒 San Jose Sharks,Team,San Jose,⭐ NHL Pacific,#F2FFF5
+🏒 Seattle Kraken,Team,Seattle,⭐ NHL Pacific,#F2FFF5
+🏒 Vancouver Canucks,Team,Vancouver,⭐ NHL Pacific,#F2FFF5
+🏒 Vegas Golden Knights,Team,Las Vegas,⭐ NHL Pacific,#F2FFF5
