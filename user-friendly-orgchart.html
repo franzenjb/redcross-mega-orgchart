@@ -921,15 +921,14 @@
             chart = new d3.OrgChart()
                 .container('#chart-container')
                 .data([])
+                .svgWidth(window.innerWidth)
+                .svgHeight(window.innerHeight - 180)
                 .nodeWidth((d) => 250)
                 .nodeHeight((d) => 120)
                 .childrenMargin((d) => 40)
                 .compactMarginBetween((d) => 15)
                 .compactMarginPair((d) => 80)
-                .nestedNodeChildrenMargin((d) => 40)
-                .svgHeight(window.innerHeight - 180)
-                .svgWidth(window.innerWidth)
-                .expandLevel(1)
+                .initialZoom(0.7)
                 .onNodeClick((d) => handleNodeClick(d))
                 .nodeContent((d) => {
                     const isExecutive = d.data.title && d.data.title.toLowerCase().includes('vp');
