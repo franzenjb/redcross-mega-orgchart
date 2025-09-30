@@ -907,10 +907,15 @@
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             initializeChart();
-            loadFromLocal();
             setupEventListeners();
             updateUndoRedoButtons();
-            showToast('Welcome! Double-click any name to make corrections.', 'info');
+            
+            // Only show welcome message after data loads
+            setTimeout(() => {
+                if (currentData) {
+                    showToast('Welcome! Double-click any name to make corrections.', 'info');
+                }
+            }, 1000);
         });
         
         function initializeChart() {
@@ -984,11 +989,27 @@
             // Load initial data
             if (typeof orgData !== 'undefined') {
                 currentData = JSON.parse(JSON.stringify(orgData));
+                
+                // Check for saved data in localStorage
+                const savedData = localStorage.getItem('orgChartData');
+                if (savedData) {
+                    try {
+                        currentData = JSON.parse(savedData);
+                        console.log('Using saved data from localStorage');
+                    } catch (e) {
+                        console.log('Using original data');
+                    }
+                }
+                
                 updateChart();
                 setTimeout(() => {
                     document.getElementById('loading').classList.remove('active');
                     fitToScreen();
                 }, 500);
+            } else {
+                console.error('orgData not found! Make sure deep-org-data.js is loaded');
+                document.getElementById('loading').classList.remove('active');
+                showToast('Error: Organization data not found', 'error');
             }
         }
         
@@ -1661,6 +1682,12 @@
         }
         
         function filterByRegion(region) {
+            // Safety check - ensure data is loaded
+            if (!currentData || !chart) {
+                console.log('Data not loaded yet');
+                return;
+            }
+            
             currentRegion = region;
             
             if (region === 'all') {
@@ -1707,6 +1734,11 @@
             
             if (!query || query.length < 2) {
                 resultsDiv.style.display = 'none';
+                return;
+            }
+            
+            if (!currentData) {
+                console.log('Data not loaded yet');
                 return;
             }
             
@@ -1809,19 +1841,8 @@
         }
         
         function loadFromLocal() {
-            const savedData = localStorage.getItem('orgChartData');
-            if (savedData) {
-                try {
-                    currentData = JSON.parse(savedData);
-                    updateChart();
-                    const lastSaved = localStorage.getItem('orgChartLastSaved');
-                    if (lastSaved) {
-                        console.log('Loaded data from', new Date(lastSaved).toLocaleString());
-                    }
-                } catch (e) {
-                    console.error('Error loading saved data:', e);
-                }
-            }
+            // This is now handled in initializeChart
+            // Keeping function for compatibility but it's not needed
         }
         
         // Add dummy contact data to existing nodes
