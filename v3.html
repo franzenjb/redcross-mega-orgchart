@@ -426,12 +426,6 @@
         let chart;
         let currentData = [];
         let currentRegion = 'all';
-        let completeOrgData;
-        
-        // Initialize completeOrgData from global scope if available
-        if (typeof window.completeOrgData !== 'undefined') {
-            completeOrgData = window.completeOrgData;
-        }
         
         // Initialize chart
         function initChart() {
@@ -871,9 +865,8 @@
                 document.head.appendChild(divScript);
             }
             
-            if (typeof window.completeOrgData !== 'undefined') {
-                console.log('Found completeOrgData:', window.completeOrgData);
-                completeOrgData = window.completeOrgData; // Copy from global
+            if (typeof completeOrgData !== 'undefined') {
+                console.log('Found completeOrgData:', completeOrgData);
                 currentRegion = document.getElementById('regionSelect')?.value || 'all';
                 const flatData = convertToFlatData(completeOrgData, null, currentRegion, '');
                 currentData = flatData;
@@ -892,10 +885,7 @@
                 const script = document.createElement('script');
                 script.src = 'complete-org-data.js';
                 script.onload = () => {
-                    console.log('Script loaded, completeOrgData available:', typeof window.completeOrgData !== 'undefined');
-                    if (typeof window.completeOrgData !== 'undefined') {
-                        completeOrgData = window.completeOrgData; // Copy from global
-                    }
+                    console.log('Script loaded, completeOrgData available:', typeof completeOrgData !== 'undefined');
                     setTimeout(loadData, 100);
                 };
                 script.onerror = () => {
@@ -1768,7 +1758,7 @@
         function createEmergencyBackup() {
             // Save the original Red Cross data as emergency backup
             if (typeof completeOrgData !== 'undefined') {
-                const emergencyData = JSON.stringify(completeOrgData);
+                const emergencyData = JSON.stringify(window.completeOrgData || completeOrgData);
                 localStorage.setItem('EMERGENCY_REDCROSS_BACKUP', emergencyData);
                 localStorage.setItem('EMERGENCY_BACKUP_DATE', new Date().toISOString());
                 console.log('🚨 Emergency backup created (only you know about this)');
@@ -1780,7 +1770,7 @@
             const emergencyData = localStorage.getItem('EMERGENCY_REDCROSS_BACKUP');
             if (emergencyData) {
                 try {
-                    completeOrgData = JSON.parse(emergencyData);
+                    window.completeOrgData = JSON.parse(emergencyData);
                     const backupDate = localStorage.getItem('EMERGENCY_BACKUP_DATE');
                     loadData();
                     saveToLocal();
@@ -1916,7 +1906,7 @@
         
         // Save/Load functions
         function saveToLocal() {
-            localStorage.setItem('orgChartData', JSON.stringify(completeOrgData));
+            localStorage.setItem('orgChartData', JSON.stringify(window.completeOrgData || completeOrgData));
             localStorage.setItem('orgChartFlat', JSON.stringify(currentData));
             
             // Show save confirmation
@@ -1931,7 +1921,7 @@
             const saved = localStorage.getItem('orgChartData');
             if (saved) {
                 try {
-                    completeOrgData = JSON.parse(saved);
+                    window.completeOrgData = JSON.parse(saved);
                     console.log('Loaded saved data from local storage');
                 } catch (e) {
                     console.error('Error loading saved data:', e);
@@ -1940,7 +1930,7 @@
         }
         
         function exportData() {
-            const dataStr = JSON.stringify(completeOrgData, null, 2);
+            const dataStr = JSON.stringify(window.completeOrgData || completeOrgData, null, 2);
             const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -1959,7 +1949,7 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     try {
-                        completeOrgData = JSON.parse(e.target.result);
+                        window.completeOrgData = JSON.parse(e.target.result);
                         loadData();
                         saveToLocal();
                         alert('Data imported successfully!');
