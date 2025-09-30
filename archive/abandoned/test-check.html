@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Check</title>
+    <script src="complete-org-data.js"></script>
+    <script src="divisional-leadership.js"></script>
+</head>
+<body>
+    <h1>Testing Data Loading</h1>
+    <div id="output"></div>
+    <script>
+        const output = document.getElementById('output');
+        
+        if (typeof completeOrgData !== 'undefined') {
+            output.innerHTML += '<p style="color: green;">✓ completeOrgData loaded successfully</p>';
+            output.innerHTML += '<p>Division data: ' + (completeOrgData.division ? 'Found' : 'Not found') + '</p>';
+            output.innerHTML += '<p>Regions found: ' + Object.keys(completeOrgData).length + '</p>';
+        } else {
+            output.innerHTML += '<p style="color: red;">✗ completeOrgData NOT loaded</p>';
+        }
+        
+        if (typeof divisionalLeadership !== 'undefined') {
+            output.innerHTML += '<p style="color: green;">✓ divisionalLeadership loaded successfully</p>';
+        } else {
+            output.innerHTML += '<p style="color: red;">✗ divisionalLeadership NOT loaded</p>';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Validate Org Chart</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0/build/d3-org-chart.min.js"></script>
+    <script src="complete-org-data.js"></script>
+    <script src="divisional-leadership.js"></script>
+</head>
+<body>
+    <h1>Validation Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        const results = document.getElementById('results');
+        let errors = [];
+        let successes = [];
+        
+        // Test 1: Data Loading
+        if (typeof completeOrgData !== 'undefined') {
+            successes.push('✓ completeOrgData loaded');
+            if (completeOrgData.division) {
+                successes.push('✓ Division data found');
+                if (completeOrgData.division.name === 'Anna Trefethen') {
+                    successes.push('✓ Anna Trefethen at top');
+                } else {
+                    errors.push('✗ Anna Trefethen not found at top');
+                }
+            } else {
+                errors.push('✗ Division data missing');
+            }
+        } else {
+            errors.push('✗ completeOrgData not loaded');
+        }
+        
+        // Test 2: D3 OrgChart
+        try {
+            const chart = new d3.OrgChart();
+            successes.push('✓ D3 OrgChart loaded');
+        } catch (e) {
+            errors.push('✗ D3 OrgChart not available: ' + e.message);
+        }
+        
+        // Test 3: Build hierarchical data
+        function buildHierarchicalData() {
+            if (completeOrgData && completeOrgData.division) {
+                return JSON.parse(JSON.stringify(completeOrgData.division));
+            }
+            return { name: 'Error', title: 'No data', children: [] };
+        }
+        
+        const testData = buildHierarchicalData();
+        if (testData.name === 'Anna Trefethen') {
+            successes.push('✓ Hierarchical data built correctly');
+        } else {
+            errors.push('✗ Failed to build hierarchical data');
+        }
+        
+        // Display results
+        let html = '<h2>Test Results:</h2>';
+        
+        if (successes.length > 0) {
+            html += '<h3 style="color: green;">Successes:</h3><ul>';
+            successes.forEach(s => html += '<li>' + s + '</li>');
+            html += '</ul>';
+        }
+        
+        if (errors.length > 0) {
+            html += '<h3 style="color: red;">Errors:</h3><ul>';
+            errors.forEach(e => html += '<li>' + e + '</li>');
+            html += '</ul>';
+        }
+        
+        if (errors.length === 0) {
+            html += '<h2 style="color: green;">✅ ALL TESTS PASSED - Ready to deploy!</h2>';
+        } else {
+            html += '<h2 style="color: red;">❌ Some tests failed - needs fixing</h2>';
+        }
+        
+        results.innerHTML = html;
+    </script>
+</body>
+</html>

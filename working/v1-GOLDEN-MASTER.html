@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Red Cross Org Chart - Editable</title>
+    <title>Red Cross Org Chart - Beta (D3)</title>
     <meta charset="utf-8">
     <style>
         * {
@@ -361,7 +361,6 @@
                 <button class="btn" style="background: #0984e3; width: 100%; margin-bottom: 5px;" onclick="exportData()">📤 Export Current Version</button>
                 <button class="btn" style="background: #6c5ce7; width: 100%; margin-bottom: 5px;" onclick="importData()">📥 Import JSON</button>
                 <button class="btn" style="background: #e74c3c; width: 100%; margin-bottom: 5px;" onclick="openSimpleEditor()">✏️ Simple Editor (NEW)</button>
-                <button id="architectBtn" class="btn" style="background: #9b59b6; width: 100%; margin-bottom: 5px;" onclick="toggleArchitectMode()">🔐 Architect Mode</button>
                 <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
                 <button class="btn" style="background: #f39c12; width: 100%; margin-bottom: 5px;" onclick="createBackup()">🔒 Create Backup</button>
                 <button class="btn" style="background: #3498db; width: 100%; margin-bottom: 5px;" onclick="showBackups()">📚 View Backups</button>
@@ -484,15 +483,13 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0/build/d3-org-chart.min.js"></script>
-    <script src="data-files/complete-org-data.js"></script>
-    <script src="data-files/divisional-leadership.js"></script>
+    <script src="complete-org-data.js"></script>
+    <script src="divisional-leadership.js"></script>
     
     <script>
         let chart;
         let currentData = [];
         let currentRegion = 'all';
-        let isArchitectMode = false;
-        const ARCHITECT_PASSWORD = 'redcross';
         
         // Initialize chart
         function initChart() {
@@ -2307,133 +2304,6 @@
                 localStorage.setItem('orgChartBackups', JSON.stringify(backups));
                 showBackups(); // Refresh the list
             }
-        }
-        
-        // Architect Mode Functions
-        function toggleArchitectMode() {
-            if (isArchitectMode) {
-                // Turn off architect mode
-                isArchitectMode = false;
-                document.getElementById('architectBtn').innerHTML = '🔐 Architect Mode';
-                document.getElementById('architectBtn').style.background = '#9b59b6';
-                alert('Architect Mode disabled');
-            } else {
-                // Ask for password
-                const password = prompt('Enter Architect Mode password:');
-                if (password === ARCHITECT_PASSWORD) {
-                    isArchitectMode = true;
-                    document.getElementById('architectBtn').innerHTML = '🔓 Exit Architect Mode';
-                    document.getElementById('architectBtn').style.background = '#e74c3c';
-                    alert('Architect Mode enabled!\n\nYou can now:\n• Right-click any node to add/delete people\n• Hold Shift+Click to delete a node\n• Ctrl+Click to add a child node');
-                } else if (password !== null) {
-                    alert('Incorrect password');
-                }
-            }
-        }
-        
-        // Add right-click context menu for architect mode
-        document.addEventListener('contextmenu', function(e) {
-            if (!isArchitectMode) return;
-            
-            // Check if right-clicked on a node
-            const nodeElement = e.target.closest('.node');
-            if (nodeElement) {
-                e.preventDefault();
-                showNodeContextMenu(e, nodeElement);
-            }
-        });
-        
-        function showNodeContextMenu(event, nodeElement) {
-            // Remove existing menu if any
-            const existingMenu = document.getElementById('nodeContextMenu');
-            if (existingMenu) existingMenu.remove();
-            
-            // Get node data
-            const nodeId = nodeElement.getAttribute('data-node-id');
-            if (!nodeId) return;
-            
-            const node = currentData.find(d => d.id === nodeId);
-            if (!node) return;
-            
-            // Create context menu
-            const menu = document.createElement('div');
-            menu.id = 'nodeContextMenu';
-            menu.style.cssText = `
-                position: fixed;
-                left: ${event.pageX}px;
-                top: ${event.pageY}px;
-                background: white;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                padding: 5px 0;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-                z-index: 10000;
-            `;
-            
-            menu.innerHTML = `
-                <div onclick="addChildNode('${nodeId}')" style="padding: 8px 15px; cursor: pointer; hover: background: #f0f0f0;">
-                    ➕ Add Person Below
-                </div>
-                <div onclick="deleteNode('${nodeId}')" style="padding: 8px 15px; cursor: pointer; hover: background: #f0f0f0;">
-                    ❌ Delete ${node.name}
-                </div>
-            `;
-            
-            document.body.appendChild(menu);
-            
-            // Remove menu on click outside
-            setTimeout(() => {
-                document.addEventListener('click', function removeMenu() {
-                    menu.remove();
-                    document.removeEventListener('click', removeMenu);
-                });
-            }, 100);
-        }
-        
-        function addChildNode(parentId) {
-            const name = prompt('Enter person name:');
-            if (!name) return;
-            
-            const title = prompt('Enter person title:');
-            
-            const newNode = {
-                id: 'node_' + Date.now(),
-                parentId: parentId,
-                name: name,
-                title: title || 'Position',
-                location: ''
-            };
-            
-            currentData.push(newNode);
-            updateChart();
-            saveToLocal();
-            alert('Person added successfully!');
-        }
-        
-        function deleteNode(nodeId) {
-            const node = currentData.find(d => d.id === nodeId);
-            if (!node) return;
-            
-            if (!confirm(`Delete ${node.name} and all their reports?`)) return;
-            
-            // Find all descendants
-            const toDelete = [nodeId];
-            let changed = true;
-            while (changed) {
-                changed = false;
-                currentData.forEach(n => {
-                    if (n.parentId && toDelete.includes(n.parentId) && !toDelete.includes(n.id)) {
-                        toDelete.push(n.id);
-                        changed = true;
-                    }
-                });
-            }
-            
-            // Remove nodes
-            currentData = currentData.filter(n => !toDelete.includes(n.id));
-            updateChart();
-            saveToLocal();
-            alert(`Deleted ${toDelete.length} node(s)`);
         }
     </script>
 </body>
