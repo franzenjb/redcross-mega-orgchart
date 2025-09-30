@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple D3 OrgChart Test</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+        #chart-container { width: 100%; height: 800px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Simple D3 OrgChart Test</h1>
+    <div id="status"></div>
+    <div id="chart-container"></div>
+    
+    <!-- Include D3.js and D3 OrgChart -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0/build/d3-org-chart.min.js"></script>
+    
+    <!-- Include organizational data -->
+    <script src="complete-org-data.js"></script>
+    <script src="divisional-leadership.js"></script>
+    
+    <script>
+        const status = document.getElementById('status');
+        
+        // Step 1: Check if libraries loaded
+        if (typeof d3 !== 'undefined') {
+            status.innerHTML += '<p style="color: green;">✓ D3.js loaded</p>';
+        } else {
+            status.innerHTML += '<p style="color: red;">✗ D3.js NOT loaded</p>';
+        }
+        
+        if (typeof d3.OrgChart !== 'undefined') {
+            status.innerHTML += '<p style="color: green;">✓ D3 OrgChart loaded</p>';
+        } else {
+            status.innerHTML += '<p style="color: red;">✗ D3 OrgChart NOT loaded</p>';
+        }
+        
+        if (typeof completeOrgData !== 'undefined') {
+            status.innerHTML += '<p style="color: green;">✓ Data loaded</p>';
+        } else {
+            status.innerHTML += '<p style="color: red;">✗ Data NOT loaded</p>';
+        }
+        
+        // Step 2: Create simple flat data
+        const testData = [
+            { id: '1', parentId: null, name: 'Anna Trefethen', title: 'Division VP' },
+            { id: '2', parentId: '1', name: 'Ryan Lock', title: 'Division Disaster Executive' },
+            { id: '3', parentId: '1', name: 'D. Dixon', title: 'Division Chief Development Officer' },
+            { id: '4', parentId: '2', name: 'Janice Vannatta', title: 'Chief of Staff' },
+            { id: '5', parentId: '2', name: 'Patricia D\'Alessandro', title: 'AD Operations' },
+            { id: '6', parentId: '3', name: 'W. Carney', title: 'CDO - Florida N/C' },
+            { id: '7', parentId: '3', name: 'Tzaicel Hernandez', title: 'CDO - Florida South' }
+        ];
+        
+        // Step 3: Try to create chart
+        try {
+            const chart = new d3.OrgChart()
+                .container('#chart-container')
+                .data(testData)
+                .svgWidth(1200)
+                .svgHeight(800)
+                .initialZoom(0.7);
+            
+            status.innerHTML += '<p style="color: green;">✓ Chart created successfully</p>';
+            
+            // Step 4: Try to render
+            try {
+                chart.render();
+                status.innerHTML += '<p style="color: green;">✓ Chart rendered successfully</p>';
+                
+                // Check if SVG was created
+                setTimeout(() => {
+                    const svg = document.querySelector('#chart-container svg');
+                    if (svg) {
+                        status.innerHTML += '<p style="color: green;">✓ SVG element created</p>';
+                        const nodes = svg.querySelectorAll('.node');
+                        status.innerHTML += `<p style="color: green;">✓ Found ${nodes.length} nodes in chart</p>`;
+                    } else {
+                        status.innerHTML += '<p style="color: red;">✗ No SVG element found</p>';
+                    }
+                }, 1000);
+            } catch (renderError) {
+                status.innerHTML += `<p style="color: red;">✗ Render failed: ${renderError.message}</p>`;
+                console.error('Render error:', renderError);
+            }
+        } catch (createError) {
+            status.innerHTML += `<p style="color: red;">✗ Chart creation failed: ${createError.message}</p>`;
+            console.error('Creation error:', createError);
+        }
+        
+        // Step 5: Try with real data
+        if (typeof completeOrgData !== 'undefined') {
+            status.innerHTML += '<h3>Testing with Real Data:</h3>';
+            
+            // Simple conversion function
+            function convertToFlat(data) {
+                const result = [];
+                let nodeId = 1;
+                
+                function processNode(node, parentId) {
+                    if (!node) return;
+                    
+                    const id = 'node_' + nodeId++;
+                    result.push({
+                        id: id,
+                        parentId: parentId,
+                        name: node.name || 'Unknown',
+                        title: node.title || '',
+                        location: node.location || ''
+                    });
+                    
+                    if (node.children && Array.isArray(node.children)) {
+                        node.children.forEach(child => processNode(child, id));
+                    }
+                }
+                
+                if (data && data.division) {
+                    processNode(data.division, null);
+                }
+                
+                return result;
+            }
+            
+            const realData = convertToFlat(completeOrgData);
+            status.innerHTML += `<p>Converted ${realData.length} nodes from real data</p>`;
+            
+            // Try to create second chart with real data
+            const chart2Container = document.createElement('div');
+            chart2Container.id = 'chart2';
+            chart2Container.style.width = '100%';
+            chart2Container.style.height = '800px';
+            chart2Container.style.border = '1px solid blue';
+            chart2Container.style.marginTop = '20px';
+            document.body.appendChild(chart2Container);
+            
+            try {
+                const chart2 = new d3.OrgChart()
+                    .container('#chart2')
+                    .data(realData)
+                    .svgWidth(1200)
+                    .svgHeight(800)
+                    .initialZoom(0.5)
+                    .render();
+                
+                status.innerHTML += '<p style="color: green;">✓ Real data chart rendered</p>';
+            } catch (realError) {
+                status.innerHTML += `<p style="color: red;">✗ Real data failed: ${realError.message}</p>`;
+                console.error('Real data error:', realError);
+            }
+        }
+    </script>
+</body>
+</html>

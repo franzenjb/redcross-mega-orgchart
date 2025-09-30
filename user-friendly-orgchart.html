@@ -1053,69 +1053,18 @@
             // Show loading
             document.getElementById('loading').classList.add('active');
             
-            // Initialize the D3 OrgChart
+            // Get container dimensions
+            const container = document.getElementById('chart-container');
+            const containerWidth = container.offsetWidth || window.innerWidth;
+            const containerHeight = container.offsetHeight || window.innerHeight - 180;
+            
+            // Initialize the D3 OrgChart with proper configuration
             chart = new d3.OrgChart()
                 .container('#chart-container')
-                .data([])
-                .svgWidth(window.innerWidth)
-                .svgHeight(window.innerHeight - 180)
-                .nodeWidth((d) => 250)
-                .nodeHeight((d) => 120)
-                .childrenMargin((d) => 40)
-                .compactMarginBetween((d) => 15)
-                .compactMarginPair((d) => 80)
+                .svgWidth(containerWidth)
+                .svgHeight(containerHeight)
                 .initialZoom(0.7)
-                .onNodeClick((d) => handleNodeClick(d))
-                .nodeContent((d) => {
-                    const isExecutive = d.data.title && d.data.title.toLowerCase().includes('vp');
-                    const isChief = d.data.title && (d.data.title.toLowerCase().includes('chief') || 
-                                                      d.data.title.toLowerCase().includes('exec'));
-                    const isDirector = d.data.title && d.data.title.toLowerCase().includes('director');
-                    
-                    let rectClass = 'node-rect';
-                    if (isExecutive) rectClass = 'node-rect-executive';
-                    else if (isChief) rectClass = 'node-rect-chief';
-                    else if (isDirector) rectClass = 'node-rect-director';
-                    
-                    const childCount = d.data._children ? d.data._children.length : 
-                                      (d.data.children ? d.data.children.length : 0);
-                    
-                    let html = `
-                        <div style="width:${d.width}px; height:${d.height}px;">
-                            <rect class="${rectClass}" 
-                                  width="${d.width}" 
-                                  height="${d.height}"
-                                  data-node-id="${d.id}">
-                            </rect>
-                            <foreignObject width="${d.width}" height="${d.height}">
-                                <div style="padding: 10px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                                    <div class="node-name">${d.data.name}</div>
-                                    <div class="node-title">${d.data.title || ''}</div>
-                                    ${d.data.email || d.data.phone ? `
-                                        <div class="node-contact">
-                                            ${d.data.email ? `📧 ${d.data.email}` : ''}
-                                            ${d.data.phone ? `📞 ${d.data.phone}` : ''}
-                                        </div>
-                                    ` : ''}
-                    `;
-                    
-                    if (childCount > 0 && d._collapsed) {
-                        html += `<div style="position: absolute; top: 5px; right: 5px; 
-                                       background: #ed1b2e; color: white; 
-                                       border-radius: 10px; padding: 2px 8px; 
-                                       font-size: 11px; font-weight: bold;">
-                                    ${childCount}
-                                </div>`;
-                    }
-                    
-                    html += `
-                                </div>
-                            </foreignObject>
-                        </div>
-                    `;
-                    
-                    return html;
-                });
+                .onNodeClick((d) => handleNodeClick(d));
             
             // Load initial data - convert to flat format for d3-org-chart
             if (typeof completeOrgData !== 'undefined') {
@@ -1815,8 +1764,19 @@
         function updateChart() {
             if (chart && currentData && currentData.length > 0) {
                 console.log('Updating chart with', currentData.length, 'nodes');
-                chart.data(currentData).render();
-                chart.fit();
+                const container = document.getElementById('chart-container');
+                chart
+                    .data(currentData)
+                    .svgWidth(container.offsetWidth)
+                    .svgHeight(container.offsetHeight)
+                    .render();
+                
+                // Call fit separately as it may not chain
+                setTimeout(() => {
+                    if (chart && chart.fit) {
+                        chart.fit();
+                    }
+                }, 100);
             } else {
                 console.error('Cannot update chart:', {
                     hasChart: !!chart,
