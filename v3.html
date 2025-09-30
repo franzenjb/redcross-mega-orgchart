@@ -455,23 +455,33 @@
                 .compactMarginPair((d) => 80)
                 .initialZoom(0.6)
                 .nodeContent((d, i, arr, state) => {
-                    const nodeClass = getNodeClass(d.data);
-                    const regionColor = getRegionColor(d.data);
-                    let bgColor = regionColor.bg;
-                    let textColor = regionColor.text;
-                    let borderColor = regionColor.border;
-                    let borderWidth = '2px';
+                    // Use CSV color if available, otherwise fallback to region colors
+                    let bgColor, textColor, borderColor, borderWidth = '2px';
                     
-                    // Special cases for division leadership
-                    if (nodeClass === 'division-vp') {
-                        bgColor = 'linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)';
+                    if (d.data.color && d.data.color.trim() !== '') {
+                        // Use CSV color
+                        bgColor = d.data.color;
                         textColor = 'black';
-                        borderColor = '#ffa000';
-                        borderWidth = '3px';
-                    } else if (d.data.name === "Division Executive Staff") {
-                        bgColor = 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)';
-                        textColor = 'black';
-                        borderColor = '#1976d2';
+                        borderColor = '#ddd';
+                    } else {
+                        // Fallback to old system
+                        const nodeClass = getNodeClass(d.data);
+                        const regionColor = getRegionColor(d.data);
+                        bgColor = regionColor.bg;
+                        textColor = regionColor.text;
+                        borderColor = regionColor.border;
+                        
+                        // Special cases for division leadership
+                        if (nodeClass === 'division-vp') {
+                            bgColor = 'linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)';
+                            textColor = 'black';
+                            borderColor = '#ffa000';
+                            borderWidth = '3px';
+                        } else if (d.data.name === "Division Executive Staff") {
+                            bgColor = 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)';
+                            textColor = 'black';
+                            borderColor = '#1976d2';
+                        }
                     }
                     
                     // For executives, make them slightly different
