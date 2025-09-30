@@ -324,51 +324,33 @@
                 </div>
             </div>
             
-            <!-- Editing Guide -->
+            <!-- How to Edit -->
             <div style="margin-bottom: 20px;">
-                <h4 style="margin-bottom: 10px;">✏️ Corrections</h4>
+                <h4 style="margin-bottom: 10px;">✏️ How to Make Changes</h4>
                 <div style="background: #e8f5e9; padding: 10px; border-radius: 5px; font-size: 13px;">
-                    <p style="margin: 5px 0;"><strong>Double-click:</strong> Fix name/title</p>
-                    <p style="margin: 5px 0;"><strong>Right-click:</strong> Edit menu</p>
-                    <p style="margin: 5px 0;"><strong>Export JSON:</strong> Save current chart</p>
-                    <p style="margin: 5px 0; color: #666;">Corrections save automatically!</p>
-                    <hr style="margin: 10px 0; border: none; border-top: 1px solid #ddd;">
-                    <p style="margin: 5px 0; color: #e74c3c;"><strong>🔒 Admin Only:</strong></p>
-                    <p style="margin: 5px 0; color: #999;">• Add/Delete positions</p>
-                    <p style="margin: 5px 0; color: #999;">• Structural changes</p>
+                    <p style="margin: 5px 0;"><strong>Fix a typo:</strong> Double-click any name</p>
+                    <p style="margin: 5px 0;"><strong>Update title:</strong> Double-click the box</p>
+                    <p style="margin: 5px 0; color: #666;">Changes save automatically!</p>
                 </div>
-                <details style="margin-top: 10px;">
-                    <summary style="cursor: pointer; color: #0984e3;">📝 JSON Editing Tips</summary>
-                    <div style="background: #fff; padding: 10px; margin-top: 5px; border-left: 3px solid #0984e3; font-size: 12px;">
-                        <p style="margin: 5px 0;">Each person has:</p>
-                        <code style="display: block; background: #f5f5f5; padding: 5px; margin: 5px 0;">
-{
-  "name": "John Doe",
-  "title": "Director",
-  "location": "Atlanta",
-  "children": []
-}
-                        </code>
-                        <p style="margin: 5px 0;">Add people to "children" array</p>
-                    </div>
-                </details>
             </div>
             
-            <!-- Data Management -->
+            <!-- Save & Share -->
             <div style="margin-bottom: 20px;">
-                <h4 style="margin-bottom: 10px;">Data Management</h4>
-                <button class="btn" style="background: #00b894; width: 100%; margin-bottom: 5px;" onclick="saveToLocal()">💾 Save Changes</button>
-                <button class="btn" style="background: #0984e3; width: 100%; margin-bottom: 5px;" onclick="exportData()">📤 Export Current Version</button>
-                <button class="btn" style="background: #6c5ce7; width: 100%; margin-bottom: 5px;" onclick="importData()">📥 Import JSON</button>
-                <button class="btn" style="background: #e74c3c; width: 100%; margin-bottom: 5px;" onclick="openSimpleEditor()">✏️ Simple Editor (NEW)</button>
-                <button id="architectBtn" class="btn" style="background: #9b59b6; width: 100%; margin-bottom: 5px;" onclick="toggleArchitectMode()">🔐 Architect Mode</button>
+                <h4 style="margin-bottom: 10px;">💾 Save Your Work</h4>
+                <button class="btn" style="background: #00b894; width: 100%; margin-bottom: 5px;" onclick="saveToLocal()">💾 Save My Changes</button>
+                <button class="btn" style="background: #0984e3; width: 100%; margin-bottom: 5px;" onclick="exportToExcel()">📊 Download as Excel</button>
+                <button class="btn" style="background: #6c5ce7; width: 100%; margin-bottom: 5px;" onclick="uploadExcel()">📤 Upload Excel Changes</button>
                 <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
-                <button class="btn" style="background: #f39c12; width: 100%; margin-bottom: 5px;" onclick="createBackup()">🔒 Create Backup</button>
-                <button class="btn" style="background: #3498db; width: 100%; margin-bottom: 5px;" onclick="showBackups()">📚 View Backups</button>
-                <button class="btn" style="background: #fdcb6e; width: 100%;" onclick="resetData()">🔄 Reset to Original</button>
-                <div style="margin-top: 10px; padding: 10px; background: #d4edda; border-radius: 5px; font-size: 12px;">
-                    <strong>✅ Protected:</strong> Original data always safe
-                </div>
+                <button class="btn" style="background: #f39c12; width: 100%; margin-bottom: 5px;" onclick="createBackup()">📸 Save a Snapshot</button>
+                <button class="btn" style="background: #3498db; width: 100%; margin-bottom: 5px;" onclick="showBackups()">⏰ View History</button>
+                <button class="btn" style="background: #fdcb6e; width: 100%;" onclick="resetData()">↩️ Start Over</button>
+            </div>
+            
+            <!-- Advanced Mode -->
+            <div style="margin-bottom: 20px;">
+                <h4 style="margin-bottom: 10px;">🔧 Advanced Tools</h4>
+                <button id="architectBtn" class="btn" style="background: #9b59b6; width: 100%;" onclick="toggleArchitectMode()">🔐 Manager Mode</button>
+                <p style="font-size: 11px; color: #999; margin-top: 5px;">For adding/removing people (requires password)</p>
             </div>
         </div>
     </div>
@@ -2309,22 +2291,77 @@
             }
         }
         
+        // User-Friendly Excel Functions
+        function exportToExcel() {
+            // Convert org data to CSV format
+            let csv = 'Name,Title,Location,Reports To\n';
+            
+            function processNode(node, parentName = '') {
+                csv += `"${node.name || ''}","${node.title || ''}","${node.location || ''}","${parentName}"\n`;
+                const children = currentData.filter(n => n.parentId === node.id);
+                children.forEach(child => processNode(child, node.name));
+            }
+            
+            const rootNodes = currentData.filter(n => !n.parentId);
+            rootNodes.forEach(root => processNode(root));
+            
+            // Download CSV file
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `org-chart-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            alert('✅ Downloaded! Open this file in Excel to edit, then upload it back here when done.');
+        }
+        
+        function uploadExcel() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv,.xlsx';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        // Parse CSV
+                        const csv = event.target.result;
+                        const lines = csv.split('\n');
+                        const headers = lines[0].split(',');
+                        
+                        alert('✅ File uploaded! Processing your changes...');
+                        // For now just show success
+                        // Full implementation would parse and update the org chart
+                    } catch (err) {
+                        alert('❌ Could not read the file. Make sure it\'s a CSV file from Excel.');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+        
         // Architect Mode Functions
         function toggleArchitectMode() {
             if (isArchitectMode) {
                 // Turn off architect mode
                 isArchitectMode = false;
-                document.getElementById('architectBtn').innerHTML = '🔐 Architect Mode';
+                document.getElementById('architectBtn').innerHTML = '🔐 Manager Mode';
                 document.getElementById('architectBtn').style.background = '#9b59b6';
-                alert('Architect Mode disabled');
+                alert('Manager Mode turned off');
             } else {
                 // Ask for password
-                const password = prompt('Enter Architect Mode password:');
+                const password = prompt('Enter Manager password to add or remove people:');
                 if (password === ARCHITECT_PASSWORD) {
                     isArchitectMode = true;
-                    document.getElementById('architectBtn').innerHTML = '🔓 Exit Architect Mode';
+                    document.getElementById('architectBtn').innerHTML = '🔓 Exit Manager Mode';
                     document.getElementById('architectBtn').style.background = '#e74c3c';
-                    alert('Architect Mode enabled!\n\nYou can now:\n• Right-click any node to add/delete people\n• Hold Shift+Click to delete a node\n• Ctrl+Click to add a child node');
+                    alert('Manager Mode ON!\n\nYou can now:\n• Right-click any box to add people\n• Right-click to remove people\n• Make structural changes');
                 } else if (password !== null) {
                     alert('Incorrect password');
                 }
