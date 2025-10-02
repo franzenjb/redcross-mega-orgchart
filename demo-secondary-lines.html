@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secondary Reporting Lines - Visual Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #ed1b2e;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .demo-chart {
+            position: relative;
+            margin: 40px 0;
+            min-height: 500px;
+        }
+        .node {
+            position: absolute;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            width: 200px;
+            text-align: center;
+        }
+        .node.division-vp {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border-color: #ffa000;
+            border-width: 3px;
+        }
+        .node.executive {
+            background: #ed1b2e;
+            color: white;
+            border-color: #c41230;
+        }
+        .node.regional {
+            background: #00796b;
+            color: white;
+            border-color: #004d40;
+        }
+        .node.cdo {
+            background: #f57c00;
+            color: white;
+            border-color: #e65100;
+        }
+        .name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .title {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .link-primary {
+            stroke: #aaa;
+            stroke-width: 2;
+            fill: none;
+        }
+        .link-secondary {
+            stroke: #999;
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+            fill: none;
+            opacity: 0.7;
+        }
+        .legend {
+            display: flex;
+            gap: 30px;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .legend-line {
+            width: 50px;
+            height: 2px;
+            background: #aaa;
+        }
+        .legend-line.secondary {
+            background: none;
+            border-bottom: 2px dashed #999;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 4px solid #2196F3;
+        }
+        .info h3 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Secondary Reporting Lines - Visual Demonstration</h1>
+        <p class="subtitle">Red Cross SE & Caribbean Division Organization Chart</p>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-line"></div>
+                <span><strong>Solid Line:</strong> Primary reporting relationship</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line secondary"></div>
+                <span><strong>Dotted Line:</strong> Secondary (functional) reporting relationship</span>
+            </div>
+        </div>
+        
+        <div class="demo-chart">
+            <svg width="100%" height="500">
+                <!-- Primary reporting lines (solid) -->
+                <path class="link-primary" d="M 400 50 L 400 100 L 200 100 L 200 150" />
+                <path class="link-primary" d="M 400 50 L 400 100 L 400 100 L 400 150" />
+                <path class="link-primary" d="M 400 50 L 400 100 L 600 100 L 600 150" />
+                
+                <!-- Regional to CDO primary lines -->
+                <path class="link-primary" d="M 200 230 L 200 280 L 100 280 L 100 330" />
+                <path class="link-primary" d="M 200 230 L 200 280 L 300 280 L 300 330" />
+                <path class="link-primary" d="M 600 230 L 600 280 L 500 280 L 500 330" />
+                <path class="link-primary" d="M 600 230 L 600 280 L 700 280 L 700 330" />
+                
+                <!-- Secondary reporting lines (dotted) from D. Dixon to CDOs -->
+                <path class="link-secondary" d="M 400 230 L 400 280 L 100 280 L 100 330" />
+                <path class="link-secondary" d="M 400 230 L 400 280 L 300 280 L 300 330" />
+                <path class="link-secondary" d="M 400 230 L 400 280 L 500 280 L 500 330" />
+                <path class="link-secondary" d="M 400 230 L 400 280 L 700 280 L 700 330" />
+            </svg>
+            
+            <!-- Nodes -->
+            <div class="node division-vp" style="left: 300px; top: 0px;">
+                <div class="name">Anna Trefethen</div>
+                <div class="title">Division Vice President</div>
+            </div>
+            
+            <div class="node executive" style="left: 100px; top: 100px;">
+                <div class="name">Regional Executive</div>
+                <div class="title">Florida N/C</div>
+            </div>
+            
+            <div class="node executive" style="left: 300px; top: 100px;">
+                <div class="name">D. Dixon</div>
+                <div class="title">Chief Development Officer</div>
+            </div>
+            
+            <div class="node executive" style="left: 500px; top: 100px;">
+                <div class="name">Regional Executive</div>
+                <div class="title">Tennessee</div>
+            </div>
+            
+            <div class="node cdo" style="left: 0px; top: 280px;">
+                <div class="name">W. Carney</div>
+                <div class="title">CDO - Florida N/C</div>
+            </div>
+            
+            <div class="node cdo" style="left: 200px; top: 280px;">
+                <div class="name">T. Hernandez</div>
+                <div class="title">CDO - Florida South</div>
+            </div>
+            
+            <div class="node cdo" style="left: 400px; top: 280px;">
+                <div class="name">L. Vaughn</div>
+                <div class="title">CDO - Tennessee</div>
+            </div>
+            
+            <div class="node cdo" style="left: 600px; top: 280px;">
+                <div class="name">D. Warren</div>
+                <div class="title">CDO - Alabama/MS</div>
+            </div>
+        </div>
+        
+        <div class="info">
+            <h3>📋 How It Works</h3>
+            <ul>
+                <li><strong>Solid lines</strong> represent direct hierarchical reporting relationships (e.g., Regional CDOs report to their Regional Executives)</li>
+                <li><strong>Dotted lines</strong> represent secondary functional reporting relationships (e.g., all Regional CDOs also report to the Division CDO)</li>
+                <li>This dual reporting structure is common in matrix organizations where employees have both hierarchical and functional reporting lines</li>
+                <li>The visualization maintains clarity by using different line styles while keeping both types of connections visible</li>
+            </ul>
+            
+            <h3>✨ Implementation Details</h3>
+            <ul>
+                <li>Secondary lines use <code>stroke-dasharray: 5, 5</code> for the dotted effect</li>
+                <li>Slightly different color (#999 vs #aaa) and lower opacity (70%) distinguish them from primary lines</li>
+                <li>Lines are automatically drawn and updated based on data in <code>org-data-unified.js</code></li>
+                <li>7 Regional CDOs have this dual reporting relationship with D. Dixon</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
