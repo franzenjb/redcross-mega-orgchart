@@ -1096,36 +1096,47 @@
                 console.log(`Found ${secondaryConnections.length} secondary reporting relationships`);
                 
                 // Draw the secondary lines
-                const linksGroup = svg.select('g.links');
-                if (!linksGroup.empty()) {
-                    secondaryConnections.forEach(conn => {
-                        const fromNode = nodeMap.get(conn.from);
-                        const toNode = nodeMap.get(conn.to);
-                        
-                        if (fromNode && toNode) {
-                            // Calculate start and end points
-                            const x1 = fromNode.x;
-                            const y1 = fromNode.y + fromNode.height / 2;
-                            const x2 = toNode.x;
-                            const y2 = toNode.y - toNode.height / 2;
-                            
-                            // Draw a curved dotted line
-                            const midY = (y1 + y2) / 2;
-                            const path = `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`;
-                            
-                            linksGroup.append('path')
-                                .attr('class', 'link-secondary')
-                                .attr('d', path)
-                                .attr('stroke', '#999')
-                                .attr('stroke-width', 1.5)
-                                .attr('stroke-dasharray', '5,5')
-                                .attr('fill', 'none')
-                                .attr('opacity', 0.7);
-                            
-                            console.log(`Drew secondary line from ${conn.from} to ${conn.to}`);
-                        }
-                    });
+                // Try to find the links group, or create one if needed
+                let linksGroup = svg.select('g.links');
+                if (linksGroup.empty()) {
+                    // Try finding any g element that contains links
+                    linksGroup = svg.select('g');
+                    if (linksGroup.empty()) {
+                        // Create a new group for secondary links
+                        linksGroup = svg.append('g').attr('class', 'secondary-links-group');
+                    }
                 }
+                
+                secondaryConnections.forEach(conn => {
+                    const fromNode = nodeMap.get(conn.from);
+                    const toNode = nodeMap.get(conn.to);
+                    
+                    if (fromNode && toNode) {
+                        // Calculate start and end points
+                        const x1 = fromNode.x;
+                        const y1 = fromNode.y + fromNode.height / 2;
+                        const x2 = toNode.x;
+                        const y2 = toNode.y - toNode.height / 2;
+                        
+                        // Draw a curved dotted line
+                        const midY = (y1 + y2) / 2;
+                        const path = `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`;
+                        
+                        linksGroup.append('path')
+                            .attr('class', 'link-secondary')
+                            .attr('d', path)
+                            .attr('stroke', '#999')
+                            .attr('stroke-width', 1.5)
+                            .attr('stroke-dasharray', '5,5')
+                            .attr('fill', 'none')
+                            .attr('opacity', 0.7);
+                        
+                        console.log(`Drew secondary line from ${conn.from} to ${conn.to}`);
+                    } else {
+                        if (!fromNode) console.log(`Node not found for: ${conn.from}`);
+                        if (!toNode) console.log(`Node not found for: ${conn.to}`);
+                    }
+                });
             } catch (error) {
                 console.error('Error drawing secondary reporting lines:', error);
             }
