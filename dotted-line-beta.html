@@ -2809,12 +2809,16 @@
                 allData.push(newPerson);
                 
                 // Add dotted relationship
-                dottedLineRelationships.push({
+                const dottedRelationship = {
                     id: 'dotted_' + Date.now(),
                     from: newPerson.id,
                     to: supervisor.id,
                     type: 'dotted'
-                });
+                };
+                dottedLineRelationships.push(dottedRelationship);
+                
+                console.log('Added dotted relationship:', dottedRelationship);
+                console.log('Total dotted relationships:', dottedLineRelationships.length);
                 
                 saveDottedLines();
                 alert(`${name} added with dotted line to ${supervisor.name}`);
@@ -3313,10 +3317,15 @@
         
         // Render dotted line relationships
         function renderDottedLines() {
+            console.log('renderDottedLines called with', dottedLineRelationships.length, 'relationships');
+            
             // Remove existing dotted lines
             d3.select('#chart-container svg g').selectAll('.dotted-link').remove();
             
-            if (dottedLineRelationships.length === 0) return;
+            if (dottedLineRelationships.length === 0) {
+                console.log('No dotted line relationships to render');
+                return;
+            }
             
             const svg = d3.select('#chart-container svg g');
             
