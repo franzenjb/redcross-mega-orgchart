@@ -358,6 +358,63 @@
             font-size: 14px;
         }
         
+        /* Enhanced searchable dropdown styles */
+        .searchable-dropdown {
+            position: relative;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        .searchable-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            background: white;
+        }
+        
+        .searchable-input:focus {
+            border-color: #ed1b2e;
+            outline: none;
+            box-shadow: 0 0 5px rgba(237, 27, 46, 0.3);
+        }
+        
+        .dropdown-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .dropdown-option {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+        
+        .dropdown-option:hover {
+            background: #f8f9fa;
+        }
+        
+        .dropdown-option:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-option.selected {
+            background: #ed1b2e;
+            color: white;
+        }
+        
         .relationship-item {
             display: flex;
             justify-content: space-between;
@@ -532,15 +589,19 @@
                 <h3>Add New Dotted Line Relationship</h3>
                 <p style="color: #666; margin-bottom: 15px;">Select who has the dotted line reporting relationship (the person who reports via dotted line to someone else):</p>
                 
-                <select id="fromPersonSelect" class="person-selector">
-                    <option value="">Select person who reports via dotted line...</option>
-                </select>
+                <div class="searchable-dropdown">
+                    <input type="text" id="fromPersonInput" class="searchable-input" placeholder="Search and select person who reports via dotted line..." readonly onclick="showDropdown('from')">
+                    <div id="fromPersonDropdown" class="dropdown-options"></div>
+                    <input type="hidden" id="fromPersonSelect" value="">
+                </div>
                 
                 <p style="color: #666; margin-bottom: 15px;">Select who they have a dotted line relationship TO:</p>
                 
-                <select id="toPersonSelect" class="person-selector">
-                    <option value="">Select person they report to via dotted line...</option>
-                </select>
+                <div class="searchable-dropdown">
+                    <input type="text" id="toPersonInput" class="searchable-input" placeholder="Search and select person they report to via dotted line..." readonly onclick="showDropdown('to')">
+                    <div id="toPersonDropdown" class="dropdown-options"></div>
+                    <input type="hidden" id="toPersonSelect" value="">
+                </div>
                 
                 <input type="text" id="relationshipNote" class="person-selector" placeholder="Add a note about this relationship (optional)" />
                 
@@ -550,6 +611,38 @@
             <div>
                 <h3>Existing Dotted Line Relationships</h3>
                 <div id="existingRelationships"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Person Modal -->
+    <div id="addPersonModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Person</h2>
+                <span class="close" onclick="closeAddPersonModal()">&times;</span>
+            </div>
+            
+            <div>
+                <h3>Select Supervisor</h3>
+                <p style="color: #666; margin-bottom: 15px;">Who should this person report to?</p>
+                
+                <div class="searchable-dropdown">
+                    <input type="text" id="supervisorInput" class="searchable-input" placeholder="Search and select supervisor..." readonly onclick="showDropdown('supervisor')">
+                    <div id="supervisorDropdown" class="dropdown-options"></div>
+                    <input type="hidden" id="supervisorSelect" value="">
+                </div>
+                
+                <h3>Person Details</h3>
+                
+                <input type="text" id="newPersonName" class="person-selector" placeholder="Full name (required)" />
+                <input type="text" id="newPersonTitle" class="person-selector" placeholder="Job title (required)" />
+                <input type="text" id="newPersonLocation" class="person-selector" placeholder="Location (optional)" />
+                <input type="email" id="newPersonEmail" class="person-selector" placeholder="Email (optional)" />
+                <input type="tel" id="newPersonPhone" class="person-selector" placeholder="Phone (optional)" />
+                <input type="text" id="newPersonColor" class="person-selector" placeholder="Background color hex code (optional, e.g., #ff6b6b)" />
+                
+                <button class="btn" onclick="addNewPerson()" style="width: 100%; background: #4CAF50;">Add Person</button>
             </div>
         </div>
     </div>
@@ -2647,47 +2740,100 @@
             return allData;
         }
         
-        // Simple Add Person function
+        // Enhanced Add Person function with modal
         function showAddPersonPrompt() {
-            const parentName = prompt('Who should this person report to? (Type their name)');
-            if (!parentName) return;
-            
-            // Find the parent node
-            const parent = currentData.find(n => 
-                n.name && n.name.toLowerCase().includes(parentName.toLowerCase())
-            );
-            
-            if (!parent) {
-                alert(`Cannot find "${parentName}". Please try again.`);
+            if (!isEditorMode) {
+                alert('Please enable Editor Mode first');
                 return;
             }
             
-            const name = prompt(`Adding person under ${parent.name}.\n\nEnter new person's name:`);
-            if (!name) return;
+            // Clear the form
+            document.getElementById('supervisorInput').value = '';
+            document.getElementById('supervisorSelect').value = '';
+            document.getElementById('newPersonName').value = '';
+            document.getElementById('newPersonTitle').value = '';
+            document.getElementById('newPersonLocation').value = '';
+            document.getElementById('newPersonEmail').value = '';
+            document.getElementById('newPersonPhone').value = '';
+            document.getElementById('newPersonColor').value = '';
             
-            const title = prompt('Enter their title:');
-            const location = prompt('Enter their location (optional):');
-            const email = prompt('Enter their email (optional):');
-            const phone = prompt('Enter their phone (optional):');
-            const color = prompt('Enter background color (hex code, optional):');
+            // Show modal
+            document.getElementById('addPersonModal').style.display = 'block';
+        }
+        
+        function closeAddPersonModal() {
+            document.getElementById('addPersonModal').style.display = 'none';
+            
+            // Clear form
+            document.getElementById('supervisorInput').value = '';
+            document.getElementById('supervisorSelect').value = '';
+            document.getElementById('newPersonName').value = '';
+            document.getElementById('newPersonTitle').value = '';
+            document.getElementById('newPersonLocation').value = '';
+            document.getElementById('newPersonEmail').value = '';
+            document.getElementById('newPersonPhone').value = '';
+            document.getElementById('newPersonColor').value = '';
+            
+            // Hide any open dropdowns
+            hideDropdown('supervisor');
+        }
+        
+        function addNewPerson() {
+            const supervisorId = document.getElementById('supervisorSelect').value;
+            const name = document.getElementById('newPersonName').value.trim();
+            const title = document.getElementById('newPersonTitle').value.trim();
+            const location = document.getElementById('newPersonLocation').value.trim();
+            const email = document.getElementById('newPersonEmail').value.trim();
+            const phone = document.getElementById('newPersonPhone').value.trim();
+            const color = document.getElementById('newPersonColor').value.trim();
+            
+            if (!supervisorId) {
+                alert('Please select a supervisor for this person');
+                return;
+            }
+            
+            if (!name) {
+                alert('Please enter the person\'s name');
+                return;
+            }
+            
+            if (!title) {
+                alert('Please enter the person\'s title');
+                return;
+            }
+            
+            // Find the supervisor
+            const supervisor = currentData.find(n => n.id === supervisorId);
+            if (!supervisor) {
+                alert('Selected supervisor not found');
+                return;
+            }
             
             const newPerson = {
                 id: 'node_' + Date.now(),
-                parentId: parent.id,
+                parentId: supervisor.id,
                 name: name,
-                title: title || '',
-                location: location || '',
-                email: email || '',
-                phone: phone || '',
-                color: color || '',
-                type: parent.type,
-                region: parent.region
+                title: title,
+                location: location,
+                email: email,
+                phone: phone,
+                color: color,
+                type: supervisor.type,
+                region: supervisor.region
             };
             
             currentData.push(newPerson);
+            allData.push(newPerson);
             saveToLocal();
             chart.data(currentData).render();
-            alert(`Added ${name} under ${parent.name}`);
+            
+            // Re-render dotted lines
+            setTimeout(() => {
+                renderDottedLines();
+            }, 100);
+            
+            alert(`${name} has been added under ${supervisor.name}`);
+            closeAddPersonModal();
         }
         
         // Simple Delete Person function
@@ -2988,6 +3134,102 @@
                 .style('opacity', 0.8);
         }
 
+        // Enhanced Dropdown Functions
+        
+        // Sort people alphabetically by last name
+        function sortPeopleByLastName(people) {
+            return people.sort((a, b) => {
+                const aLastName = a.name.split(' ').pop().toLowerCase();
+                const bLastName = b.name.split(' ').pop().toLowerCase();
+                return aLastName.localeCompare(bLastName);
+            });
+        }
+        
+        // Show searchable dropdown
+        function showDropdown(type) {
+            const dropdown = document.getElementById(`${type}PersonDropdown`);
+            const input = document.getElementById(`${type}PersonInput`);
+            
+            // Clear and populate dropdown
+            dropdown.innerHTML = '';
+            
+            // Sort people by last name
+            const sortedPeople = sortPeopleByLastName([...currentData]);
+            
+            sortedPeople.forEach(person => {
+                const option = document.createElement('div');
+                option.className = 'dropdown-option';
+                option.textContent = `${person.name} - ${person.title}`;
+                option.dataset.id = person.id;
+                option.dataset.name = person.name;
+                
+                option.onclick = () => {
+                    selectDropdownOption(type, person.id, person.name, person.title);
+                };
+                
+                dropdown.appendChild(option);
+            });
+            
+            // Show dropdown
+            dropdown.style.display = 'block';
+            
+            // Make input searchable
+            input.readOnly = false;
+            input.focus();
+            input.value = '';
+            
+            // Add search functionality
+            input.oninput = () => {
+                filterDropdownOptions(type, input.value);
+            };
+            
+            // Close dropdown when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', function closeDropdown(e) {
+                    if (!e.target.closest('.searchable-dropdown')) {
+                        hideDropdown(type);
+                        document.removeEventListener('click', closeDropdown);
+                    }
+                });
+            }, 100);
+        }
+        
+        // Filter dropdown options based on search
+        function filterDropdownOptions(type, searchTerm) {
+            const dropdown = document.getElementById(`${type}PersonDropdown`);
+            const options = dropdown.querySelectorAll('.dropdown-option');
+            
+            options.forEach(option => {
+                const text = option.textContent.toLowerCase();
+                if (text.includes(searchTerm.toLowerCase())) {
+                    option.style.display = 'block';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+        }
+        
+        // Select dropdown option
+        function selectDropdownOption(type, id, name, title) {
+            const input = document.getElementById(`${type}PersonInput`);
+            const hiddenInput = document.getElementById(`${type}PersonSelect`);
+            
+            input.value = `${name} - ${title}`;
+            hiddenInput.value = id;
+            
+            hideDropdown(type);
+        }
+        
+        // Hide dropdown
+        function hideDropdown(type) {
+            const dropdown = document.getElementById(`${type}PersonDropdown`);
+            const input = document.getElementById(`${type}PersonInput`);
+            
+            dropdown.style.display = 'none';
+            input.readOnly = true;
+            input.oninput = null;
+        }
+
         // Show dotted line management modal
         function showDottedLineManager() {
             if (!isEditorMode) {
@@ -2995,26 +3237,11 @@
                 return;
             }
             
-            // Populate person selectors
-            const fromSelect = document.getElementById('fromPersonSelect');
-            const toSelect = document.getElementById('toPersonSelect');
-            
-            // Clear existing options
-            fromSelect.innerHTML = '<option value="">Select person who reports via dotted line...</option>';
-            toSelect.innerHTML = '<option value="">Select person they report to via dotted line...</option>';
-            
-            // Add all current people as options
-            currentData.forEach(person => {
-                const option1 = document.createElement('option');
-                option1.value = person.id;
-                option1.textContent = `${person.name} - ${person.title}`;
-                fromSelect.appendChild(option1);
-                
-                const option2 = document.createElement('option');
-                option2.value = person.id;
-                option2.textContent = `${person.name} - ${person.title}`;
-                toSelect.appendChild(option2);
-            });
+            // Clear the searchable inputs
+            document.getElementById('fromPersonInput').value = '';
+            document.getElementById('fromPersonSelect').value = '';
+            document.getElementById('toPersonInput').value = '';
+            document.getElementById('toPersonSelect').value = '';
             
             // Show existing relationships
             updateExistingRelationships();
@@ -3028,9 +3255,15 @@
             document.getElementById('dottedLineModal').style.display = 'none';
             
             // Clear form
+            document.getElementById('fromPersonInput').value = '';
             document.getElementById('fromPersonSelect').value = '';
+            document.getElementById('toPersonInput').value = '';
             document.getElementById('toPersonSelect').value = '';
             document.getElementById('relationshipNote').value = '';
+            
+            // Hide any open dropdowns
+            hideDropdown('from');
+            hideDropdown('to');
         }
 
         // Add new dotted line relationship
@@ -3072,7 +3305,9 @@
             updateExistingRelationships();
             
             // Clear form
+            document.getElementById('fromPersonInput').value = '';
             document.getElementById('fromPersonSelect').value = '';
+            document.getElementById('toPersonInput').value = '';
             document.getElementById('toPersonSelect').value = '';
             document.getElementById('relationshipNote').value = '';
             
@@ -3132,9 +3367,15 @@
 
         // Close modal when clicking outside
         window.onclick = function(event) {
-            const modal = document.getElementById('dottedLineModal');
-            if (event.target === modal) {
+            const dottedLineModal = document.getElementById('dottedLineModal');
+            const addPersonModal = document.getElementById('addPersonModal');
+            
+            if (event.target === dottedLineModal) {
                 closeDottedLineModal();
+            }
+            
+            if (event.target === addPersonModal) {
+                closeAddPersonModal();
             }
         }
 
