@@ -3648,17 +3648,12 @@
             }, 100);
         }
 
-        // Close modal when clicking outside
+        // Close modal when clicking outside (simplified)
         window.onclick = function(event) {
             const dottedLineModal = document.getElementById('dottedLineModal');
-            const addPersonModal = document.getElementById('addPersonModal');
             
             if (event.target === dottedLineModal) {
                 closeDottedLineModal();
-            }
-            
-            if (event.target === addPersonModal) {
-                closeAddPersonModal();
             }
         }
 
