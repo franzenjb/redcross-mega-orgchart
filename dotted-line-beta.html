@@ -2828,6 +2828,11 @@
             }, 100);
         }
         
+        // Save dotted lines to localStorage
+        function saveDottedLines() {
+            localStorage.setItem('redcross-dotted-lines', JSON.stringify(dottedLineRelationships));
+        }
+        
         // Right-click context menu for dotted lines
         function handleRightClick(event) {
             event.preventDefault();
