@@ -657,6 +657,7 @@
     <script>
         let chart;
         let currentData = [];
+        let allData = []; // Global variable to store ALL people from all regions
         let currentRegion = 'all';
         
         // Dotted line relationships storage
@@ -1125,7 +1126,12 @@
                 currentRegion = document.getElementById('regionSelect')?.value || 'all';
                 const flatData = convertToFlatData(completeOrgData, null, currentRegion, '');
                 currentData = flatData;
+                
+                // Also populate global allData with ALL people from ALL regions for dropdowns
+                allData = convertToFlatData(completeOrgData, null, 'all', '');
+                
                 console.log('Loaded data:', currentData.length, 'nodes');
+                console.log('All data:', allData.length, 'total people');
                 console.log('Sample data:', currentData.slice(0, 5));
                 
                 // Update dropdown to match
