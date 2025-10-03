@@ -494,6 +494,7 @@
             <!-- Editor Buttons - Hidden by default -->
             <span id="editorButtons" style="display: none; margin-left: 10px;">
                 <button class="btn" onclick="showAddPersonPrompt()" style="background: #4CAF50;">➕ Add Person</button>
+                <button class="btn" onclick="showModifyReportingModal()" style="background: #FFC107;">🔄 Modify Reporting Type</button>
                 <button class="btn" onclick="showDottedLineManager()" style="background: #17a2b8;">↭ Manage Dotted Lines</button>
                 <button class="btn" onclick="showDeletePersonPrompt()" style="background: #f44336;">🗑️ Delete Person</button>
                 <button class="btn" onclick="backupData()" style="background: #2196F3;">💾 Backup</button>
@@ -633,6 +634,20 @@
                     <input type="hidden" id="supervisorSelect" value="">
                 </div>
                 
+                <h3>Reporting Relationship Type</h3>
+                <p style="color: #666; margin-bottom: 15px;">How should this person report to their supervisor?</p>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 10px;">
+                        <input type="radio" name="reportingType" value="solid" checked style="margin-right: 8px;">
+                        <strong>Straight Line Report</strong> (Direct reporting relationship)
+                    </label>
+                    <label style="display: block;">
+                        <input type="radio" name="reportingType" value="dotted" style="margin-right: 8px;">
+                        <strong>Dotted Line Report</strong> (Matrix/collaborative relationship)
+                    </label>
+                </div>
+                
                 <h3>Person Details</h3>
                 
                 <input type="text" id="newPersonName" class="person-selector" placeholder="Full name (required)" />
@@ -643,6 +658,48 @@
                 <input type="text" id="newPersonColor" class="person-selector" placeholder="Background color hex code (optional, e.g., #ff6b6b)" />
                 
                 <button class="btn" onclick="addNewPerson()" style="width: 100%; background: #4CAF50;">Add Person</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modify Reporting Type Modal -->
+    <div id="modifyReportingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Modify Reporting Type</h2>
+                <span class="close" onclick="closeModifyReportingModal()">&times;</span>
+            </div>
+            
+            <div>
+                <h3>Select Person</h3>
+                <p style="color: #666; margin-bottom: 15px;">Whose reporting relationship do you want to modify?</p>
+                
+                <div class="searchable-dropdown">
+                    <input type="text" id="modifyPersonInput" class="searchable-input" placeholder="Search and select person..." readonly onclick="showDropdown('modifyPerson')">
+                    <div id="modifyPersonDropdown" class="dropdown-options"></div>
+                    <input type="hidden" id="modifyPersonSelect" value="">
+                </div>
+                
+                <div id="currentReporting" style="margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 5px; display: none;">
+                    <h4>Current Reporting:</h4>
+                    <p id="currentReportingInfo"></p>
+                </div>
+                
+                <h3>New Reporting Type</h3>
+                <p style="color: #666; margin-bottom: 15px;">How should this person report to their supervisor?</p>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 10px;">
+                        <input type="radio" name="modifyReportingType" value="solid" style="margin-right: 8px;">
+                        <strong>Straight Line Report</strong> (Direct reporting relationship)
+                    </label>
+                    <label style="display: block;">
+                        <input type="radio" name="modifyReportingType" value="dotted" style="margin-right: 8px;">
+                        <strong>Dotted Line Report</strong> (Matrix/collaborative relationship)
+                    </label>
+                </div>
+                
+                <button class="btn" onclick="modifyReportingType()" style="width: 100%; background: #FFC107;">Update Reporting Type</button>
             </div>
         </div>
     </div>
@@ -2613,7 +2670,7 @@
                 if (isEditorMode) {
                     document.getElementById('editorButtons').style.display = 'inline-block';
                     
-                    alert('Editor Mode ON!\n\nYou can now:\n• Add Person - Type who they report to\n• Manage Dotted Lines - Create matrix reporting relationships\n• Delete Person - Type their name\n• Backup - Save current version\n• Restore - Go back to saved version\n• Export Excel - Download for editing');
+                    alert('Editor Mode ON!\n\nYou can now:\n• Add Person - Choose straight line or dotted line reporting\n• Modify Reporting Type - Change existing relationships\n• Manage Dotted Lines - Create matrix reporting relationships\n• Delete Person - Type their name\n• Backup - Save current version\n• Restore - Go back to saved version\n• Export Excel - Download for editing');
                 } else {
                     document.getElementById('editorButtons').style.display = 'none';
                     document.removeEventListener('contextmenu', handleContextMenu);
@@ -2784,6 +2841,28 @@
             hideDropdown('supervisor');
         }
         
+        // Helper function to find the root node for a person's region
+        function findRegionRoot(person) {
+            // Look for the regional executive or division root
+            const regionRoots = allData.filter(node => {
+                const title = (node.title || '').toLowerCase();
+                return title.includes('regional executive') || 
+                       title.includes('division vice president') ||
+                       node.name === 'Anna Trefethen';
+            });
+            
+            // Find the most appropriate root based on region
+            const personRegion = person.region || '';
+            const matchingRoot = regionRoots.find(root => 
+                root.region === personRegion
+            );
+            
+            // If no matching regional root, use division root
+            return matchingRoot || regionRoots.find(root => 
+                root.name === 'Anna Trefethen'
+            ) || allData[0];
+        }
+        
         function addNewPerson() {
             const supervisorId = document.getElementById('supervisorSelect').value;
             const name = document.getElementById('newPersonName').value.trim();
@@ -2792,6 +2871,7 @@
             const email = document.getElementById('newPersonEmail').value.trim();
             const phone = document.getElementById('newPersonPhone').value.trim();
             const color = document.getElementById('newPersonColor').value.trim();
+            const reportingType = document.querySelector('input[name="reportingType"]:checked').value;
             
             if (!supervisorId) {
                 alert('Please select a supervisor for this person');
@@ -2817,7 +2897,6 @@
             
             const newPerson = {
                 id: 'node_' + Date.now(),
-                parentId: supervisor.id,
                 name: name,
                 title: title,
                 location: location,
@@ -2828,18 +2907,145 @@
                 region: supervisor.region
             };
             
-            currentData.push(newPerson);
-            allData.push(newPerson);
-            saveToLocal();
-            chart.data(currentData).render();
+            if (reportingType === 'solid') {
+                // Straight line reporting - set parentId normally
+                newPerson.parentId = supervisor.id;
+                
+                currentData.push(newPerson);
+                allData.push(newPerson);
+                saveToLocal();
+                chart.data(currentData).render();
+                
+                alert(`${name} has been added as a direct report under ${supervisor.name}`);
+            } else {
+                // Dotted line reporting - add to org chart without parentId and create dotted relationship
+                // For dotted line reports, we need to attach them somewhere in the hierarchy
+                // Let's attach them to the root of their supervisor's region or division
+                const rootNode = findRegionRoot(supervisor);
+                newPerson.parentId = rootNode ? rootNode.id : supervisor.id;
+                
+                currentData.push(newPerson);
+                allData.push(newPerson);
+                
+                // Add dotted line relationship
+                const relationship = {
+                    id: 'dotted_' + Date.now(),
+                    from: newPerson.id,
+                    to: supervisor.id,
+                    type: 'dotted'
+                };
+                
+                dottedLineRelationships.push(relationship);
+                saveDottedLines();
+                saveToLocal();
+                
+                chart.data(currentData).render();
+                
+                // Re-render dotted lines
+                setTimeout(() => {
+                    renderDottedLines();
+                }, 100);
+                
+                alert(`${name} has been added with a dotted line relationship to ${supervisor.name}`);
+            }
             
-            // Re-render dotted lines
-            setTimeout(() => {
-                renderDottedLines();
-            }, 100);
-            
-            alert(`${name} has been added under ${supervisor.name}`);
             closeAddPersonModal();
+        }
+        
+        // Modify Reporting Type Functions
+        function showModifyReportingModal() {
+            document.getElementById('modifyReportingModal').style.display = 'block';
+            
+            // Reset form
+            document.getElementById('modifyPersonInput').value = '';
+            document.getElementById('modifyPersonSelect').value = '';
+            document.getElementById('currentReporting').style.display = 'none';
+            document.querySelectorAll('input[name="modifyReportingType"]').forEach(radio => radio.checked = false);
+        }
+        
+        function closeModifyReportingModal() {
+            document.getElementById('modifyReportingModal').style.display = 'none';
+            hideDropdown('modifyPerson');
+        }
+        
+        function modifyReportingType() {
+            const personId = document.getElementById('modifyPersonSelect').value;
+            const newReportingType = document.querySelector('input[name="modifyReportingType"]:checked');
+            
+            if (!personId) {
+                alert('Please select a person to modify');
+                return;
+            }
+            
+            if (!newReportingType) {
+                alert('Please select a reporting type');
+                return;
+            }
+            
+            const person = allData.find(n => n.id === personId);
+            if (!person) {
+                alert('Selected person not found');
+                return;
+            }
+            
+            // Find current supervisor
+            const currentSupervisor = allData.find(n => n.id === person.parentId);
+            if (!currentSupervisor) {
+                alert('Cannot find current supervisor for this person');
+                return;
+            }
+            
+            const reportingType = newReportingType.value;
+            
+            if (reportingType === 'solid') {
+                // Convert to straight line reporting
+                // Remove any existing dotted line relationships for this person
+                dottedLineRelationships = dottedLineRelationships.filter(rel => 
+                    rel.from !== person.id
+                );
+                
+                // Ensure person has proper parentId (should already be set)
+                if (!person.parentId) {
+                    person.parentId = currentSupervisor.id;
+                }
+                
+                saveDottedLines();
+                saveToLocal();
+                chart.data(currentData).render();
+                
+                setTimeout(() => {
+                    renderDottedLines();
+                }, 100);
+                
+                alert(`${person.name} now has a direct reporting relationship to ${currentSupervisor.name}`);
+            } else {
+                // Convert to dotted line reporting
+                // Add dotted line relationship
+                const relationship = {
+                    id: 'dotted_' + Date.now(),
+                    from: person.id,
+                    to: currentSupervisor.id,
+                    type: 'dotted'
+                };
+                
+                dottedLineRelationships.push(relationship);
+                
+                // Move person to regional root to maintain hierarchy
+                const rootNode = findRegionRoot(person);
+                person.parentId = rootNode ? rootNode.id : currentSupervisor.id;
+                
+                saveDottedLines();
+                saveToLocal();
+                chart.data(currentData).render();
+                
+                setTimeout(() => {
+                    renderDottedLines();
+                }, 100);
+                
+                alert(`${person.name} now has a dotted line relationship to ${currentSupervisor.name}`);
+            }
+            
+            closeModifyReportingModal();
         }
         
         // Simple Delete Person function
@@ -3223,7 +3429,38 @@
             input.value = `${name} - ${title}`;
             hiddenInput.value = id;
             
+            // If this is the modify person modal, show current reporting info
+            if (type === 'modifyPerson') {
+                showCurrentReportingInfo(id);
+            }
+            
             hideDropdown(type);
+        }
+        
+        function showCurrentReportingInfo(personId) {
+            const person = allData.find(n => n.id === personId);
+            if (!person) return;
+            
+            const supervisor = allData.find(n => n.id === person.parentId);
+            const isDottedLine = dottedLineRelationships.some(rel => rel.from === personId);
+            
+            const currentReportingDiv = document.getElementById('currentReporting');
+            const currentReportingInfo = document.getElementById('currentReportingInfo');
+            
+            if (supervisor) {
+                const reportingType = isDottedLine ? 'Dotted Line Report' : 'Straight Line Report';
+                currentReportingInfo.textContent = `${person.name} currently has a ${reportingType} to ${supervisor.name}`;
+                
+                // Pre-select the current reporting type
+                const currentTypeRadio = document.querySelector(`input[name="modifyReportingType"][value="${isDottedLine ? 'dotted' : 'solid'}"]`);
+                if (currentTypeRadio) {
+                    currentTypeRadio.checked = true;
+                }
+            } else {
+                currentReportingInfo.textContent = `${person.name} has no current supervisor assigned`;
+            }
+            
+            currentReportingDiv.style.display = 'block';
         }
         
         // Hide dropdown
