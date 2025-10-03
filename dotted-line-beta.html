@@ -629,9 +629,9 @@
                 <p style="color: #666; margin-bottom: 15px;">Who should this person report to?</p>
                 
                 <div class="searchable-dropdown">
-                    <input type="text" id="supervisorPersonInput" class="searchable-input" placeholder="Search and select supervisor..." readonly onclick="showDropdown('supervisor')">
+                    <input type="text" id="supervisorPersonInput" class="searchable-input" placeholder="Search and select supervisor..." readonly onclick="showDropdown('supervisorPerson')">
                     <div id="supervisorPersonDropdown" class="dropdown-options"></div>
-                    <input type="hidden" id="supervisorSelect" value="">
+                    <input type="hidden" id="supervisorPersonSelect" value="">
                 </div>
                 
                 <h3>Reporting Relationship Type</h3>
@@ -2812,7 +2812,7 @@
             
             // Clear the form
             document.getElementById('supervisorPersonInput').value = '';
-            document.getElementById('supervisorSelect').value = '';
+            document.getElementById('supervisorPersonSelect').value = '';
             document.getElementById('newPersonName').value = '';
             document.getElementById('newPersonTitle').value = '';
             document.getElementById('newPersonLocation').value = '';
@@ -2829,7 +2829,7 @@
             
             // Clear form
             document.getElementById('supervisorPersonInput').value = '';
-            document.getElementById('supervisorSelect').value = '';
+            document.getElementById('supervisorPersonSelect').value = '';
             document.getElementById('newPersonName').value = '';
             document.getElementById('newPersonTitle').value = '';
             document.getElementById('newPersonLocation').value = '';
@@ -2838,7 +2838,7 @@
             document.getElementById('newPersonColor').value = '';
             
             // Hide any open dropdowns
-            hideDropdown('supervisor');
+            hideDropdown('supervisorPerson');
         }
         
         // Helper function to find the root node for a person's region
@@ -2864,7 +2864,7 @@
         }
         
         function addNewPerson() {
-            const supervisorId = document.getElementById('supervisorSelect').value;
+            const supervisorId = document.getElementById('supervisorPersonSelect').value;
             const name = document.getElementById('newPersonName').value.trim();
             const title = document.getElementById('newPersonTitle').value.trim();
             const location = document.getElementById('newPersonLocation').value.trim();
@@ -3425,6 +3425,11 @@
         function selectDropdownOption(type, id, name, title) {
             const input = document.getElementById(`${type}PersonInput`);
             const hiddenInput = document.getElementById(`${type}PersonSelect`);
+            
+            if (!input || !hiddenInput) {
+                console.error(`Could not find elements for type: ${type}`);
+                return;
+            }
             
             input.value = `${name} - ${title}`;
             hiddenInput.value = id;
