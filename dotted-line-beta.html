@@ -493,9 +493,7 @@
             
             <!-- Editor Buttons - Hidden by default -->
             <span id="editorButtons" style="display: none; margin-left: 10px;">
-                <button class="btn" onclick="showAddPersonPrompt()" style="background: #4CAF50;">➕ Add Person</button>
-                <button class="btn" onclick="showModifyReportingModal()" style="background: #FFC107;">🔄 Modify Reporting Type</button>
-                <button class="btn" onclick="showDottedLineManager()" style="background: #17a2b8;">↭ Manage Dotted Lines</button>
+                <button class="btn" onclick="showSimpleAddPerson()" style="background: #4CAF50;">➕ Add Person</button>
                 <button class="btn" onclick="showDeletePersonPrompt()" style="background: #f44336;">🗑️ Delete Person</button>
                 <button class="btn" onclick="backupData()" style="background: #2196F3;">💾 Backup</button>
                 <button class="btn" onclick="restoreData()" style="background: #9C27B0;">📂 Restore</button>
@@ -616,93 +614,9 @@
         </div>
     </div>
 
-    <!-- Add Person Modal -->
-    <div id="addPersonModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Add New Person</h2>
-                <span class="close" onclick="closeAddPersonModal()">&times;</span>
-            </div>
-            
-            <div>
-                <h3>Select Supervisor</h3>
-                <p style="color: #666; margin-bottom: 15px;">Who should this person report to?</p>
-                
-                <div class="searchable-dropdown">
-                    <input type="text" id="supervisorPersonInput" class="searchable-input" placeholder="Search and select supervisor..." readonly onclick="showDropdown('supervisorPerson')">
-                    <div id="supervisorPersonDropdown" class="dropdown-options"></div>
-                    <input type="hidden" id="supervisorPersonSelect" value="">
-                </div>
-                
-                <h3>Reporting Relationship Type</h3>
-                <p style="color: #666; margin-bottom: 15px;">How should this person report to their supervisor?</p>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 10px;">
-                        <input type="radio" name="reportingType" value="solid" checked style="margin-right: 8px;">
-                        <strong>Straight Line Report</strong> (Direct reporting relationship)
-                    </label>
-                    <label style="display: block;">
-                        <input type="radio" name="reportingType" value="dotted" style="margin-right: 8px;">
-                        <strong>Dotted Line Report</strong> (Matrix/collaborative relationship)
-                    </label>
-                </div>
-                
-                <h3>Person Details</h3>
-                
-                <input type="text" id="newPersonName" class="person-selector" placeholder="Full name (required)" />
-                <input type="text" id="newPersonTitle" class="person-selector" placeholder="Job title (required)" />
-                <input type="text" id="newPersonLocation" class="person-selector" placeholder="Location (optional)" />
-                <input type="email" id="newPersonEmail" class="person-selector" placeholder="Email (optional)" />
-                <input type="tel" id="newPersonPhone" class="person-selector" placeholder="Phone (optional)" />
-                <input type="text" id="newPersonColor" class="person-selector" placeholder="Background color hex code (optional, e.g., #ff6b6b)" />
-                
-                <button class="btn" onclick="addNewPerson()" style="width: 100%; background: #4CAF50;">Add Person</button>
-            </div>
-        </div>
-    </div>
+    <!-- REMOVED: Complex Add Person Modal - Using simple prompts instead -->
     
-    <!-- Modify Reporting Type Modal -->
-    <div id="modifyReportingModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Modify Reporting Type</h2>
-                <span class="close" onclick="closeModifyReportingModal()">&times;</span>
-            </div>
-            
-            <div>
-                <h3>Select Person</h3>
-                <p style="color: #666; margin-bottom: 15px;">Whose reporting relationship do you want to modify?</p>
-                
-                <div class="searchable-dropdown">
-                    <input type="text" id="modifyPersonInput" class="searchable-input" placeholder="Search and select person..." readonly onclick="showDropdown('modifyPerson')">
-                    <div id="modifyPersonDropdown" class="dropdown-options"></div>
-                    <input type="hidden" id="modifyPersonSelect" value="">
-                </div>
-                
-                <div id="currentReporting" style="margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 5px; display: none;">
-                    <h4>Current Reporting:</h4>
-                    <p id="currentReportingInfo"></p>
-                </div>
-                
-                <h3>New Reporting Type</h3>
-                <p style="color: #666; margin-bottom: 15px;">How should this person report to their supervisor?</p>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 10px;">
-                        <input type="radio" name="modifyReportingType" value="solid" style="margin-right: 8px;">
-                        <strong>Straight Line Report</strong> (Direct reporting relationship)
-                    </label>
-                    <label style="display: block;">
-                        <input type="radio" name="modifyReportingType" value="dotted" style="margin-right: 8px;">
-                        <strong>Dotted Line Report</strong> (Matrix/collaborative relationship)
-                    </label>
-                </div>
-                
-                <button class="btn" onclick="modifyReportingType()" style="width: 100%; background: #FFC107;">Update Reporting Type</button>
-            </div>
-        </div>
-    </div>
+    <!-- REMOVED: Complex Modify Reporting Modal - Using right-click context menu instead -->
     
     <!-- D3.js and dependencies -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -2669,11 +2583,12 @@
                 
                 if (isEditorMode) {
                     document.getElementById('editorButtons').style.display = 'inline-block';
+                    document.addEventListener('contextmenu', handleRightClick);
                     
-                    alert('Editor Mode ON!\n\nYou can now:\n• Add Person - Choose straight line or dotted line reporting\n• Modify Reporting Type - Change existing relationships\n• Manage Dotted Lines - Create matrix reporting relationships\n• Delete Person - Type their name\n• Backup - Save current version\n• Restore - Go back to saved version\n• Export Excel - Download for editing');
+                    alert('Editor Mode ON!\n\nYou can now:\n• Add Person - Simple prompts for adding people\n• Right-click any person - Add dotted line relationships\n• Delete Person - Type their name\n• Backup/Restore - Save your work\n• Export/Import Excel - Data management');
                 } else {
                     document.getElementById('editorButtons').style.display = 'none';
-                    document.removeEventListener('contextmenu', handleContextMenu);
+                    document.removeEventListener('contextmenu', handleRightClick);
                     alert('Editor Mode OFF');
                 }
             } else if (password !== null) {
@@ -2841,6 +2756,126 @@
             hideDropdown('supervisorPerson');
         }
         
+        // Simple Add Person with prompts
+        function showSimpleAddPerson() {
+            const supervisorName = prompt('Who should this person report to? (Type part of their name)');
+            if (!supervisorName) return;
+            
+            // Find supervisor
+            const supervisor = allData.find(person => 
+                person.name.toLowerCase().includes(supervisorName.toLowerCase())
+            );
+            
+            if (!supervisor) {
+                alert(`Cannot find anyone with "${supervisorName}" in their name. Please try again.`);
+                return;
+            }
+            
+            const confirm = window.confirm(`Report to: ${supervisor.name}\nClick OK for straight line, Cancel for dotted line`);
+            const reportingType = confirm ? 'solid' : 'dotted';
+            
+            const name = prompt('Person\'s full name:');
+            if (!name) return;
+            
+            const title = prompt('Job title:');
+            if (!title) return;
+            
+            const location = prompt('Location (optional):') || '';
+            
+            addPersonSimple(supervisor, name, title, location, reportingType);
+        }
+        
+        function addPersonSimple(supervisor, name, title, location, reportingType) {
+            const newPerson = {
+                id: 'node_' + Date.now(),
+                name: name,
+                title: title,
+                location: location,
+                type: supervisor.type,
+                region: supervisor.region
+            };
+            
+            if (reportingType === 'solid') {
+                newPerson.parentId = supervisor.id;
+                currentData.push(newPerson);
+                allData.push(newPerson);
+                alert(`${name} added as direct report to ${supervisor.name}`);
+            } else {
+                // Dotted line - attach to regional root
+                const rootNode = findRegionRoot(supervisor);
+                newPerson.parentId = rootNode ? rootNode.id : supervisor.id;
+                
+                currentData.push(newPerson);
+                allData.push(newPerson);
+                
+                // Add dotted relationship
+                dottedLineRelationships.push({
+                    id: 'dotted_' + Date.now(),
+                    from: newPerson.id,
+                    to: supervisor.id,
+                    type: 'dotted'
+                });
+                
+                saveDottedLines();
+                alert(`${name} added with dotted line to ${supervisor.name}`);
+            }
+            
+            saveToLocal();
+            chart.data(currentData).render();
+            
+            setTimeout(() => {
+                renderDottedLines();
+            }, 100);
+        }
+        
+        // Right-click context menu for dotted lines
+        function handleRightClick(event) {
+            event.preventDefault();
+            
+            // Find if we clicked on a person node
+            const nodeElement = event.target.closest('[data-node-id]');
+            if (!nodeElement) return;
+            
+            const nodeId = nodeElement.getAttribute('data-node-id');
+            const person = allData.find(p => p.id === nodeId);
+            if (!person) return;
+            
+            const supervisorName = prompt(`Add dotted line FROM "${person.name}" TO whom?\n(Type part of their name)`);
+            if (!supervisorName) return;
+            
+            const supervisor = allData.find(p => 
+                p.name.toLowerCase().includes(supervisorName.toLowerCase()) && p.id !== person.id
+            );
+            
+            if (!supervisor) {
+                alert(`Cannot find anyone with "${supervisorName}" in their name.`);
+                return;
+            }
+            
+            // Check if relationship already exists
+            const existingRelationship = dottedLineRelationships.find(rel => 
+                rel.from === person.id && rel.to === supervisor.id
+            );
+            
+            if (existingRelationship) {
+                alert(`Dotted line from ${person.name} to ${supervisor.name} already exists.`);
+                return;
+            }
+            
+            // Add dotted line relationship
+            dottedLineRelationships.push({
+                id: 'dotted_' + Date.now(),
+                from: person.id,
+                to: supervisor.id,
+                type: 'dotted'
+            });
+            
+            saveDottedLines();
+            renderDottedLines();
+            
+            alert(`Added dotted line from ${person.name} to ${supervisor.name}`);
+        }
+
         // Helper function to find the root node for a person's region
         function findRegionRoot(person) {
             // Look for the regional executive or division root
