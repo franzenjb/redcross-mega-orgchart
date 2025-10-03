@@ -628,8 +628,8 @@
                 <p style="color: #666; margin-bottom: 15px;">Who should this person report to?</p>
                 
                 <div class="searchable-dropdown">
-                    <input type="text" id="supervisorInput" class="searchable-input" placeholder="Search and select supervisor..." readonly onclick="showDropdown('supervisor')">
-                    <div id="supervisorDropdown" class="dropdown-options"></div>
+                    <input type="text" id="supervisorPersonInput" class="searchable-input" placeholder="Search and select supervisor..." readonly onclick="showDropdown('supervisor')">
+                    <div id="supervisorPersonDropdown" class="dropdown-options"></div>
                     <input type="hidden" id="supervisorSelect" value="">
                 </div>
                 
@@ -2748,7 +2748,7 @@
             }
             
             // Clear the form
-            document.getElementById('supervisorInput').value = '';
+            document.getElementById('supervisorPersonInput').value = '';
             document.getElementById('supervisorSelect').value = '';
             document.getElementById('newPersonName').value = '';
             document.getElementById('newPersonTitle').value = '';
@@ -2765,7 +2765,7 @@
             document.getElementById('addPersonModal').style.display = 'none';
             
             // Clear form
-            document.getElementById('supervisorInput').value = '';
+            document.getElementById('supervisorPersonInput').value = '';
             document.getElementById('supervisorSelect').value = '';
             document.getElementById('newPersonName').value = '';
             document.getElementById('newPersonTitle').value = '';
@@ -2802,8 +2802,8 @@
                 return;
             }
             
-            // Find the supervisor
-            const supervisor = currentData.find(n => n.id === supervisorId);
+            // Find the supervisor - search in ALL data not just current view
+            const supervisor = allData.find(n => n.id === supervisorId);
             if (!supervisor) {
                 alert('Selected supervisor not found');
                 return;
@@ -3153,8 +3153,8 @@
             // Clear and populate dropdown
             dropdown.innerHTML = '';
             
-            // Sort people by last name
-            const sortedPeople = sortPeopleByLastName([...currentData]);
+            // Sort people by last name - use ALL data, not just current filtered view
+            const sortedPeople = sortPeopleByLastName([...allData]);
             
             sortedPeople.forEach(person => {
                 const option = document.createElement('div');
@@ -3331,8 +3331,8 @@
             container.innerHTML = '';
             
             dottedLineRelationships.forEach(relationship => {
-                const fromPerson = currentData.find(p => p.id === relationship.from);
-                const toPerson = currentData.find(p => p.id === relationship.to);
+                const fromPerson = allData.find(p => p.id === relationship.from);
+                const toPerson = allData.find(p => p.id === relationship.to);
                 
                 if (!fromPerson || !toPerson) return;
                 
