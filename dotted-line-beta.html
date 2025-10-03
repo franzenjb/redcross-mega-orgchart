@@ -2582,6 +2582,7 @@
                 isEditorMode = !isEditorMode;
                 
                 if (isEditorMode) {
+                    console.log('Editor Mode activated');
                     document.getElementById('editorButtons').style.display = 'inline-block';
                     document.addEventListener('contextmenu', handleRightClick);
                     
@@ -2758,6 +2759,7 @@
         
         // Simple Add Person with prompts
         function showSimpleAddPerson() {
+            console.log('showSimpleAddPerson called');
             const supervisorName = prompt('Who should this person report to? (Type part of their name)');
             if (!supervisorName) return;
             
