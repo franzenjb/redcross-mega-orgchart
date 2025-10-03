@@ -293,90 +293,14 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar Menu -->
-    <div id="sidebar" style="position: fixed; left: -300px; top: 0; width: 300px; height: 100vh; background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.2); z-index: 1000; transition: left 0.3s; display: flex; flex-direction: column;">
-        <div style="padding: 20px; border-bottom: 1px solid #ddd; flex-shrink: 0;">
-            <h3 style="margin: 0;">🛠️ Tools & Settings</h3>
-            <button onclick="toggleSidebar()" style="position: absolute; right: 10px; top: 20px; background: none; border: none; font-size: 24px; cursor: pointer;">✖</button>
-        </div>
-        
-        <div style="padding: 20px; overflow-y: auto; flex: 1;">
-            <!-- View Controls -->
-            <div style="margin-bottom: 20px;">
-                <h4 style="margin-bottom: 10px;">View Controls</h4>
-                <button class="btn" onclick="expandAll()" style="width: 100%; margin-bottom: 5px;">➕ Expand All</button>
-                <button class="btn" onclick="collapseAll()" style="width: 100%; margin-bottom: 5px;">➖ Collapse All</button>
-                <button class="btn" onclick="fitToScreen()" style="width: 100%; margin-bottom: 5px;">⤢ Fit to Screen</button>
-                <button class="btn" onclick="centerChart()" style="width: 100%;">⌖ Center</button>
-            </div>
-            
-            <!-- Export Options -->
-            <div style="margin-bottom: 20px;">
-                <h4 style="margin-bottom: 10px;">Export & Print</h4>
-                <button class="btn btn-secondary" onclick="exportChart()" style="width: 100%; margin-bottom: 5px;">📸 Export PNG</button>
-                <button class="btn btn-secondary" onclick="printPreview()" style="width: 100%; margin-bottom: 5px;">👁️ Print Preview</button>
-                <button class="btn btn-secondary" onclick="printChart()" style="width: 100%; margin-bottom: 5px;">🖨️ Print</button>
-                <button class="btn" onclick="toggleSelectionMode()" style="background: #e17055; width: 100%; margin-top: 10px;" id="selectionModeBtn">
-                    <span id="selectionBtnText">🎯 Select Area (Beta)</span>
-                </button>
-                <div id="selectionHelp" style="display: none; margin-top: 10px; padding: 10px; background: #fee; border-radius: 5px; font-size: 12px;">
-                    Click and drag to select an area to print. Press ESC to cancel.
-                </div>
-            </div>
-            
-            <!-- Editing Guide -->
-            <div style="margin-bottom: 20px;">
-                <h4 style="margin-bottom: 10px;">✏️ Corrections</h4>
-                <div style="background: #e8f5e9; padding: 10px; border-radius: 5px; font-size: 13px;">
-                    <p style="margin: 5px 0;"><strong>Double-click:</strong> Fix name/title</p>
-                    <p style="margin: 5px 0;"><strong>Right-click:</strong> Edit menu</p>
-                    <p style="margin: 5px 0;"><strong>Export JSON:</strong> Save current chart</p>
-                    <p style="margin: 5px 0; color: #666;">Corrections save automatically!</p>
-                    <hr style="margin: 10px 0; border: none; border-top: 1px solid #ddd;">
-                    <p style="margin: 5px 0; color: #e74c3c;"><strong>🔒 Admin Only:</strong></p>
-                    <p style="margin: 5px 0; color: #999;">• Add/Delete positions</p>
-                    <p style="margin: 5px 0; color: #999;">• Structural changes</p>
-                </div>
-                <details style="margin-top: 10px;">
-                    <summary style="cursor: pointer; color: #0984e3;">📝 JSON Editing Tips</summary>
-                    <div style="background: #fff; padding: 10px; margin-top: 5px; border-left: 3px solid #0984e3; font-size: 12px;">
-                        <p style="margin: 5px 0;">Each person has:</p>
-                        <code style="display: block; background: #f5f5f5; padding: 5px; margin: 5px 0;">
-{
-  "name": "John Doe",
-  "title": "Director",
-  "location": "Atlanta",
-  "children": []
-}
-                        </code>
-                        <p style="margin: 5px 0;">Add people to "children" array</p>
-                    </div>
-                </details>
-            </div>
-            
-            <!-- Data Management -->
-            <div style="margin-bottom: 20px;">
-                <h4 style="margin-bottom: 10px;">Data Management</h4>
-                <button class="btn" style="background: #00b894; width: 100%; margin-bottom: 5px;" onclick="saveToLocal()">💾 Save Changes</button>
-                <button class="btn" style="background: #0984e3; width: 100%; margin-bottom: 5px;" onclick="exportData()">📤 Export Current Version</button>
-                <button class="btn" style="background: #6c5ce7; width: 100%; margin-bottom: 5px;" onclick="importData()">📥 Import JSON</button>
-                <button class="btn" style="background: #e74c3c; width: 100%; margin-bottom: 5px;" onclick="openSimpleEditor()">✏️ Simple Editor (NEW)</button>
-                <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
-                <button class="btn" style="background: #f39c12; width: 100%; margin-bottom: 5px;" onclick="createBackup()">🔒 Create Backup</button>
-                <button class="btn" style="background: #3498db; width: 100%; margin-bottom: 5px;" onclick="showBackups()">📚 View Backups</button>
-                <button class="btn" style="background: #fdcb6e; width: 100%;" onclick="resetData()">🔄 Reset to Original</button>
-                <div style="margin-top: 10px; padding: 10px; background: #d4edda; border-radius: 5px; font-size: 12px;">
-                    <strong>✅ Protected:</strong> Original data always safe
-                </div>
-            </div>
-        </div>
-    </div>
-    
     <!-- Main Header (Simplified) -->
     <div class="header">
-        <button onclick="toggleSidebar()" style="position: absolute; left: 20px; top: 20px; background: #333; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 20px;">☰</button>
+        <h1 style="text-align: center;">🏥 Red Cross SE & Caribbean Division</h1>
         
-        <h1 style="text-align: center;">🏥 Red Cross SE & Caribbean Division - Beta Org Chart</h1>
+        <!-- Hint for users -->
+        <div style="text-align: center; color: #666; font-size: 14px; margin-top: -10px; margin-bottom: 10px;">
+            💡 Double-click any name to fix typos
+        </div>
         
         <div class="controls" style="justify-content: center; padding-top: 10px;">
             <select class="region-select" id="regionSelect">
@@ -402,7 +326,19 @@
             <button class="btn" onclick="fitToScreen()" title="Fit to Screen">⤢ Fit</button>
             <button class="btn" onclick="centerChart()" title="Center">⌖ Center</button>
             <button class="btn" onclick="resetView()" title="Reset View" style="background: #e74c3c;">🔄 Reset</button>
-            <button class="btn" onclick="clearCache()" title="Clear Cache" style="background: #e67e22;">🗑️ Clear Cache</button>
+            
+            <!-- Editor Mode Button -->
+            <button class="btn" onclick="toggleEditorMode()" style="background: #ff6b6b; margin-left: 20px;">🔐 Editor Mode</button>
+            
+            <!-- Editor Buttons - Hidden by default -->
+            <span id="editorButtons" style="display: none; margin-left: 10px;">
+                <button class="btn" onclick="showAddPersonPrompt()" style="background: #4CAF50;">➕ Add Person</button>
+                <button class="btn" onclick="showDeletePersonPrompt()" style="background: #f44336;">🗑️ Delete Person</button>
+                <button class="btn" onclick="backupData()" style="background: #2196F3;">💾 Backup</button>
+                <button class="btn" onclick="restoreData()" style="background: #9C27B0;">📂 Restore</button>
+                <button class="btn" onclick="exportToSimpleExcel()" style="background: #00BCD4;">📊 Export Excel</button>
+                <button class="btn" onclick="importFromCSV()" style="background: #4CAF50;">📤 Import Excel</button>
+            </span>
             
             <span style="padding: 8px 12px; background: #ffeaa7; border-radius: 4px; font-size: 12px; margin-left: 10px;">
                 💡 <strong>Corrections:</strong> Double-click to fix names/titles • <strong>Navigate:</strong> Click to expand/collapse • Scroll to zoom
@@ -519,23 +455,35 @@
                 .compactMarginPair((d) => 80)
                 .initialZoom(0.6)
                 .nodeContent((d, i, arr, state) => {
+                    // Use CSV color if available, otherwise fallback to region colors
+                    let bgColor, textColor, borderColor, borderWidth = '2px';
+                    
+                    // Get node class and region color for all nodes
                     const nodeClass = getNodeClass(d.data);
                     const regionColor = getRegionColor(d.data);
-                    let bgColor = regionColor.bg;
-                    let textColor = regionColor.text;
-                    let borderColor = regionColor.border;
-                    let borderWidth = '2px';
                     
-                    // Special cases for division leadership
-                    if (nodeClass === 'division-vp') {
-                        bgColor = 'linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)';
+                    if (d.data.color && d.data.color.trim() !== '') {
+                        // Use CSV color
+                        bgColor = d.data.color;
                         textColor = 'black';
-                        borderColor = '#ffa000';
-                        borderWidth = '3px';
-                    } else if (d.data.name === "Division Executive Staff") {
-                        bgColor = 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)';
-                        textColor = 'black';
-                        borderColor = '#1976d2';
+                        borderColor = '#ddd';
+                    } else {
+                        // Fallback to old system
+                        bgColor = regionColor.bg;
+                        textColor = regionColor.text;
+                        borderColor = regionColor.border;
+                        
+                        // Special cases for division leadership
+                        if (nodeClass === 'division-vp') {
+                            bgColor = 'linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)';
+                            textColor = 'black';
+                            borderColor = '#ffa000';
+                            borderWidth = '3px';
+                        } else if (d.data.name === "Division Executive Staff") {
+                            bgColor = 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)';
+                            textColor = 'black';
+                            borderColor = '#1976d2';
+                        }
                     }
                     
                     // For executives, make them slightly different
@@ -549,7 +497,7 @@
                     const showJumpButton = d.data.region && d.data.region !== 'division' && d.data.region !== 'all' && currentRegion !== d.data.region;
                     
                     return `
-                        <div style="padding:10px; width:${d.width}px; height:${d.height}px; background:${bgColor}; border-radius:8px; border:${borderWidth} solid ${borderColor}; position:relative;">
+                        <div ondblclick="editPerson('${d.data.id}')" style="padding:10px; width:${d.width}px; height:${d.height}px; background:${bgColor}; border-radius:8px; border:${borderWidth} solid ${borderColor}; position:relative; cursor:pointer;">
                             ${showJumpButton ? `
                                 <div style="position:absolute; top:5px; right:5px;">
                                     <button onclick="jumpToRegion('${d.data.region}', '${d.data.id}')" 
@@ -1808,9 +1756,46 @@
             }, 500);
         }
         
+        // Emergency backup system - secret restore capability
+        function createEmergencyBackup() {
+            // Save the original Red Cross data as emergency backup
+            if (typeof completeOrgData !== 'undefined') {
+                const emergencyData = JSON.stringify(window.completeOrgData || completeOrgData);
+                localStorage.setItem('EMERGENCY_REDCROSS_BACKUP', emergencyData);
+                localStorage.setItem('EMERGENCY_BACKUP_DATE', new Date().toISOString());
+                console.log('🚨 Emergency backup created (only you know about this)');
+            }
+        }
+        
+        // Secret emergency restore function - only we know about this
+        function emergencyRestore() {
+            const emergencyData = localStorage.getItem('EMERGENCY_REDCROSS_BACKUP');
+            if (emergencyData) {
+                try {
+                    window.completeOrgData = JSON.parse(emergencyData);
+                    const backupDate = localStorage.getItem('EMERGENCY_BACKUP_DATE');
+                    loadData();
+                    saveToLocal();
+                    chart.data(currentData).render();
+                    alert(`🚨 EMERGENCY RESTORE COMPLETE!\n\nRestored original Red Cross data from: ${new Date(backupDate).toLocaleString()}\n\nAll custom changes have been erased.`);
+                } catch (error) {
+                    alert('Emergency restore failed: ' + error.message);
+                }
+            } else {
+                alert('No emergency backup found');
+            }
+        }
+        
+        // Secret console commands - only accessible via browser console
+        window.EMERGENCY_RESTORE = emergencyRestore;
+        window.CREATE_EMERGENCY_BACKUP = createEmergencyBackup;
+        
         // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
             console.log('DOM loaded, initializing chart...');
+            
+            // Create emergency backup of original data (secret)
+            createEmergencyBackup();
             
             // Load saved data if exists
             loadFromLocal();
@@ -1923,7 +1908,7 @@
         
         // Save/Load functions
         function saveToLocal() {
-            localStorage.setItem('orgChartData', JSON.stringify(completeOrgData));
+            localStorage.setItem('orgChartData', JSON.stringify(window.completeOrgData || completeOrgData));
             localStorage.setItem('orgChartFlat', JSON.stringify(currentData));
             
             // Show save confirmation
@@ -1938,7 +1923,7 @@
             const saved = localStorage.getItem('orgChartData');
             if (saved) {
                 try {
-                    completeOrgData = JSON.parse(saved);
+                    window.completeOrgData = JSON.parse(saved);
                     console.log('Loaded saved data from local storage');
                 } catch (e) {
                     console.error('Error loading saved data:', e);
@@ -1947,7 +1932,7 @@
         }
         
         function exportData() {
-            const dataStr = JSON.stringify(completeOrgData, null, 2);
+            const dataStr = JSON.stringify(window.completeOrgData || completeOrgData, null, 2);
             const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -1966,7 +1951,7 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     try {
-                        completeOrgData = JSON.parse(e.target.result);
+                        window.completeOrgData = JSON.parse(e.target.result);
                         loadData();
                         saveToLocal();
                         alert('Data imported successfully!');
@@ -2303,6 +2288,458 @@
                 backups.splice(index, 1);
                 localStorage.setItem('orgChartBackups', JSON.stringify(backups));
                 showBackups(); // Refresh the list
+            }
+        }
+        
+        // ============ EDITING FEATURES ============
+        
+        // Edit person function (double-click handler)
+        function editPerson(nodeId) {
+            event.stopPropagation();
+            const node = currentData.find(n => n.id === nodeId);
+            if (!node) return;
+            
+            // Enhanced editing with multiple fields
+            const newName = prompt('Edit Name:', node.name || '');
+            if (newName !== null && newName !== node.name) {
+                node.name = newName;
+            }
+            
+            const newTitle = prompt('Edit Title:', node.title || '');
+            if (newTitle !== null) {
+                node.title = newTitle;
+            }
+            
+            const newLocation = prompt('Edit Location:', node.location || '');
+            if (newLocation !== null) {
+                node.location = newLocation;
+            }
+            
+            const newEmail = prompt('Edit Email (optional):', node.email || '');
+            if (newEmail !== null) {
+                node.email = newEmail;
+            }
+            
+            const newPhone = prompt('Edit Phone (optional):', node.phone || '');
+            if (newPhone !== null) {
+                node.phone = newPhone;
+            }
+            
+            const newColor = prompt('Edit Background Color (hex code, optional):', node.color || '');
+            if (newColor !== null) {
+                node.color = newColor;
+            }
+            
+            // Save and refresh
+            saveToLocal();
+            chart.data(currentData).render();
+        }
+        
+        // Editor Mode
+        let isEditorMode = false;
+        
+        function toggleEditorMode() {
+            const password = prompt('Enter password for Editor Mode:');
+            if (password === 'redcross') {
+                isEditorMode = !isEditorMode;
+                
+                if (isEditorMode) {
+                    document.getElementById('editorButtons').style.display = 'inline-block';
+                    
+                    alert('Editor Mode ON!\n\nYou can now:\n• Add Person - Type who they report to\n• Delete Person - Type their name\n• Backup - Save current version\n• Restore - Go back to saved version\n• Export Excel - Download for editing');
+                } else {
+                    document.getElementById('editorButtons').style.display = 'none';
+                    document.removeEventListener('contextmenu', handleContextMenu);
+                    alert('Editor Mode OFF');
+                }
+            } else if (password !== null) {
+                alert('Incorrect password');
+            }
+        }
+        
+        // Context menu for right-click
+        let selectedNodeForEdit = null;
+        
+        function handleContextMenu(e) {
+            if (!isEditorMode) return;
+            
+            e.preventDefault();
+            
+            // Find if we clicked on a node
+            const nodeElement = e.target.closest('[data-node-id]');
+            if (nodeElement) {
+                selectedNodeForEdit = currentData.find(n => n.id === nodeElement.dataset.nodeId);
+                
+                // Show simple context menu
+                const menu = document.getElementById('contextMenu');
+                if (!menu) {
+                    createContextMenu();
+                }
+                const contextMenu = document.getElementById('contextMenu');
+                contextMenu.style.left = e.pageX + 'px';
+                contextMenu.style.top = e.pageY + 'px';
+                contextMenu.style.display = 'block';
+            }
+        }
+        
+        function createContextMenu() {
+            const menu = document.createElement('div');
+            menu.id = 'contextMenu';
+            menu.style.cssText = 'position:fixed;background:white;border:1px solid #ccc;border-radius:4px;padding:8px 0;box-shadow:0 2px 10px rgba(0,0,0,0.2);z-index:10000;display:none;';
+            menu.innerHTML = `
+                <div onclick="addPersonBelow()" style="padding:8px 16px;cursor:pointer;">➕ Add Person Below</div>
+                <div onclick="deletePerson()" style="padding:8px 16px;cursor:pointer;color:red;">🗑️ Delete Person</div>
+            `;
+            document.body.appendChild(menu);
+            
+            // Hide on click elsewhere
+            document.addEventListener('click', () => {
+                menu.style.display = 'none';
+            });
+        }
+        
+        function addPersonBelow() {
+            if (!selectedNodeForEdit) return;
+            
+            const name = prompt('Enter name:');
+            if (!name) return;
+            
+            const title = prompt('Enter title:');
+            const location = prompt('Enter location (optional):');
+            
+            const newPerson = {
+                id: 'node_' + Date.now(),
+                parentId: selectedNodeForEdit.id,
+                name: name,
+                title: title || '',
+                location: location || '',
+                type: selectedNodeForEdit.type,
+                region: selectedNodeForEdit.region
+            };
+            
+            currentData.push(newPerson);
+            saveToLocal();
+            chart.data(currentData).render();
+            
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+        
+        function deletePerson() {
+            if (!selectedNodeForEdit) return;
+            
+            if (!confirm(`Delete ${selectedNodeForEdit.name} and all their reports?`)) return;
+            
+            // Find all descendants
+            const toDelete = [selectedNodeForEdit.id];
+            let found = true;
+            while (found) {
+                found = false;
+                currentData.forEach(node => {
+                    if (toDelete.includes(node.parentId) && !toDelete.includes(node.id)) {
+                        toDelete.push(node.id);
+                        found = true;
+                    }
+                });
+            }
+            
+            currentData = currentData.filter(n => !toDelete.includes(n.id));
+            saveToLocal();
+            chart.data(currentData).render();
+            
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+        
+        // Get ALL data (not filtered)
+        function getAllData() {
+            // Always load fresh complete data for export
+            const allData = [];
+            
+            // Convert division data
+            if (completeOrgData.division) {
+                const divisionData = convertToFlatData(completeOrgData.division, null, 'division', 'div_');
+                allData.push(...divisionData);
+            }
+            
+            // Convert each region's data - get EVERYTHING
+            const regions = Object.keys(completeOrgData).filter(key => key !== 'division');
+            regions.forEach(regionKey => {
+                const regionData = completeOrgData[regionKey];
+                if (Array.isArray(regionData)) {
+                    regionData.forEach((item, idx) => {
+                        const flat = convertToFlatData(item, null, regionKey, `${regionKey}_${idx}_`);
+                        allData.push(...flat);
+                    });
+                } else if (regionData && typeof regionData === 'object') {
+                    const flat = convertToFlatData(regionData, null, regionKey, `${regionKey}_`);
+                    allData.push(...flat);
+                }
+            });
+            
+            console.log('Export: Found', allData.length, 'total people');
+            return allData;
+        }
+        
+        // Simple Add Person function
+        function showAddPersonPrompt() {
+            const parentName = prompt('Who should this person report to? (Type their name)');
+            if (!parentName) return;
+            
+            // Find the parent node
+            const parent = currentData.find(n => 
+                n.name && n.name.toLowerCase().includes(parentName.toLowerCase())
+            );
+            
+            if (!parent) {
+                alert(`Cannot find "${parentName}". Please try again.`);
+                return;
+            }
+            
+            const name = prompt(`Adding person under ${parent.name}.\n\nEnter new person's name:`);
+            if (!name) return;
+            
+            const title = prompt('Enter their title:');
+            const location = prompt('Enter their location (optional):');
+            const email = prompt('Enter their email (optional):');
+            const phone = prompt('Enter their phone (optional):');
+            const color = prompt('Enter background color (hex code, optional):');
+            
+            const newPerson = {
+                id: 'node_' + Date.now(),
+                parentId: parent.id,
+                name: name,
+                title: title || '',
+                location: location || '',
+                email: email || '',
+                phone: phone || '',
+                color: color || '',
+                type: parent.type,
+                region: parent.region
+            };
+            
+            currentData.push(newPerson);
+            saveToLocal();
+            chart.data(currentData).render();
+            alert(`Added ${name} under ${parent.name}`);
+        }
+        
+        // Simple Delete Person function
+        function showDeletePersonPrompt() {
+            const name = prompt('Who do you want to delete? (Type their name)');
+            if (!name) return;
+            
+            const person = currentData.find(n => 
+                n.name && n.name.toLowerCase().includes(name.toLowerCase())
+            );
+            
+            if (!person) {
+                alert(`Cannot find "${name}". Please try again.`);
+                return;
+            }
+            
+            if (!confirm(`Delete ${person.name} (${person.title}) and everyone who reports to them?`)) return;
+            
+            // Find all descendants
+            const toDelete = [person.id];
+            let found = true;
+            while (found) {
+                found = false;
+                currentData.forEach(node => {
+                    if (toDelete.includes(node.parentId) && !toDelete.includes(node.id)) {
+                        toDelete.push(node.id);
+                        found = true;
+                    }
+                });
+            }
+            
+            const deleteCount = toDelete.length;
+            currentData = currentData.filter(n => !toDelete.includes(n.id));
+            saveToLocal();
+            chart.data(currentData).render();
+            alert(`Deleted ${deleteCount} position(s)`);
+        }
+        
+        // Simple Excel Export - Always export FULL organization
+        function exportToSimpleExcel() {
+            // Always use the full data, not filtered view
+            const fullData = getAllData();
+            
+            console.log('Starting export with', fullData.length, 'people');
+            
+            let csv = 'Name,Title,Location,Reports To,Color,Email,Phone\n';
+            let exportCount = 0;
+            
+            fullData.forEach(node => {
+                // Skip empty nodes
+                if (!node.name || node.name.trim() === '') {
+                    console.log('Skipping empty node:', node);
+                    return;
+                }
+                
+                const parent = fullData.find(p => p.id === node.parentId);
+                const parentName = parent ? parent.name : '';
+                
+                // Build CSV row with new fields
+                const row = `"${node.name || ''}","${node.title || ''}","${node.location || ''}","${parentName}","${node.color || ''}","${node.email || ''}","${node.phone || ''}"`;
+                csv += row + '\n';
+                exportCount++;
+                
+                // Debug first few rows
+                if (exportCount <= 5) {
+                    console.log('Row', exportCount, ':', row);
+                }
+            });
+            
+            console.log('Actually exported', exportCount, 'rows to CSV');
+            console.log('CSV length:', csv.length, 'characters');
+            console.log('First 500 chars of CSV:', csv.substring(0, 500));
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'red-cross-org-chart-full.csv';
+            a.click();
+            
+            alert(`Export complete!\n\nFound: ${fullData.length} people\nExported: ${exportCount} people with names\n\nOpen this file in Excel to edit, then save as CSV to import back.`);
+        }
+        
+        // Import from CSV
+        function importFromCSV() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv';
+            
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const csv = event.target.result;
+                        const lines = csv.split('\n');
+                        
+                        // Skip header
+                        if (lines[0].toLowerCase().includes('name')) {
+                            lines.shift();
+                        }
+                        
+                        // Parse CSV and build new data
+                        const newData = [];
+                        const nameToId = {};
+                        
+                        // First pass - create all nodes
+                        lines.forEach((line, index) => {
+                            if (!line.trim()) return;
+                            
+                            // Parse CSV line (handle commas in quotes)
+                            const parts = [];
+                            let current = '';
+                            let inQuotes = false;
+                            
+                            for (let char of line) {
+                                if (char === '"') {
+                                    inQuotes = !inQuotes;
+                                } else if (char === ',' && !inQuotes) {
+                                    parts.push(current.trim());
+                                    current = '';
+                                } else {
+                                    current += char;
+                                }
+                            }
+                            parts.push(current.trim());
+                            
+                            // Remove quotes from parts
+                            const cleanParts = parts.map(p => p.replace(/^"|"$/g, ''));
+                            
+                            const [name, title, location, reportsTo, color, email, phone] = cleanParts;
+                            
+                            if (name) {
+                                const id = 'node_' + Date.now() + '_' + index;
+                                nameToId[name] = id;
+                                
+                                newData.push({
+                                    id: id,
+                                    name: name,
+                                    title: title || '',
+                                    location: location || '',
+                                    reportsTo: reportsTo || '',
+                                    color: color || '',
+                                    email: email || '',
+                                    phone: phone || '',
+                                    parentId: null,
+                                    type: currentData[0]?.type || '',
+                                    region: currentData[0]?.region || 'all'
+                                });
+                            }
+                        });
+                        
+                        // Second pass - set up parent relationships
+                        newData.forEach(node => {
+                            if (node.reportsTo && nameToId[node.reportsTo]) {
+                                node.parentId = nameToId[node.reportsTo];
+                            }
+                            delete node.reportsTo; // Clean up temporary field
+                        });
+                        
+                        // Find root nodes (no parentId) and make sure there's at least one
+                        const rootNodes = newData.filter(n => !n.parentId);
+                        if (rootNodes.length === 0 && newData.length > 0) {
+                            // Make the first person the root
+                            newData[0].parentId = null;
+                        }
+                        
+                        if (confirm(`Import ${newData.length} people from CSV? This will REPLACE the current chart.`)) {
+                            currentData = newData;
+                            saveToLocal();
+                            chart.data(currentData).render();
+                            alert('CSV imported successfully!');
+                        }
+                    } catch (error) {
+                        alert('Error importing CSV: ' + error.message + '\n\nMake sure your CSV has columns: Name, Title, Location, Reports To');
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+        
+        // Backup functions
+        function backupData() {
+            const backupName = prompt('Enter backup name:') || 'backup_' + new Date().toISOString();
+            const backups = JSON.parse(localStorage.getItem('orgBackups') || '{}');
+            
+            backups[backupName] = {
+                date: new Date().toISOString(),
+                data: currentData
+            };
+            
+            localStorage.setItem('orgBackups', JSON.stringify(backups));
+            alert(`Backup "${backupName}" saved!`);
+        }
+        
+        function restoreData() {
+            const backups = JSON.parse(localStorage.getItem('orgBackups') || '{}');
+            const backupNames = Object.keys(backups);
+            
+            if (backupNames.length === 0) {
+                alert('No backups found');
+                return;
+            }
+            
+            const backupList = backupNames.map(name => 
+                `${name} (${new Date(backups[name].date).toLocaleString()})`
+            ).join('\n');
+            
+            const backupName = prompt(`Choose backup:\n\n${backupList}\n\nEnter backup name:`);
+            
+            if (backupName && backups[backupName]) {
+                currentData = backups[backupName].data;
+                saveToLocal();
+                chart.data(currentData).render();
+                alert('Backup restored!');
             }
         }
     </script>
