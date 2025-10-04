@@ -3331,18 +3331,32 @@
             
             const svg = d3.select('#chart-container svg g');
             
-            dottedLineRelationships.forEach(relationship => {
+            dottedLineRelationships.forEach((relationship, index) => {
+                console.log(`Processing dotted relationship ${index + 1}:`, relationship);
+                
                 // Find the nodes in current data
                 const fromNode = currentData.find(n => n.id === relationship.from);
                 const toNode = currentData.find(n => n.id === relationship.to);
                 
-                if (!fromNode || !toNode) return;
+                console.log('fromNode found:', !!fromNode, fromNode?.name);
+                console.log('toNode found:', !!toNode, toNode?.name);
+                
+                if (!fromNode || !toNode) {
+                    console.log('Skipping relationship - missing node');
+                    return;
+                }
                 
                 // Find the rendered nodes in the DOM
                 const fromElement = document.querySelector(`[data-node-id="${relationship.from}"]`);
                 const toElement = document.querySelector(`[data-node-id="${relationship.to}"]`);
                 
-                if (!fromElement || !toElement) return;
+                console.log('fromElement found:', !!fromElement);
+                console.log('toElement found:', !!toElement);
+                
+                if (!fromElement || !toElement) {
+                    console.log('Skipping relationship - DOM elements not found');
+                    return;
+                }
                 
                 // Get positions
                 const fromRect = fromElement.getBoundingClientRect();
