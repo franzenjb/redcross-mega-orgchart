@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Cross Professional Organizational Chart</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            color: #dc143c;
+            margin-bottom: 10px;
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .btn {
+            background: #dc143c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #b91c3c;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        .upload-area {
+            border: 2px dashed #dc143c;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            background: #fff5f5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            background: #ffe5e5;
+            border-color: #b91c3c;
+        }
+        #chart-container {
+            width: 100%;
+            height: 700px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .export-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .export-section h2 {
+            color: #dc143c;
+            margin-top: 0;
+        }
+        .export-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .export-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+        .export-card h3 {
+            color: #dc143c;
+            margin-top: 0;
+        }
+        .file-info {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .line-solid {
+            width: 30px;
+            height: 3px;
+            background: #333;
+        }
+        .line-dotted {
+            width: 30px;
+            height: 3px;
+            background: #ff6b6b;
+            background-image: repeating-linear-gradient(to right, transparent, transparent 3px, #ff6b6b 3px, #ff6b6b 6px);
+        }
+        .zoom-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        .zoom-btn {
+            background: rgba(220, 20, 60, 0.9);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin: 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .zoom-btn:hover {
+            background: rgba(185, 28, 60, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏥 Red Cross Professional Organizational Chart</h1>
+        <p>Complete solution with CSV import, visual chart, and professional exports</p>
+    </div>
+
+    <div class="controls">
+        <div class="upload-area" id="uploadArea">
+            <h3>📄 Upload Your CSV File</h3>
+            <p>Drop CSV file here or click to browse</p>
+            <input type="file" id="csvFile" accept=".csv" style="display: none;">
+        </div>
+        
+        <div class="file-info" id="fileInfo" style="display: none;"></div>
+        
+        <button class="btn" onclick="downloadTemplate()">📥 Download Template</button>
+        <button class="btn btn-secondary" onclick="generateChart()" id="generateBtn" disabled>🎨 Generate Chart</button>
+        <button class="btn" onclick="downloadChartImage()" id="imageBtn" disabled>🖼️ Download Image</button>
+    </div>
+
+    <div class="legend" id="legend" style="display: none;">
+        <div class="legend-item">
+            <div class="line-solid"></div>
+            <span>Direct Reporting (Solid Line)</span>
+        </div>
+        <div class="legend-item">
+            <div class="line-dotted"></div>
+            <span>Matrix Reporting (Dotted Line)</span>
+        </div>
+    </div>
+
+    <div id="chart-container">
+        <div class="zoom-controls" id="zoomControls" style="display: none;">
+            <button class="zoom-btn" onclick="zoomIn()">🔍+</button>
+            <button class="zoom-btn" onclick="zoomOut()">🔍-</button>
+            <button class="zoom-btn" onclick="fitToScreen()">📏 Fit</button>
+            <button class="zoom-btn" onclick="resetZoom()">🎯 Reset</button>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666; flex-direction: column;">
+            <h3>📊 Professional Org Chart Viewer</h3>
+            <p>Upload a CSV file to generate your organizational chart</p>
+        </div>
+    </div>
+
+    <div class="export-section" id="exportSection" style="display: none;">
+        <h2>📤 Export Options</h2>
+        <div class="export-grid">
+            <div class="export-card">
+                <h3>🖼️ High-Quality Images</h3>
+                <p>Perfect for presentations and documents</p>
+                <button class="btn" onclick="exportPNG()">PNG (Transparent)</button>
+                <button class="btn" onclick="exportJPG()">JPG (White Background)</button>
+                <button class="btn" onclick="exportSVG()">SVG (Vector)</button>
+            </div>
+            
+            <div class="export-card">
+                <h3>📊 Microsoft Office</h3>
+                <p>Import into Office applications</p>
+                <button class="btn" onclick="exportForPowerPoint()">PowerPoint Format</button>
+                <button class="btn" onclick="exportForWord()">Word Document</button>
+                <button class="btn" onclick="exportExcelData()">Excel Data</button>
+            </div>
+            
+            <div class="export-card">
+                <h3>🌐 Web & Print</h3>
+                <p>Web-ready and print formats</p>
+                <button class="btn" onclick="exportPDF()">PDF (Print Ready)</button>
+                <button class="btn" onclick="exportHTML()">HTML (Interactive)</button>
+                <button class="btn" onclick="printChart()">🖨️ Print</button>
+            </div>
+            
+            <div class="export-card">
+                <h3>📋 Data Formats</h3>
+                <p>For other systems and tools</p>
+                <button class="btn" onclick="exportJSON()">JSON Data</button>
+                <button class="btn" onclick="exportCSVProcessed()">Processed CSV</button>
+                <button class="btn" onclick="exportDiagram()">Diagram Code</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- D3.js for advanced visualization -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Additional libraries for export functionality -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+        let csvData = [];
+        let processedData = [];
+        let chart = null;
+        let currentZoom = 1;
+
+        // File upload handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('csvFile');
+        const fileInfo = document.getElementById('fileInfo');
+        const generateBtn = document.getElementById('generateBtn');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.transform = 'scale(1.02)';
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.transform = 'scale(1)';
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.transform = 'scale(1)';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                alert('Please select a CSV file');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const csv = e.target.result;
+                parseCSV(csv);
+                
+                fileInfo.style.display = 'block';
+                fileInfo.innerHTML = `
+                    ✅ <strong>File loaded:</strong> ${file.name}<br>
+                    📊 <strong>Size:</strong> ${(file.size / 1024).toFixed(1)} KB<br>
+                    👥 <strong>Records:</strong> ${csvData.length} people<br>
+                    🎯 <strong>Status:</strong> Ready to generate professional chart
+                `;
+                
+                generateBtn.disabled = false;
+                generateBtn.classList.remove('btn-secondary');
+                generateBtn.classList.add('btn');
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.split('\n').filter(line => line.trim());
+            
+            function parseCSVLine(line) {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                result.push(current.trim());
+                return result;
+            }
+            
+            const headers = parseCSVLine(lines[0]);
+            csvData = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                
+                const nameField = row.Name || row.name || row.NAME || '';
+                if (nameField && nameField.trim()) {
+                    csvData.push(row);
+                }
+            }
+        }
+
+        function generateChart() {
+            if (csvData.length === 0) {
+                alert('Please upload a CSV file first');
+                return;
+            }
+
+            processedData = processCSVData(csvData);
+            renderAdvancedChart(processedData);
+            
+            // Show controls and export options
+            document.getElementById('legend').style.display = 'flex';
+            document.getElementById('zoomControls').style.display = 'block';
+            document.getElementById('exportSection').style.display = 'block';
+            document.getElementById('imageBtn').disabled = false;
+        }
+
+        function processCSVData(data) {
+            const peopleMap = new Map();
+            
+            data.forEach(row => {
+                const name = row.Name || row.name;
+                const reportsTo = row['Reports To'] || row['Reports_To'] || '';
+                const relationshipType = (row['Relationship Type'] || row.relationship_type || 'solid').toLowerCase();
+                
+                if (!peopleMap.has(name)) {
+                    peopleMap.set(name, {
+                        name: name,
+                        title: row.Title || row.title || '',
+                        location: row.Location || row.location || '',
+                        phone: row.Phone || row.phone || '',
+                        email: row.Email || row.email || '',
+                        department: row.Department || row.department || '',
+                        solidReportsTo: null,
+                        dottedReportsTo: []
+                    });
+                }
+                
+                const person = peopleMap.get(name);
+                
+                if (reportsTo && reportsTo.trim()) {
+                    if (relationshipType === 'dotted') {
+                        person.dottedReportsTo.push(reportsTo);
+                    } else {
+                        person.solidReportsTo = reportsTo;
+                    }
+                }
+            });
+            
+            return Array.from(peopleMap.values());
+        }
+
+        function renderAdvancedChart(data) {
+            const container = document.getElementById('chart-container');
+            container.innerHTML = '';
+            
+            // Add zoom controls back
+            const zoomControls = document.createElement('div');
+            zoomControls.className = 'zoom-controls';
+            zoomControls.id = 'zoomControls';
+            zoomControls.innerHTML = `
+                <button class="zoom-btn" onclick="zoomIn()">🔍+</button>
+                <button class="zoom-btn" onclick="zoomOut()">🔍-</button>
+                <button class="zoom-btn" onclick="fitToScreen()">📏 Fit</button>
+                <button class="zoom-btn" onclick="resetZoom()">🎯 Reset</button>
+            `;
+            container.appendChild(zoomControls);
+            
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            const svg = d3.select('#chart-container')
+                .append('svg')
+                .attr('width', '100%')
+                .attr('height', '100%')
+                .attr('viewBox', `0 0 ${width} ${height}`)
+                .style('background', 'white');
+            
+            const g = svg.append('g')
+                .attr('class', 'chart-group');
+            
+            // Find root node
+            const root = data.find(person => !person.solidReportsTo);
+            if (!root) {
+                container.innerHTML = '<div style="padding: 50px; text-align: center; color: red;">Error: No root person found</div>';
+                return;
+            }
+            
+            // Build hierarchy
+            const hierarchy = buildHierarchy(data, root);
+            const treeLayout = d3.tree().size([width - 100, height - 100]);
+            const rootNode = d3.hierarchy(hierarchy);
+            treeLayout(rootNode);
+            
+            // Draw connections (solid lines)
+            g.selectAll('.link')
+                .data(rootNode.links())
+                .enter()
+                .append('path')
+                .attr('class', 'link')
+                .attr('d', d3.linkVertical()
+                    .x(d => d.x)
+                    .y(d => d.y))
+                .style('fill', 'none')
+                .style('stroke', '#333')
+                .style('stroke-width', '2px');
+            
+            // Draw nodes
+            const nodeGroup = g.selectAll('.node')
+                .data(rootNode.descendants())
+                .enter()
+                .append('g')
+                .attr('class', 'node')
+                .attr('transform', d => `translate(${d.x},${d.y})`);
+            
+            // Node background
+            nodeGroup.append('rect')
+                .attr('width', 160)
+                .attr('height', 80)
+                .attr('x', -80)
+                .attr('y', -40)
+                .style('fill', '#dc143c')
+                .style('stroke', '#333')
+                .style('stroke-width', '2px')
+                .style('rx', '8px')
+                .style('filter', 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))');
+            
+            // Name text
+            nodeGroup.append('text')
+                .attr('dy', '-15')
+                .attr('text-anchor', 'middle')
+                .style('fill', 'white')
+                .style('font-size', '12px')
+                .style('font-weight', 'bold')
+                .text(d => d.data.name);
+            
+            // Title text
+            nodeGroup.append('text')
+                .attr('dy', '0')
+                .attr('text-anchor', 'middle')
+                .style('fill', 'white')
+                .style('font-size', '10px')
+                .text(d => d.data.title);
+            
+            // Location text
+            nodeGroup.append('text')
+                .attr('dy', '15')
+                .attr('text-anchor', 'middle')
+                .style('fill', 'white')
+                .style('font-size', '8px')
+                .text(d => d.data.location);
+            
+            // Draw dotted lines
+            drawDottedLines(g, rootNode, data);
+            
+            // Add zoom behavior
+            const zoom = d3.zoom()
+                .scaleExtent([0.1, 3])
+                .on('zoom', (event) => {
+                    g.attr('transform', event.transform);
+                    currentZoom = event.transform.k;
+                });
+            
+            svg.call(zoom);
+            chart = { svg, zoom, g };
+        }
+
+        function buildHierarchy(data, root) {
+            function buildNode(person) {
+                const children = data.filter(p => p.solidReportsTo === person.name);
+                return {
+                    name: person.name,
+                    title: person.title,
+                    location: person.location,
+                    phone: person.phone,
+                    email: person.email,
+                    department: person.department,
+                    children: children.map(child => buildNode(child))
+                };
+            }
+            return buildNode(root);
+        }
+
+        function drawDottedLines(g, rootNode, data) {
+            const dottedRelationships = [];
+            data.forEach(person => {
+                person.dottedReportsTo.forEach(supervisor => {
+                    dottedRelationships.push({ from: person.name, to: supervisor });
+                });
+            });
+            
+            dottedRelationships.forEach(rel => {
+                const fromNode = rootNode.descendants().find(d => d.data.name === rel.from);
+                const toNode = rootNode.descendants().find(d => d.data.name === rel.to);
+                
+                if (fromNode && toNode) {
+                    g.append('path')
+                        .attr('d', d3.linkVertical()
+                            .x(d => d.x)
+                            .y(d => d.y)({
+                            source: fromNode,
+                            target: toNode
+                        }))
+                        .style('fill', 'none')
+                        .style('stroke', '#ff6b6b')
+                        .style('stroke-width', '3px')
+                        .style('stroke-dasharray', '10,5')
+                        .style('opacity', '0.8');
+                }
+            });
+        }
+
+        // Zoom controls
+        function zoomIn() {
+            if (chart) {
+                chart.svg.transition().call(chart.zoom.scaleBy, 1.5);
+            }
+        }
+
+        function zoomOut() {
+            if (chart) {
+                chart.svg.transition().call(chart.zoom.scaleBy, 0.67);
+            }
+        }
+
+        function fitToScreen() {
+            if (chart) {
+                const bounds = chart.g.node().getBBox();
+                const parent = chart.svg.node().parentElement;
+                const fullWidth = parent.clientWidth;
+                const fullHeight = parent.clientHeight;
+                const width = bounds.width;
+                const height = bounds.height;
+                const midX = bounds.x + width / 2;
+                const midY = bounds.y + height / 2;
+                const scale = 0.8 / Math.max(width / fullWidth, height / fullHeight);
+                const translate = [fullWidth / 2 - scale * midX, fullHeight / 2 - scale * midY];
+                
+                chart.svg.transition().call(
+                    chart.zoom.transform,
+                    d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale)
+                );
+            }
+        }
+
+        function resetZoom() {
+            if (chart) {
+                chart.svg.transition().call(chart.zoom.transform, d3.zoomIdentity);
+            }
+        }
+
+        // Template download
+        function downloadTemplate() {
+            const templateCSV = `Name,Title,Location,Reports To,Relationship Type,Phone,Email,Department
+Anna Trefethen,Division Vice President,SE & Caribbean Division,,solid,555-0101,anna.trefethen@redcross.org,Executive
+Ryan Lock,Division Disaster Executive,Division HQ,Anna Trefethen,solid,555-0102,ryan.lock@redcross.org,Disaster Services
+D. Dixon,Division Chief Development Officer,Division HQ,Anna Trefethen,solid,555-0103,d.dixon@redcross.org,Development
+K. Gonzalez,Division Service to Armed Forces Director,Division HQ,Anna Trefethen,solid,555-0104,k.gonzalez@redcross.org,SAF
+W. Carney,CDO - Florida N/C,Jacksonville,D. Dixon,solid,555-0105,w.carney@redcross.org,Development
+Jeff Franzen,Regional Director,Florida North Central,W. Carney,solid,555-0106,jeff.franzen@redcross.org,Operations
+Jeff Franzen,Regional Director,Florida North Central,D. Dixon,dotted,555-0106,jeff.franzen@redcross.org,Operations`;
+            
+            downloadFile(templateCSV, 'redcross-org-template.csv', 'text/csv');
+        }
+
+        // Export functions
+        function exportPNG() {
+            const svg = document.querySelector('#chart-container svg');
+            if (!svg) {
+                alert('Please generate a chart first');
+                return;
+            }
+            
+            html2canvas(svg.parentElement, {
+                backgroundColor: 'white',
+                scale: 2
+            }).then(canvas => {
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'redcross-orgchart.png';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+            });
+        }
+
+        function exportSVG() {
+            const svg = document.querySelector('#chart-container svg');
+            if (!svg) {
+                alert('Please generate a chart first');
+                return;
+            }
+            
+            const serializer = new XMLSerializer();
+            const svgString = serializer.serializeToString(svg);
+            downloadFile(svgString, 'redcross-orgchart.svg', 'image/svg+xml');
+        }
+
+        function exportExcelData() {
+            if (processedData.length === 0) {
+                alert('Please generate a chart first');
+                return;
+            }
+            
+            let csv = 'Name,Title,Location,Reports_To,Dotted_Reports_To,Phone,Email,Department\n';
+            processedData.forEach(person => {
+                const dotted = person.dottedReportsTo.join('; ');
+                csv += `"${person.name}","${person.title}","${person.location}","${person.solidReportsTo || ''}","${dotted}","${person.phone}","${person.email}","${person.department}"\n`;
+            });
+            
+            downloadFile(csv, 'redcross-org-excel.csv', 'text/csv');
+        }
+
+        function exportJSON() {
+            if (processedData.length === 0) {
+                alert('Please generate a chart first');
+                return;
+            }
+            
+            const jsonData = JSON.stringify(processedData, null, 2);
+            downloadFile(jsonData, 'redcross-org-data.json', 'application/json');
+        }
+
+        function downloadChartImage() {
+            exportPNG();
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Placeholder functions for additional exports
+        function exportJPG() {
+            alert('JPG export: Convert PNG to JPG using your preferred image editor');
+        }
+
+        function exportForPowerPoint() {
+            alert('PowerPoint: Use the PNG export and insert into your presentation');
+        }
+
+        function exportForWord() {
+            alert('Word: Use the PNG export and insert into your document');
+        }
+
+        function exportPDF() {
+            alert('PDF: Use your browser\'s Print → Save as PDF feature');
+        }
+
+        function exportHTML() {
+            alert('HTML: This page itself is the interactive HTML version');
+        }
+
+        function printChart() {
+            window.print();
+        }
+
+        function exportCSVProcessed() {
+            exportExcelData();
+        }
+
+        function exportDiagram() {
+            exportSVG();
+        }
+    </script>
+</body>
+</html>
