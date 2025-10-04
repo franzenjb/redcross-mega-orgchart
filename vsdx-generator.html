@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Cross VSDX Generator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            color: #dc143c;
+            margin-bottom: 10px;
+        }
+        .section {
+            background: white;
+            margin: 20px 0;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #dc143c;
+            margin-top: 0;
+            border-bottom: 2px solid #dc143c;
+            padding-bottom: 10px;
+        }
+        .upload-area {
+            border: 2px dashed #dc143c;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            background: #fff5f5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            background: #ffe5e5;
+            border-color: #b91c3c;
+        }
+        .btn {
+            background: #dc143c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #b91c3c;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        .file-info {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .instructions {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+            margin: 15px 0;
+        }
+        .success {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏥 Red Cross VSDX Generator</h1>
+        <p>Convert your CSV organizational data directly into Visio VSDX files</p>
+        <p><strong>No Visio template required - creates native .vsdx files!</strong></p>
+    </div>
+
+    <div class="section">
+        <h2>📋 How This Works</h2>
+        <div class="instructions">
+            <h3>🎯 The VSDX Solution:</h3>
+            <ul>
+                <li><strong>Upload your CSV</strong> - Same format as before</li>
+                <li><strong>Generate VSDX</strong> - Creates actual Visio file format</li>
+                <li><strong>Open in Visio</strong> - Double-click the .vsdx file</li>
+                <li><strong>Professional result</strong> - Native Visio organizational chart</li>
+                <li><strong>Edit in Visio</strong> - Add dotted lines, styling, etc.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📁 Upload Your CSV File</h2>
+        <div class="upload-area" id="uploadArea">
+            <h3>📄 Drop your CSV file here or click to browse</h3>
+            <p>Same CSV format - with Name, Title, Reports To, Relationship Type</p>
+            <input type="file" id="csvFile" accept=".csv" style="display: none;">
+        </div>
+        
+        <div class="file-info" id="fileInfo" style="display: none;"></div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn" onclick="downloadTemplate()">📥 Download Template CSV</button>
+            <button class="btn btn-secondary" onclick="generateVSDX()" id="generateBtn" disabled>🎨 Generate VSDX File</button>
+        </div>
+    </div>
+
+    <div class="section" id="resultSection" style="display: none;">
+        <h2>✅ VSDX File Generated</h2>
+        <div class="success" id="successMessage"></div>
+        <div class="instructions">
+            <h3>🎯 Next Steps:</h3>
+            <ol>
+                <li><strong>Locate the downloaded .vsdx file</strong> in your Downloads folder</li>
+                <li><strong>Double-click to open</strong> in Microsoft Visio</li>
+                <li><strong>Visio will display</strong> your organizational chart</li>
+                <li><strong>Add dotted lines manually</strong> for matrix relationships</li>
+                <li><strong>Customize styling</strong> as needed in Visio</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- JSZip for creating ZIP files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <script>
+        let csvData = [];
+        let processedData = [];
+
+        // File upload handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('csvFile');
+        const fileInfo = document.getElementById('fileInfo');
+        const generateBtn = document.getElementById('generateBtn');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.transform = 'scale(1.02)';
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.transform = 'scale(1)';
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.transform = 'scale(1)';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                alert('Please select a CSV file');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const csv = e.target.result;
+                parseCSV(csv);
+                
+                fileInfo.style.display = 'block';
+                fileInfo.innerHTML = `
+                    ✅ <strong>File loaded:</strong> ${file.name}<br>
+                    📊 <strong>Size:</strong> ${(file.size / 1024).toFixed(1)} KB<br>
+                    👥 <strong>Records:</strong> ${csvData.length} people<br>
+                    🎯 <strong>Status:</strong> Ready to generate VSDX file
+                `;
+                
+                generateBtn.disabled = false;
+                generateBtn.classList.remove('btn-secondary');
+                generateBtn.classList.add('btn');
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.split('\n').filter(line => line.trim());
+            
+            function parseCSVLine(line) {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                result.push(current.trim());
+                return result;
+            }
+            
+            const headers = parseCSVLine(lines[0]);
+            csvData = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                
+                const nameField = row.Name || row.name || row.NAME || '';
+                if (nameField && nameField.trim()) {
+                    csvData.push(row);
+                }
+            }
+            
+            console.log('Parsed CSV data:', csvData.length, 'records');
+        }
+
+        function generateVSDX() {
+            if (csvData.length === 0) {
+                alert('Please upload a CSV file first');
+                return;
+            }
+
+            console.log('Starting VSDX generation...');
+            processedData = processCSVData(csvData);
+            createVSDXFile(processedData);
+        }
+
+        function processCSVData(data) {
+            const peopleMap = new Map();
+            
+            data.forEach(row => {
+                const name = row.Name || row.name;
+                const reportsTo = row['Reports To'] || row['Reports_To'] || '';
+                const relationshipType = (row['Relationship Type'] || row.relationship_type || 'solid').toLowerCase();
+                
+                if (!peopleMap.has(name)) {
+                    peopleMap.set(name, {
+                        name: name,
+                        title: row.Title || row.title || '',
+                        location: row.Location || row.location || '',
+                        phone: row.Phone || row.phone || '',
+                        email: row.Email || row.email || '',
+                        department: row.Department || row.department || '',
+                        solidReportsTo: null,
+                        dottedReportsTo: []
+                    });
+                }
+                
+                const person = peopleMap.get(name);
+                
+                if (reportsTo && reportsTo.trim()) {
+                    if (relationshipType === 'dotted') {
+                        person.dottedReportsTo.push(reportsTo);
+                    } else {
+                        person.solidReportsTo = reportsTo;
+                    }
+                }
+            });
+            
+            return Array.from(peopleMap.values());
+        }
+
+        async function createVSDXFile(data) {
+            console.log('Creating VSDX file with', data.length, 'people');
+            
+            const zip = new JSZip();
+            
+            // Create VSDX package structure
+            await createVSDXStructure(zip, data);
+            
+            // Generate the ZIP file
+            const blob = await zip.generateAsync({type: "blob"});
+            
+            // Download the file
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'redcross-orgchart.vsdx';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            // Show success message
+            showSuccess(data.length);
+        }
+
+        async function createVSDXStructure(zip, data) {
+            // Content Types
+            zip.file('[Content_Types].xml', createContentTypesXML());
+            
+            // App properties
+            zip.file('docProps/app.xml', createAppPropertiesXML());
+            zip.file('docProps/core.xml', createCorePropertiesXML());
+            
+            // Main relationships
+            zip.file('_rels/.rels', createMainRelationshipsXML());
+            
+            // Visio document
+            zip.file('visio/document.xml', createDocumentXML());
+            zip.file('visio/_rels/document.xml.rels', createDocumentRelationshipsXML());
+            
+            // Pages
+            zip.file('visio/pages/page1.xml', createPageXML(data));
+            zip.file('visio/pages/_rels/page1.xml.rels', createPageRelationshipsXML());
+            
+            // Masters (stencils)
+            zip.file('visio/masters/master1.xml', createMasterXML());
+            zip.file('visio/masters/_rels/master1.xml.rels', createMasterRelationshipsXML());
+            
+            console.log('VSDX structure created');
+        }
+
+        function createContentTypesXML() {
+            return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+    <Default Extension="xml" ContentType="application/xml"/>
+    <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+    <Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>
+    <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
+    <Override PartName="/visio/document.xml" ContentType="application/vnd.ms-visio.drawing.main+xml"/>
+    <Override PartName="/visio/pages/page1.xml" ContentType="application/vnd.ms-visio.page+xml"/>
+    <Override PartName="/visio/masters/master1.xml" ContentType="application/vnd.ms-visio.master+xml"/>
+</Types>`;
+        }
+
+        function createAppPropertiesXML() {
+            return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties">
+    <Application>Red Cross Org Chart Generator</Application>
+    <Company>American Red Cross</Company>
+    <Manager>Generated by Claude Code</Manager>
+</Properties>`;
+        }
+
+        function createCorePropertiesXML() {
+            const now = new Date().toISOString();
+            return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <dc:title>Red Cross Organizational Chart</dc:title>
+    <dc:creator>Red Cross Org Chart Generator</dc:creator>
+    <dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created>
+    <dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified>
+</cp:coreProperties>`;
+        }
+
+        function createMainRelationshipsXML() {
+            return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+    <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>
+    <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>
+    <Relationship Id="rId3" Type="http://schemas.microsoft.com/visio/2010/relationships/document" Target="visio/document.xml"/>
+</Relationships>`;
+        }
+
+        function createDocumentXML() {
+            return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<VisioDocument xmlns="http://schemas.microsoft.com/office/visio/2012/main">
+    <DocumentSettings>
+        <GlueSettings>9</GlueSettings>
+        <SnapSettings>65847</SnapSettings>
+        <SnapExtensions>36</SnapExtensions>
+    </DocumentSettings>
+    <Colors>
+        <ColorEntry RGB="#000000"/>
+        <ColorEntry RGB="#FFFFFF"/>
+        <ColorEntry RGB="#DC143C"/>
+        <ColorEntry RGB="#FF6B6B"/>
+    </Colors>
+    <FaceNames>
+        <FaceName Name="Calibri"/>
+    </FaceNames>
+    <StyleSheets>
+        <StyleSheet ID="0" Name="Normal">
+            <Line>
+                <LineWeight>0.01</LineWeight>
+                <LineColor>0</LineColor>
+            </Line>
+            <Fill>
+                <FillForegnd>1</FillForegnd>
+                <FillBkgnd>1</FillBkgnd>
+            </Fill>
+            <Char>
+                <Font>0</Font>
+                <Color>0</Color>
+                <Size>0.1666666666666667</Size>
+            </Char>
+        </StyleSheet>
+    </StyleSheets>
+</VisioDocument>`;
+        }
+
+        function createDocumentRelationshipsXML() {
+            return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+    <Relationship Id="rId1" Type="http://schemas.microsoft.com/visio/2010/relationships/page" Target="pages/page1.xml"/>
+    <Relationship Id="rId2" Type="http://schemas.microsoft.com/visio/2010/relationships/masters" Target="masters/master1.xml"/>
+</Relationships>`;
+        }
+
+        function createPageXML(data) {
+            let shapesXML = '';
+            let connectorsXML = '';
+            let shapeId = 1;
+            let connectorId = 1000;
+            
+            // Find root person
+            const root = data.find(person => !person.solidReportsTo);
+            
+            // Create organizational hierarchy
+            const hierarchy = buildHierarchy(data, root);
+            const positions = calculatePositions(hierarchy);
+            
+            // Generate shapes
+            positions.forEach(pos => {
+                shapesXML += createShapeXML(shapeId++, pos.person, pos.x, pos.y);
+            });
+            
+            // Generate connectors (solid lines)
+            positions.forEach(pos => {
+                if (pos.person.solidReportsTo) {
+                    const parentPos = positions.find(p => p.person.name === pos.person.solidReportsTo);
+                    if (parentPos) {
+                        connectorsXML += createConnectorXML(connectorId++, parentPos.shapeId, pos.shapeId, false);
+                    }
+                }
+            });
+            
+            // Generate dotted connectors
+            positions.forEach(pos => {
+                pos.person.dottedReportsTo.forEach(supervisor => {
+                    const supervisorPos = positions.find(p => p.person.name === supervisor);
+                    if (supervisorPos) {
+                        connectorsXML += createConnectorXML(connectorId++, supervisorPos.shapeId, pos.shapeId, true);
+                    }
+                });
+            });
+            
+            return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PageContents xmlns="http://schemas.microsoft.com/office/visio/2012/main">
+    <Shapes>
+        ${shapesXML}
+        ${connectorsXML}
+    </Shapes>
+</PageContents>`;
+        }
+
+        function buildHierarchy(data, root) {
+            function buildNode(person, level = 0) {
+                const children = data.filter(p => p.solidReportsTo === person.name);
+                return {
+                    person: person,
+                    level: level,
+                    children: children.map(child => buildNode(child, level + 1))
+                };
+            }
+            return buildNode(root);
+        }
+
+        function calculatePositions(hierarchy) {
+            const positions = [];
+            let currentShapeId = 1;
+            
+            function positionNode(node, x, y, index = 0) {
+                const shapeId = currentShapeId++;
+                positions.push({
+                    person: node.person,
+                    x: x,
+                    y: y,
+                    shapeId: shapeId
+                });
+                
+                // Position children
+                const childCount = node.children.length;
+                const childSpacing = 2; // inches
+                const startX = x - (childCount - 1) * childSpacing / 2;
+                
+                node.children.forEach((child, i) => {
+                    positionNode(child, startX + i * childSpacing, y - 1.5, i);
+                });
+            }
+            
+            positionNode(hierarchy, 4, 8); // Start at center top
+            return positions;
+        }
+
+        function createShapeXML(id, person, x, y) {
+            return `
+        <Shape ID="${id}" Type="Shape">
+            <XForm>
+                <PinX>${x}</PinX>
+                <PinY>${y}</PinY>
+                <Width>1.5</Width>
+                <Height>0.75</Height>
+            </XForm>
+            <Line>
+                <LineWeight>0.01</LineWeight>
+                <LineColor>0</LineColor>
+            </Line>
+            <Fill>
+                <FillForegnd>2</FillForegnd>
+                <FillBkgnd>2</FillBkgnd>
+            </Fill>
+            <Char>
+                <Font>0</Font>
+                <Color>1</Color>
+                <Size>0.125</Size>
+            </Char>
+            <Text>${escapeXML(person.name)}&#10;${escapeXML(person.title)}&#10;${escapeXML(person.location)}</Text>
+        </Shape>`;
+        }
+
+        function createConnectorXML(id, fromShapeId, toShapeId, isDotted) {
+            const linePattern = isDotted ? '<LinePattern>2</LinePattern>' : '';
+            const lineColor = isDotted ? '3' : '0';
+            
+            return `
+        <Shape ID="${id}" Type="Shape">
+            <Line>
+                <LineWeight>0.02</LineWeight>
+                <LineColor>${lineColor}</LineColor>
+                ${linePattern}
+            </Line>
+            <XForm1D>
+                <BeginX>Inh</BeginX>
+                <BeginY>Inh</BeginY>
+                <EndX>Inh</EndX>
+                <EndY>Inh</EndY>
+            </XForm1D>
+            <Connection IX="0">
+                <X>Connections.X1</X>
+                <Y>Connections.Y1</Y>
+                <DirX>0</DirX>
+                <DirY>0</DirY>
+                <Type>0</Type>
+                <AutoGen>1</AutoGen>
+                <Prompt Val=""/>
+            </Connection>
+        </Shape>`;
+        }
+
+        function createPageRelationshipsXML() {
+            return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+</Relationships>`;
+        }
+
+        function createMasterXML() {
+            return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Master xmlns="http://schemas.microsoft.com/office/visio/2012/main">
+    <PageSheet>
+        <PageProps>
+            <PageWidth>11</PageWidth>
+            <PageHeight>8.5</PageHeight>
+            <ShdwOffsetX>0.125</ShdwOffsetX>
+            <ShdwOffsetY>-0.125</ShdwOffsetY>
+        </PageProps>
+    </PageSheet>
+</Master>`;
+        }
+
+        function createMasterRelationshipsXML() {
+            return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+</Relationships>`;
+        }
+
+        function escapeXML(text) {
+            if (!text) return '';
+            return text.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&apos;');
+        }
+
+        function showSuccess(count) {
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('successMessage').innerHTML = `
+                🎉 <strong>Success!</strong> Generated VSDX file with ${count} people<br>
+                📁 <strong>File:</strong> redcross-orgchart.vsdx<br>
+                💾 <strong>Location:</strong> Downloads folder<br>
+                🎯 <strong>Ready to open in Visio!</strong>
+            `;
+            
+            // Scroll to result
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function downloadTemplate() {
+            const templateCSV = `Name,Title,Location,Reports To,Relationship Type,Phone,Email,Department
+Anna Trefethen,Division Vice President,SE & Caribbean Division,,solid,555-0101,anna.trefethen@redcross.org,Executive
+Ryan Lock,Division Disaster Executive,Division HQ,Anna Trefethen,solid,555-0102,ryan.lock@redcross.org,Disaster Services
+D. Dixon,Division Chief Development Officer,Division HQ,Anna Trefethen,solid,555-0103,d.dixon@redcross.org,Development
+K. Gonzalez,Division Service to Armed Forces Director,Division HQ,Anna Trefethen,solid,555-0104,k.gonzalez@redcross.org,SAF
+W. Carney,CDO - Florida N/C,Jacksonville,D. Dixon,solid,555-0105,w.carney@redcross.org,Development
+Jeff Franzen,Regional Director,Florida North Central,W. Carney,solid,555-0106,jeff.franzen@redcross.org,Operations
+Jeff Franzen,Regional Director,Florida North Central,D. Dixon,dotted,555-0106,jeff.franzen@redcross.org,Operations`;
+            
+            const blob = new Blob([templateCSV], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'redcross-org-template.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
