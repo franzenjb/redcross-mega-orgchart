@@ -287,23 +287,34 @@
     <div class="section">
         <h2>🔧 Export Options</h2>
         <div style="text-align: center;">
-            <button class="btn" onclick="exportToVisio()" id="visioBtn" disabled>📊 Export for Visio</button>
-            <button class="btn" onclick="exportToPowerPoint()" id="pptBtn" disabled>📽️ Export for PowerPoint</button>
-            <button class="btn" onclick="exportToExcel()" id="excelBtn" disabled>📈 Export to Excel</button>
+            <button class="btn" onclick="exportToVisio()" id="visioBtn" disabled>📊 Export for Visio (.txt + .csv)</button>
+            <button class="btn" onclick="exportToExcel()" id="excelBtn" disabled>📈 Export Excel (.xlsx)</button>
+            <button class="btn" onclick="exportToPowerPoint()" id="pptBtn" disabled>📽️ PowerPoint Info</button>
         </div>
         
         <div class="instructions">
-            <h3>🎯 Integration Steps:</h3>
+            <h3>🎯 Visio Integration Steps:</h3>
             <ol>
-                <li><strong>For Visio:</strong> File → New → Organization Chart → Import data from Excel/CSV</li>
-                <li><strong>For PowerPoint:</strong> Insert → SmartArt → Hierarchy → Import from Excel</li>
-                <li><strong>For Excel:</strong> Use the exported file with enhanced formatting</li>
+                <li><strong>Step 1:</strong> Click "Export for Visio" to download the specially formatted file</li>
+                <li><strong>Step 2:</strong> Open Microsoft Visio → File → New</li>
+                <li><strong>Step 3:</strong> Search for "Organization Chart" template</li>
+                <li><strong>Step 4:</strong> Select "Information that's already stored in a file or database"</li>
+                <li><strong>Step 5:</strong> Choose "A text, Org Plus (.txt), or Excel file"</li>
+                <li><strong>Step 6:</strong> Browse and select your exported file</li>
+                <li><strong>Step 7:</strong> Visio will create your org chart with solid lines</li>
+                <li><strong>Step 8:</strong> Manually add dotted lines for matrix relationships</li>
             </ol>
+            
+            <div class="warning">
+                <strong>Note about Dotted Lines:</strong> Visio's automatic import only creates solid reporting lines. You'll need to manually add dotted connector lines for matrix relationships. The exported file includes comments showing which relationships should be dotted.
+            </div>
         </div>
     </div>
 
     <!-- D3.js for chart rendering -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- SheetJS for Excel file generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <script>
         let csvData = [];
@@ -598,24 +609,61 @@ Jeff Franzen,Regional Director,Florida North Central,D. Dixon,dotted,555-0106,je
                 return;
             }
             
-            // Create Visio-compatible CSV
-            let visioCSV = 'Name,Title,Reports_To,Department,Phone,E_mail,Office\n';
+            // Create Visio-compatible text file with comments about dotted relationships
+            let visioContent = '# Red Cross Organizational Chart - Visio Import File\n';
+            visioContent += '# Generated on: ' + new Date().toLocaleDateString() + '\n';
+            visioContent += '# Instructions: Import this file into Visio Organization Chart template\n';
+            visioContent += '# Note: Dotted line relationships listed in comments below\n\n';
             
+            // Collect dotted relationships for reference
+            const dottedRelationships = [];
             processedData.forEach(person => {
-                // Main solid relationship
-                if (person.solidReportsTo) {
-                    visioCSV += `"${person.name}","${person.title}","${person.solidReportsTo}","${person.department}","${person.phone}","${person.email}","${person.location}"\n`;
-                } else {
-                    visioCSV += `"${person.name}","${person.title}","","${person.department}","${person.phone}","${person.email}","${person.location}"\n`;
-                }
-                
-                // Add dotted relationships as separate entries with special notation
                 person.dottedReportsTo.forEach(supervisor => {
-                    visioCSV += `"${person.name} (Matrix)","${person.title}","${supervisor}","${person.department}","${person.phone}","${person.email}","${person.location}"\n`;
+                    dottedRelationships.push(`${person.name} has matrix relationship with ${supervisor}`);
                 });
             });
             
-            const blob = new Blob([visioCSV], { type: 'text/csv' });
+            if (dottedRelationships.length > 0) {
+                visioContent += '# DOTTED LINE RELATIONSHIPS TO ADD MANUALLY:\n';
+                dottedRelationships.forEach(rel => {
+                    visioContent += `# - ${rel}\n`;
+                });
+                visioContent += '\n';
+            }
+            
+            // Standard Visio format
+            visioContent += 'Name\tTitle\tReports_To\tDepartment\tPhone\tE-mail\tOffice\n';
+            
+            processedData.forEach(person => {
+                // Only include solid relationships in the main structure
+                const reportsTo = person.solidReportsTo || '';
+                visioContent += `${person.name}\t${person.title}\t${reportsTo}\t${person.department}\t${person.phone}\t${person.email}\t${person.location}\n`;
+            });
+            
+            const blob = new Blob([visioContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'redcross-org-visio.txt';
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            // Also create Excel version for better Visio compatibility
+            createExcelForVisio();
+        }
+        
+        function createExcelForVisio() {
+            // Create Excel-compatible CSV that Visio prefers
+            let excelCSV = 'Name,Title,Reports_To,Department,Phone,E_mail,Office,Matrix_Relationships\n';
+            
+            processedData.forEach(person => {
+                const reportsTo = person.solidReportsTo || '';
+                const matrixRels = person.dottedReportsTo.join('; ');
+                
+                excelCSV += `"${person.name}","${person.title}","${reportsTo}","${person.department}","${person.phone}","${person.email}","${person.location}","${matrixRels}"\n`;
+            });
+            
+            const blob = new Blob([excelCSV], { type: 'application/vnd.ms-excel' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -623,7 +671,7 @@ Jeff Franzen,Regional Director,Florida North Central,D. Dixon,dotted,555-0106,je
             a.click();
             window.URL.revokeObjectURL(url);
             
-            alert('Visio-compatible CSV downloaded!\n\nTo import:\n1. Open Visio\n2. File → New → Organization Chart\n3. Select "Information that\'s already stored in a file"\n4. Choose the downloaded CSV file');
+            alert('Visio files downloaded!\n\n✅ redcross-org-visio.txt (with dotted line instructions)\n✅ redcross-org-visio.csv (Excel format)\n\nUse either file in Visio Organization Chart wizard.\nDotted relationships listed in comments for manual addition.');
         }
 
         function exportToPowerPoint() {
@@ -636,23 +684,61 @@ Jeff Franzen,Regional Director,Florida North Central,D. Dixon,dotted,555-0106,je
                 return;
             }
             
-            // Create enhanced Excel-compatible CSV
-            let excelCSV = 'Name,Title,Location,Solid_Reports_To,Dotted_Reports_To,Phone,Email,Department,Hierarchy_Level\n';
+            // Create Excel workbook with multiple sheets
+            const workbook = XLSX.utils.book_new();
             
+            // Main org data sheet
+            const orgData = processedData.map(person => ({
+                'Name': person.name,
+                'Title': person.title,
+                'Location': person.location,
+                'Solid_Reports_To': person.solidReportsTo || '',
+                'Dotted_Reports_To': person.dottedReportsTo.join('; '),
+                'Phone': person.phone,
+                'Email': person.email,
+                'Department': person.department,
+                'Hierarchy_Level': calculateHierarchyLevel(person, processedData)
+            }));
+            
+            const orgSheet = XLSX.utils.json_to_sheet(orgData);
+            XLSX.utils.book_append_sheet(workbook, orgSheet, 'Organization Data');
+            
+            // Visio import sheet (simplified format)
+            const visioData = processedData.map(person => ({
+                'Name': person.name,
+                'Title': person.title,
+                'Reports_To': person.solidReportsTo || '',
+                'Department': person.department,
+                'Phone': person.phone,
+                'E_mail': person.email,
+                'Office': person.location
+            }));
+            
+            const visioSheet = XLSX.utils.json_to_sheet(visioData);
+            XLSX.utils.book_append_sheet(workbook, visioSheet, 'Visio Import');
+            
+            // Matrix relationships sheet
+            const matrixData = [];
             processedData.forEach(person => {
-                const dottedList = person.dottedReportsTo.join('; ');
-                const level = calculateHierarchyLevel(person, processedData);
-                
-                excelCSV += `"${person.name}","${person.title}","${person.location}","${person.solidReportsTo || ''}","${dottedList}","${person.phone}","${person.email}","${person.department}","${level}"\n`;
+                person.dottedReportsTo.forEach(supervisor => {
+                    matrixData.push({
+                        'Person': person.name,
+                        'Matrix_Reports_To': supervisor,
+                        'Type': 'Dotted Line',
+                        'Instructions': 'Add manually in Visio as connector'
+                    });
+                });
             });
             
-            const blob = new Blob([excelCSV], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'redcross-org-enhanced.csv';
-            a.click();
-            window.URL.revokeObjectURL(url);
+            if (matrixData.length > 0) {
+                const matrixSheet = XLSX.utils.json_to_sheet(matrixData);
+                XLSX.utils.book_append_sheet(workbook, matrixSheet, 'Matrix Relationships');
+            }
+            
+            // Save as Excel file
+            XLSX.writeFile(workbook, 'redcross-org-complete.xlsx');
+            
+            alert('Excel file downloaded: redcross-org-complete.xlsx\n\n📊 Contains 3 sheets:\n• Organization Data (complete info)\n• Visio Import (ready for import)\n• Matrix Relationships (dotted lines to add)');
         }
 
         function calculateHierarchyLevel(person, data) {
