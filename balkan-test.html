@@ -110,7 +110,7 @@
     </div>
 
     <!-- BALKAN OrgChart JS - FREE TRIAL VERSION -->
-    <script src="https://unpkg.com/balkangraph-orgchart@3/js/OrgChart.js"></script>
+    <script src="https://balkangraph.com/js/latest/OrgChart.js"></script>
 
     <script>
         // Sample Red Cross data structure
@@ -172,8 +172,20 @@
             }
         ];
 
-        // Initialize BALKAN OrgChart
-        let chart = new OrgChart('#tree', {
+        // Global variables
+        let chart;
+        let originalDottedLines = [{ from: 6, to: 3 }];
+        let dottedLinesVisible = true;
+
+        // Initialize BALKAN OrgChart after DOM loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof OrgChart === 'undefined') {
+                console.error('OrgChart library not loaded');
+                document.getElementById('tree').innerHTML = '<div style="padding: 50px; text-align: center; color: red;">Error: OrgChart library failed to load. This might be due to CDN issues or network restrictions.</div>';
+                return;
+            }
+
+            chart = new OrgChart('#tree', {
             template: "ana",
             enableDragDrop: true,
             scaleInitial: 0.8,
@@ -189,15 +201,39 @@
                 // This shows matrix reporting: Jeff reports to W. Carney (solid) AND D. Dixon (dotted)
                 { from: 6, to: 3 }
             ],
-            nodes: redCrossData
-        });
+                nodes: redCrossData
+            });
 
-        // Store original dotted lines
-        let originalDottedLines = [{ from: 6, to: 3 }];
-        let dottedLinesVisible = true;
+            // Custom styling for dotted lines
+            chart.on('init', function() {
+                // Add custom CSS for dotted lines
+                const style = document.createElement('style');
+                style.textContent = `
+                    .boc-dotted-connector path {
+                        stroke: #ff6b6b !important;
+                        stroke-width: 2 !important;
+                        stroke-dasharray: 8,4 !important;
+                        opacity: 0.8 !important;
+                    }
+                    .boc-dotted-connector .boc-connector-arrow {
+                        fill: #ff6b6b !important;
+                    }
+                `;
+                document.head.appendChild(style);
+            });
+
+            // Log success
+            console.log('BALKAN OrgChart initialized with Red Cross data');
+            console.log('Dotted lines configured:', chart.config.dottedLines);
+        });
 
         // Toggle dotted lines on/off
         function toggleDottedLines() {
+            if (!chart) {
+                alert('Chart not initialized yet');
+                return;
+            }
+            
             if (dottedLinesVisible) {
                 chart.config.dottedLines = [];
                 dottedLinesVisible = false;
@@ -210,6 +246,11 @@
 
         // Add a test dotted line
         function addTestDottedLine() {
+            if (!chart) {
+                alert('Chart not initialized yet');
+                return;
+            }
+            
             // Add dotted line from Jeff Franzen II (id: 7) to Ryan Lock (id: 2)
             const newDottedLine = { from: 7, to: 2 };
             
@@ -222,28 +263,6 @@
                 alert('Dotted line already exists!');
             }
         }
-
-        // Custom styling for dotted lines
-        chart.on('init', function() {
-            // Add custom CSS for dotted lines
-            const style = document.createElement('style');
-            style.textContent = `
-                .boc-dotted-connector path {
-                    stroke: #ff6b6b !important;
-                    stroke-width: 2 !important;
-                    stroke-dasharray: 8,4 !important;
-                    opacity: 0.8 !important;
-                }
-                .boc-dotted-connector .boc-connector-arrow {
-                    fill: #ff6b6b !important;
-                }
-            `;
-            document.head.appendChild(style);
-        });
-
-        // Log success
-        console.log('BALKAN OrgChart initialized with Red Cross data');
-        console.log('Dotted lines configured:', chart.config.dottedLines);
     </script>
 </body>
 </html>
