@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Cross CSV Organizational Chart System</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            color: #dc143c;
+            margin-bottom: 10px;
+        }
+        .section {
+            background: white;
+            margin: 20px 0;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #dc143c;
+            margin-top: 0;
+            border-bottom: 2px solid #dc143c;
+            padding-bottom: 10px;
+        }
+        .upload-area {
+            border: 2px dashed #dc143c;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            background: #fff5f5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            background: #ffe5e5;
+            border-color: #b91c3c;
+        }
+        .upload-area.dragover {
+            background: #ffe5e5;
+            transform: scale(1.02);
+        }
+        .btn {
+            background: #dc143c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #b91c3c;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        #chart-container {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            position: relative;
+            overflow: auto;
+        }
+        .example-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        .example-table th,
+        .example-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .example-table th {
+            background: #dc143c;
+            color: white;
+        }
+        .example-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        .dotted-example {
+            background: #fff8e1 !important;
+        }
+        .instructions {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            margin: 15px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+        }
+        .file-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .line-solid {
+            width: 30px;
+            height: 3px;
+            background: #333;
+        }
+        .line-dotted {
+            width: 30px;
+            height: 3px;
+            background: #ff6b6b;
+            background-image: repeating-linear-gradient(to right, transparent, transparent 3px, #ff6b6b 3px, #ff6b6b 6px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏥 Red Cross CSV Organizational Chart System</h1>
+        <p>Professional org chart solution using Excel/CSV data with full dotted line support</p>
+        <p><strong>Perfect for Red Cross teams with Microsoft Office access</strong></p>
+    </div>
+
+    <div class="section">
+        <h2>📋 How This Solution Works</h2>
+        <div class="instructions">
+            <h3>🎯 The Perfect Red Cross Solution:</h3>
+            <ul>
+                <li><strong>Use Excel/CSV</strong> - Tools everyone already knows</li>
+                <li><strong>No extra costs</strong> - Uses existing Microsoft licenses</li>
+                <li><strong>Full dotted line control</strong> - Specify solid or dotted relationships</li>
+                <li><strong>Easy maintenance</strong> - Anyone can update org data</li>
+                <li><strong>Visio integration</strong> - Import directly into Visio for professional charts</li>
+                <li><strong>Multiple formats</strong> - Web charts, Visio diagrams, PowerPoint presentations</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📊 CSV File Format</h2>
+        <p>Your CSV file should have these columns (Excel-friendly):</p>
+        
+        <table class="example-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Title</th>
+                    <th>Location</th>
+                    <th>Reports To</th>
+                    <th>Relationship Type</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Anna Trefethen</td>
+                    <td>Division Vice President</td>
+                    <td>SE & Caribbean Division</td>
+                    <td></td>
+                    <td>solid</td>
+                    <td>555-0101</td>
+                    <td>anna.trefethen@redcross.org</td>
+                    <td>Executive</td>
+                </tr>
+                <tr>
+                    <td>D. Dixon</td>
+                    <td>Chief Development Officer</td>
+                    <td>Division HQ</td>
+                    <td>Anna Trefethen</td>
+                    <td>solid</td>
+                    <td>555-0103</td>
+                    <td>d.dixon@redcross.org</td>
+                    <td>Development</td>
+                </tr>
+                <tr>
+                    <td>Jeff Franzen</td>
+                    <td>Regional Director</td>
+                    <td>Florida North Central</td>
+                    <td>W. Carney</td>
+                    <td>solid</td>
+                    <td>555-0106</td>
+                    <td>jeff.franzen@redcross.org</td>
+                    <td>Operations</td>
+                </tr>
+                <tr class="dotted-example">
+                    <td>Jeff Franzen</td>
+                    <td>Regional Director</td>
+                    <td>Florida North Central</td>
+                    <td>D. Dixon</td>
+                    <td>dotted</td>
+                    <td>555-0106</td>
+                    <td>jeff.franzen@redcross.org</td>
+                    <td>Operations</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="warning">
+            <strong>Key Points:</strong>
+            <ul>
+                <li><strong>Duplicate rows for dotted lines:</strong> Create a second row for the same person with "dotted" relationship type</li>
+                <li><strong>Relationship Type:</strong> Use "solid" for direct reports, "dotted" for matrix relationships</li>
+                <li><strong>Reports To:</strong> Must match the "Name" field exactly (case-sensitive)</li>
+                <li><strong>Empty Reports To:</strong> Leave blank for top-level executives</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📁 Upload Your CSV File</h2>
+        <div class="upload-area" id="uploadArea">
+            <h3>📄 Drop your CSV file here or click to browse</h3>
+            <p>Supports .csv files exported from Excel</p>
+            <input type="file" id="csvFile" accept=".csv" style="display: none;">
+        </div>
+        
+        <div class="file-info" id="fileInfo" style="display: none;"></div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn" onclick="downloadTemplate()">📥 Download Template CSV</button>
+            <button class="btn btn-secondary" onclick="generateChart()" id="generateBtn" disabled>🎨 Generate Chart</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🎨 Generated Organizational Chart</h2>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="line-solid"></div>
+                <span>Direct Reporting (Solid Line)</span>
+            </div>
+            <div class="legend-item">
+                <div class="line-dotted"></div>
+                <span>Matrix Reporting (Dotted Line)</span>
+            </div>
+        </div>
+        <div id="chart-container">
+            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666;">
+                Upload a CSV file to generate your organizational chart
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔧 Export Options</h2>
+        <div style="text-align: center;">
+            <button class="btn" onclick="exportToVisio()" id="visioBtn" disabled>📊 Export for Visio</button>
+            <button class="btn" onclick="exportToPowerPoint()" id="pptBtn" disabled>📽️ Export for PowerPoint</button>
+            <button class="btn" onclick="exportToExcel()" id="excelBtn" disabled>📈 Export to Excel</button>
+        </div>
+        
+        <div class="instructions">
+            <h3>🎯 Integration Steps:</h3>
+            <ol>
+                <li><strong>For Visio:</strong> File → New → Organization Chart → Import data from Excel/CSV</li>
+                <li><strong>For PowerPoint:</strong> Insert → SmartArt → Hierarchy → Import from Excel</li>
+                <li><strong>For Excel:</strong> Use the exported file with enhanced formatting</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- D3.js for chart rendering -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <script>
+        let csvData = [];
+        let processedData = [];
+
+        // File upload handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('csvFile');
+        const fileInfo = document.getElementById('fileInfo');
+        const generateBtn = document.getElementById('generateBtn');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                alert('Please select a CSV file');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const csv = e.target.result;
+                parseCSV(csv);
+                
+                fileInfo.style.display = 'block';
+                fileInfo.innerHTML = `
+                    <strong>File loaded:</strong> ${file.name}<br>
+                    <strong>Size:</strong> ${(file.size / 1024).toFixed(1)} KB<br>
+                    <strong>Records:</strong> ${csvData.length} people<br>
+                    <strong>Status:</strong> ✅ Ready to generate chart
+                `;
+                
+                generateBtn.disabled = false;
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.split('\n').filter(line => line.trim());
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            
+            csvData = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                if (row.Name && row.Name.trim()) {
+                    csvData.push(row);
+                }
+            }
+            
+            console.log('Parsed CSV data:', csvData);
+        }
+
+        function generateChart() {
+            if (csvData.length === 0) {
+                alert('Please upload a CSV file first');
+                return;
+            }
+
+            processedData = processCSVData(csvData);
+            renderChart(processedData);
+            
+            // Enable export buttons
+            document.getElementById('visioBtn').disabled = false;
+            document.getElementById('pptBtn').disabled = false;
+            document.getElementById('excelBtn').disabled = false;
+        }
+
+        function processCSVData(data) {
+            const hierarchy = {};
+            const relationships = [];
+            
+            // Group by person and separate solid vs dotted relationships
+            const peopleMap = new Map();
+            
+            data.forEach(row => {
+                const name = row.Name;
+                const reportsTo = row['Reports To'];
+                const relationshipType = row['Relationship Type'] || 'solid';
+                
+                if (!peopleMap.has(name)) {
+                    peopleMap.set(name, {
+                        name: name,
+                        title: row.Title || '',
+                        location: row.Location || '',
+                        phone: row.Phone || '',
+                        email: row.Email || '',
+                        department: row.Department || '',
+                        solidReportsTo: null,
+                        dottedReportsTo: []
+                    });
+                }
+                
+                const person = peopleMap.get(name);
+                
+                if (reportsTo && reportsTo.trim()) {
+                    if (relationshipType.toLowerCase() === 'dotted') {
+                        person.dottedReportsTo.push(reportsTo);
+                    } else {
+                        person.solidReportsTo = reportsTo;
+                    }
+                }
+            });
+            
+            return Array.from(peopleMap.values());
+        }
+
+        function renderChart(data) {
+            const container = document.getElementById('chart-container');
+            container.innerHTML = '';
+            
+            // Create simple tree visualization
+            const svg = d3.select('#chart-container')
+                .append('svg')
+                .attr('width', '100%')
+                .attr('height', '100%');
+            
+            // Find root node (person with no solid reports to)
+            const root = data.find(person => !person.solidReportsTo);
+            if (!root) {
+                container.innerHTML = '<div style="padding: 50px; text-align: center; color: red;">Error: No root person found (person with no solid reporting relationship)</div>';
+                return;
+            }
+            
+            // Build hierarchy tree
+            const hierarchy = buildHierarchy(data, root);
+            
+            // Use D3 tree layout
+            const treeLayout = d3.tree().size([800, 500]);
+            const rootNode = d3.hierarchy(hierarchy);
+            treeLayout(rootNode);
+            
+            const g = svg.append('g').attr('transform', 'translate(50, 50)');
+            
+            // Draw solid lines (tree structure)
+            g.selectAll('.link')
+                .data(rootNode.links())
+                .enter()
+                .append('path')
+                .attr('class', 'link')
+                .attr('d', d3.linkVertical()
+                    .x(d => d.x)
+                    .y(d => d.y))
+                .style('fill', 'none')
+                .style('stroke', '#333')
+                .style('stroke-width', '2px');
+            
+            // Draw nodes
+            const nodeGroup = g.selectAll('.node')
+                .data(rootNode.descendants())
+                .enter()
+                .append('g')
+                .attr('class', 'node')
+                .attr('transform', d => `translate(${d.x},${d.y})`);
+            
+            nodeGroup.append('rect')
+                .attr('width', 120)
+                .attr('height', 60)
+                .attr('x', -60)
+                .attr('y', -30)
+                .style('fill', '#dc143c')
+                .style('stroke', '#333')
+                .style('stroke-width', '1px')
+                .style('rx', '5px');
+            
+            nodeGroup.append('text')
+                .attr('dy', '-10')
+                .attr('text-anchor', 'middle')
+                .style('fill', 'white')
+                .style('font-size', '10px')
+                .style('font-weight', 'bold')
+                .text(d => d.data.name);
+            
+            nodeGroup.append('text')
+                .attr('dy', '5')
+                .attr('text-anchor', 'middle')
+                .style('fill', 'white')
+                .style('font-size', '8px')
+                .text(d => d.data.title);
+            
+            nodeGroup.append('text')
+                .attr('dy', '18')
+                .attr('text-anchor', 'middle')
+                .style('fill', 'white')
+                .style('font-size', '7px')
+                .text(d => d.data.location);
+            
+            // Draw dotted lines for matrix relationships
+            drawDottedLines(g, rootNode, data);
+        }
+
+        function buildHierarchy(data, root) {
+            const peopleMap = new Map();
+            data.forEach(person => peopleMap.set(person.name, person));
+            
+            function buildNode(person) {
+                const children = data.filter(p => p.solidReportsTo === person.name);
+                return {
+                    name: person.name,
+                    title: person.title,
+                    location: person.location,
+                    phone: person.phone,
+                    email: person.email,
+                    department: person.department,
+                    children: children.map(child => buildNode(child))
+                };
+            }
+            
+            return buildNode(root);
+        }
+
+        function drawDottedLines(g, rootNode, data) {
+            // Find all dotted relationships
+            const dottedRelationships = [];
+            data.forEach(person => {
+                person.dottedReportsTo.forEach(supervisor => {
+                    dottedRelationships.push({
+                        from: person.name,
+                        to: supervisor
+                    });
+                });
+            });
+            
+            // Draw dotted lines
+            dottedRelationships.forEach(rel => {
+                const fromNode = rootNode.descendants().find(d => d.data.name === rel.from);
+                const toNode = rootNode.descendants().find(d => d.data.name === rel.to);
+                
+                if (fromNode && toNode) {
+                    g.append('path')
+                        .attr('d', d3.linkVertical()
+                            .x(d => d.x)
+                            .y(d => d.y)({
+                            source: fromNode,
+                            target: toNode
+                        }))
+                        .style('fill', 'none')
+                        .style('stroke', '#ff6b6b')
+                        .style('stroke-width', '2px')
+                        .style('stroke-dasharray', '8,4')
+                        .style('opacity', '0.8');
+                }
+            });
+        }
+
+        function downloadTemplate() {
+            const templateCSV = `Name,Title,Location,Reports To,Relationship Type,Phone,Email,Department
+Anna Trefethen,Division Vice President,SE & Caribbean Division,,solid,555-0101,anna.trefethen@redcross.org,Executive
+Ryan Lock,Division Disaster Executive,Division HQ,Anna Trefethen,solid,555-0102,ryan.lock@redcross.org,Disaster Services
+D. Dixon,Division Chief Development Officer,Division HQ,Anna Trefethen,solid,555-0103,d.dixon@redcross.org,Development
+K. Gonzalez,Division Service to Armed Forces Director,Division HQ,Anna Trefethen,solid,555-0104,k.gonzalez@redcross.org,SAF
+W. Carney,CDO - Florida N/C,Jacksonville,D. Dixon,solid,555-0105,w.carney@redcross.org,Development
+Jeff Franzen,Regional Director,Florida North Central,W. Carney,solid,555-0106,jeff.franzen@redcross.org,Operations
+Jeff Franzen,Regional Director,Florida North Central,D. Dixon,dotted,555-0106,jeff.franzen@redcross.org,Operations`;
+            
+            const blob = new Blob([templateCSV], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'redcross-org-template.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function exportToVisio() {
+            if (processedData.length === 0) {
+                alert('Please generate a chart first');
+                return;
+            }
+            
+            // Create Visio-compatible CSV
+            let visioCSV = 'Name,Title,Reports_To,Department,Phone,E_mail,Office\n';
+            
+            processedData.forEach(person => {
+                // Main solid relationship
+                if (person.solidReportsTo) {
+                    visioCSV += `"${person.name}","${person.title}","${person.solidReportsTo}","${person.department}","${person.phone}","${person.email}","${person.location}"\n`;
+                } else {
+                    visioCSV += `"${person.name}","${person.title}","","${person.department}","${person.phone}","${person.email}","${person.location}"\n`;
+                }
+                
+                // Add dotted relationships as separate entries with special notation
+                person.dottedReportsTo.forEach(supervisor => {
+                    visioCSV += `"${person.name} (Matrix)","${person.title}","${supervisor}","${person.department}","${person.phone}","${person.email}","${person.location}"\n`;
+                });
+            });
+            
+            const blob = new Blob([visioCSV], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'redcross-org-visio.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            alert('Visio-compatible CSV downloaded!\n\nTo import:\n1. Open Visio\n2. File → New → Organization Chart\n3. Select "Information that\'s already stored in a file"\n4. Choose the downloaded CSV file');
+        }
+
+        function exportToPowerPoint() {
+            alert('PowerPoint export:\n\n1. Open PowerPoint\n2. Insert → SmartArt → Hierarchy\n3. Right-click SmartArt → "Convert to Shapes" for dotted line editing\n4. Use downloaded CSV data to populate manually\n\nNote: PowerPoint SmartArt doesn\'t natively support dotted matrix relationships.');
+        }
+
+        function exportToExcel() {
+            if (processedData.length === 0) {
+                alert('Please generate a chart first');
+                return;
+            }
+            
+            // Create enhanced Excel-compatible CSV
+            let excelCSV = 'Name,Title,Location,Solid_Reports_To,Dotted_Reports_To,Phone,Email,Department,Hierarchy_Level\n';
+            
+            processedData.forEach(person => {
+                const dottedList = person.dottedReportsTo.join('; ');
+                const level = calculateHierarchyLevel(person, processedData);
+                
+                excelCSV += `"${person.name}","${person.title}","${person.location}","${person.solidReportsTo || ''}","${dottedList}","${person.phone}","${person.email}","${person.department}","${level}"\n`;
+            });
+            
+            const blob = new Blob([excelCSV], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'redcross-org-enhanced.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function calculateHierarchyLevel(person, data) {
+            let level = 0;
+            let current = person;
+            
+            while (current.solidReportsTo) {
+                level++;
+                current = data.find(p => p.name === current.solidReportsTo);
+                if (!current) break;
+            }
+            
+            return level;
+        }
+    </script>
+</body>
+</html>

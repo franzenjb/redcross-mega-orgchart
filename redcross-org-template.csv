@@ -1,0 +1,8 @@
+Name,Title,Location,Reports To,Relationship Type,Phone,Email,Department
+Anna Trefethen,Division Vice President,SE & Caribbean Division,,solid,555-0101,anna.trefethen@redcross.org,Executive
+Ryan Lock,Division Disaster Executive,Division HQ,Anna Trefethen,solid,555-0102,ryan.lock@redcross.org,Disaster Services
+D. Dixon,Division Chief Development Officer,Division HQ,Anna Trefethen,solid,555-0103,d.dixon@redcross.org,Development
+K. Gonzalez,Division Service to Armed Forces Director,Division HQ,Anna Trefethen,solid,555-0104,k.gonzalez@redcross.org,SAF
+W. Carney,CDO - Florida N/C,Jacksonville,D. Dixon,solid,555-0105,w.carney@redcross.org,Development
+Jeff Franzen,Regional Director,Florida North Central,W. Carney,solid,555-0106,jeff.franzen@redcross.org,Operations
+Jeff Franzen,Regional Director,Florida North Central,D. Dixon,dotted,555-0106,jeff.franzen@redcross.org,Operations
