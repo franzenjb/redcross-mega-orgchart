@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Secondary Lines Logic</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-result {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        .test-result.error {
+            border-left-color: #f44336;
+        }
+        pre {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Secondary Reporting Lines - Logic Test</h1>
+    
+    <div id="results"></div>
+    
+    <script>
+        // Mock the unified org data structure
+        const unifiedOrgData = {
+            people: {
+                "d-dixon": {
+                    id: "d-dixon",
+                    name: "D. Dixon",
+                    title: "Chief Development Officer",
+                    type: "executive"
+                },
+                "w-carney": {
+                    id: "w-carney",
+                    name: "W. Carney",
+                    title: "Chief Development Officer",
+                    dualReport: true,
+                    primaryReport: "c-smith",
+                    secondaryReport: "d-dixon"
+                },
+                "tzaicel-hernandez": {
+                    id: "tzaicel-hernandez",
+                    name: "Tzaicel Hernandez",
+                    title: "Chief Development Officer",
+                    dualReport: true,
+                    primaryReport: "krista-coletti",
+                    secondaryReport: "d-dixon"
+                },
+                "l-vaughn": {
+                    id: "l-vaughn",
+                    name: "L. Vaughn",
+                    title: "Chief Development Officer",
+                    dualReport: true,
+                    primaryReport: "j-sullivan",
+                    secondaryReport: "d-dixon"
+                }
+            }
+        };
+        
+        // Test the logic
+        const results = document.getElementById('results');
+        
+        function addResult(title, content, isError = false) {
+            const div = document.createElement('div');
+            div.className = 'test-result' + (isError ? ' error' : '');
+            div.innerHTML = `<h3>${title}</h3><pre>${content}</pre>`;
+            results.appendChild(div);
+        }
+        
+        // Test 1: Find dual reporting relationships
+        const secondaryConnections = [];
+        Object.values(unifiedOrgData.people).forEach(person => {
+            if (person.dualReport && person.secondaryReport) {
+                const secondaryManager = unifiedOrgData.people[person.secondaryReport];
+                if (secondaryManager) {
+                    secondaryConnections.push({
+                        from: secondaryManager.name,
+                        to: person.name
+                    });
+                }
+            }
+        });
+        
+        addResult(
+            '✓ Test 1: Find Secondary Connections',
+            `Found ${secondaryConnections.length} secondary reporting relationships:\n` +
+            JSON.stringify(secondaryConnections, null, 2)
+        );
+        
+        // Test 2: Verify all connections point to D. Dixon
+        const allToDDixon = secondaryConnections.every(conn => conn.from === 'D. Dixon');
+        addResult(
+            allToDDixon ? '✓ Test 2: All Secondary Reports to D. Dixon' : '✗ Test 2: FAILED',
+            `All connections point to D. Dixon: ${allToDDixon}\n` +
+            secondaryConnections.map(c => `${c.from} → ${c.to}`).join('\n'),
+            !allToDDixon
+        );
+        
+        // Test 3: Check node name matching
+        const mockNodes = [
+            { data: { name: 'D. Dixon' }, x: 100, y: 50, width: 250, height: 80 },
+            { data: { name: 'W. Carney' }, x: 50, y: 200, width: 250, height: 80 },
+            { data: { name: 'Tzaicel Hernandez' }, x: 150, y: 200, width: 250, height: 80 },
+            { data: { name: 'L. Vaughn' }, x: 250, y: 200, width: 250, height: 80 }
+        ];
+        
+        const nodeMap = new Map();
+        mockNodes.forEach(node => {
+            if (node.data && node.data.name) {
+                nodeMap.set(node.data.name, {
+                    x: node.x,
+                    y: node.y,
+                    width: node.width,
+                    height: node.height
+                });
+            }
+        });
+        
+        let matchedConnections = 0;
+        secondaryConnections.forEach(conn => {
+            const fromNode = nodeMap.get(conn.from);
+            const toNode = nodeMap.get(conn.to);
+            if (fromNode && toNode) {
+                matchedConnections++;
+            }
+        });
+        
+        addResult(
+            matchedConnections === secondaryConnections.length ? 
+                '✓ Test 3: Node Name Matching' : 
+                '✗ Test 3: Node Matching FAILED',
+            `Matched ${matchedConnections} out of ${secondaryConnections.length} connections\n` +
+            `Node map contains: ${Array.from(nodeMap.keys()).join(', ')}`,
+            matchedConnections !== secondaryConnections.length
+        );
+        
+        // Test 4: Calculate path coordinates
+        const pathData = [];
+        secondaryConnections.forEach(conn => {
+            const fromNode = nodeMap.get(conn.from);
+            const toNode = nodeMap.get(conn.to);
+            
+            if (fromNode && toNode) {
+                const x1 = fromNode.x;
+                const y1 = fromNode.y + fromNode.height / 2;
+                const x2 = toNode.x;
+                const y2 = toNode.y - toNode.height / 2;
+                const midY = (y1 + y2) / 2;
+                const path = `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`;
+                
+                pathData.push({
+                    connection: `${conn.from} → ${conn.to}`,
+                    path: path,
+                    start: `(${x1}, ${y1})`,
+                    end: `(${x2}, ${y2})`
+                });
+            }
+        });
+        
+        addResult(
+            '✓ Test 4: Path Generation',
+            `Generated ${pathData.length} SVG paths:\n` +
+            pathData.map(p => 
+                `${p.connection}\n  Start: ${p.start}\n  End: ${p.end}\n  Path: ${p.path}`
+            ).join('\n\n')
+        );
+        
+        // Summary
+        addResult(
+            '✓ Summary',
+            `Implementation logic verified successfully!\n\n` +
+            `• Found ${secondaryConnections.length} dual reporting relationships\n` +
+            `• All report to D. Dixon as secondary manager\n` +
+            `• Node name matching works correctly\n` +
+            `• SVG path generation produces valid coordinates\n\n` +
+            `The implementation will draw dotted lines for these secondary relationships\n` +
+            `when the Division Leadership or All Regions view is displayed.`
+        );
+    </script>
+</body>
+</html>

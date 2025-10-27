@@ -136,6 +136,15 @@
             stroke-width: 1.5;
         }
         
+        /* Secondary reporting link style */
+        .link-secondary {
+            fill: none;
+            stroke: #999;
+            stroke-width: 1.5;
+            stroke-dasharray: 5, 5;
+            opacity: 0.7;
+        }
+        
         /* Legend */
         .legend {
             position: fixed;
@@ -421,6 +430,7 @@
     <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0/build/d3-org-chart.min.js"></script>
     <script src="data-files/complete-org-data.js"></script>
     <script src="data-files/divisional-leadership.js"></script>
+    <script src="data-files/org-data-unified.js"></script>
     
     <script>
         let chart;
@@ -581,12 +591,16 @@
                                             setTimeout(() => {
                                                 chart.setCentered(d.data.id).render();
                                                 console.log('Final center on parent:', d.data.name);
+                                                // Redraw secondary lines
+                                                setTimeout(drawSecondaryReportingLines, 200);
                                             }, 300);
                                         }, 300);
                                     } else {
                                         // If we collapsed, center on the node
                                         chart.setCentered(d.data.id).render();
                                         console.log('Centered on collapsed node:', d.data.name);
+                                        // Redraw secondary lines
+                                        setTimeout(drawSecondaryReportingLines, 400);
                                     }
                                 }
                             }, 600);
@@ -952,6 +966,11 @@
                         }
                     }
                 }, 800);
+                
+                // Draw secondary reporting lines after chart is rendered
+                setTimeout(() => {
+                    drawSecondaryReportingLines();
+                }, 1200);
             } catch (error) {
                 console.error('Error updating chart:', error);
                 // Show error to user
@@ -961,6 +980,113 @@
                         <p>${error.message}</p>
                         <p>Please check console for details.</p>
                     </div>`;
+            }
+        }
+        
+        // Draw dotted lines for secondary reporting relationships
+        function drawSecondaryReportingLines() {
+            try {
+                // Only draw secondary lines in Division Leadership or All Regions view
+                if (currentRegion !== 'division' && currentRegion !== 'all') {
+                    return;
+                }
+                
+                // Check if unifiedOrgData is available
+                if (typeof unifiedOrgData === 'undefined') {
+                    console.log('unifiedOrgData not loaded, skipping secondary lines');
+                    return;
+                }
+                
+                // Get the SVG element
+                const svg = d3.select('#chart-container svg');
+                if (svg.empty()) {
+                    console.log('SVG not found, skipping secondary lines');
+                    return;
+                }
+                
+                // Remove any existing secondary lines
+                svg.selectAll('.link-secondary').remove();
+                
+                // Get all nodes from the chart
+                const nodes = chart.getChartState().allNodes;
+                if (!nodes || nodes.length === 0) {
+                    return;
+                }
+                
+                // Build a map of person names to node positions
+                const nodeMap = new Map();
+                nodes.forEach(node => {
+                    if (node.data && node.data.name) {
+                        nodeMap.set(node.data.name, {
+                            x: node.x,
+                            y: node.y,
+                            width: node.width,
+                            height: node.height
+                        });
+                    }
+                });
+                
+                // Find people with dual reporting
+                const secondaryConnections = [];
+                Object.values(unifiedOrgData.people).forEach(person => {
+                    if (person.dualReport && person.secondaryReport) {
+                        // Find the secondary manager
+                        const secondaryManager = unifiedOrgData.people[person.secondaryReport];
+                        if (secondaryManager) {
+                            secondaryConnections.push({
+                                from: secondaryManager.name,
+                                to: person.name
+                            });
+                        }
+                    }
+                });
+                
+                console.log(`Found ${secondaryConnections.length} secondary reporting relationships`);
+                
+                // Draw the secondary lines
+                // Try to find the links group, or create one if needed
+                let linksGroup = svg.select('g.links');
+                if (linksGroup.empty()) {
+                    // Try finding any g element that contains links
+                    linksGroup = svg.select('g');
+                    if (linksGroup.empty()) {
+                        // Create a new group for secondary links
+                        linksGroup = svg.append('g').attr('class', 'secondary-links-group');
+                    }
+                }
+                
+                secondaryConnections.forEach(conn => {
+                    const fromNode = nodeMap.get(conn.from);
+                    const toNode = nodeMap.get(conn.to);
+                    
+                    if (fromNode && toNode) {
+                        // Calculate start and end points
+                        const x1 = fromNode.x;
+                        const y1 = fromNode.y + fromNode.height / 2;
+                        const x2 = toNode.x;
+                        const y2 = toNode.y - toNode.height / 2;
+                        
+                        // Draw a curved dotted line
+                        const midY = (y1 + y2) / 2;
+                        const path = `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`;
+                        
+                        linksGroup.append('path')
+                            .attr('class', 'link-secondary')
+                            .attr('d', path)
+                            .attr('stroke', '#999')
+                            .attr('stroke-width', 1.5)
+                            .attr('stroke-dasharray', '5,5')
+                            .attr('fill', 'none')
+                            .attr('opacity', 0.7);
+                        
+                        console.log(`Drew secondary line from ${conn.from} to ${conn.to}`);
+                    } else {
+                        if (!fromNode) console.log(`Node not found for: ${conn.from}`);
+                        if (!toNode) console.log(`Node not found for: ${conn.to}`);
+                    }
+                });
+            } catch (error) {
+                console.error('Error drawing secondary reporting lines:', error);
             }
         }
         
@@ -1013,6 +1139,8 @@
                     setTimeout(() => {
                         chart.fit();
                         console.log('Auto-fitted after expand level');
+                        // Redraw secondary lines
+                        setTimeout(drawSecondaryReportingLines, 300);
                     }, 500);
                 } else {
                     console.log('All nodes already expanded');
@@ -1029,6 +1157,8 @@
                 setTimeout(() => {
                     chart.fit();
                     console.log('Auto-fitted after collapse all');
+                    // Redraw secondary lines
+                    setTimeout(drawSecondaryReportingLines, 300);
                 }, 500);
             }
         }
